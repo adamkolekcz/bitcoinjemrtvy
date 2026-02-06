@@ -6,7 +6,7 @@ export const revalidate = 3600; // ISR - revalidace každou hodinu
 
 export const metadata = {
   title: "Timeline — Bitcoin je mrtvý",
-  description: "Chronologický přehled všech prohlášení o\u00A0smrti Bitcoinu od\u00A0roku 2010 do\u00A0současnosti.",
+  description: "Chronologický přehled všech prohlášení o smrti Bitcoinu od roku 2010 do současnosti.",
 };
 
 export default async function PostsPage() {

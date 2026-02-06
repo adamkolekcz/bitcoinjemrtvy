@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Bitcoin je mrtvý — Kolikrát byl Bitcoin prohlášen za mrtvý",
   description:
-    "Kompletní databáze všech případů, kdy byl Bitcoin prohlášen za mrtvý od\u00A0roku 2010. Interaktivní graf, statistiky a\u00A0investiční kalkulačka.",
+    "Kompletní databáze všech případů, kdy byl Bitcoin prohlášen za mrtvý od roku 2010. Interaktivní graf, statistiky a investiční kalkulačka.",
   keywords: ["bitcoin", "bitcoin je mrtvý", "bitcoin deaths", "bitcoin obituary", "kryptoměny"],
   openGraph: {
     title: "Bitcoin je mrtvý — Kolikrát byl Bitcoin prohlášen za mrtvý",

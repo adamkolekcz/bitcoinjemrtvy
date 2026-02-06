@@ -54,8 +54,6 @@ export default async function Image() {
             stroke="#EF4444"
             strokeWidth="3"
           />
-          {/* Current price - green dot */}
-          <circle cx="1180" cy="490" r="12" fill="#22C55E" />
         </svg>
 
         {/* Bitcoin Logo */}
@@ -94,7 +92,7 @@ export default async function Image() {
             marginBottom: "50px",
           }}
         >
-          Sledujeme každé prohlášení o\u00A0úmrtí Bitcoinu již od\u00A0roku 2010
+          Sledujeme každé prohlášení o úmrtí Bitcoinu již od roku 2010
         </div>
 
         {/* Button */}

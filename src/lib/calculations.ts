@@ -57,11 +57,10 @@ export function generateDeathSlug(death: DeathEvent): string {
 
 export function formatCurrency(value: number, currency: string = "CZK"): string {
   if (currency === "CZK") {
-    // Use non-breaking spaces for Czech typography
     const formatted = new Intl.NumberFormat("cs-CZ", {
       maximumFractionDigits: 0,
     }).format(value);
-    return `${formatted}\u00A0Kč`;
+    return `${formatted} Kč`;
   }
   return new Intl.NumberFormat("en-US", {
     style: "currency",
