@@ -15,12 +15,12 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Bitcoin je mrtvý — Kolikrát byl Bitcoin prohlášen za mrtvý",
   description:
-    "Kompletní databáze všech případů, kdy byl Bitcoin prohlášen za mrtvý od roku 2010. Interaktivní graf, statistiky a investiční kalkulačka.",
+    "Kolikrát byl Bitcoin prohlášen za mrtvý? Kompletní přehled všech nekrologů od roku 2010 s interaktivním grafem a statistikami.",
   keywords: ["bitcoin", "bitcoin je mrtvý", "bitcoin deaths", "bitcoin obituary", "kryptoměny"],
   openGraph: {
     title: "Bitcoin je mrtvý — Kolikrát byl Bitcoin prohlášen za mrtvý",
     description:
-      "Kompletní databáze všech případů, kdy byl Bitcoin prohlášen za mrtvý od roku 2010.",
+      "Kolikrát byl Bitcoin prohlášen za mrtvý? Kompletní přehled všech nekrologů od roku 2010 s interaktivním grafem a statistikami.",
     type: "website",
     locale: "cs_CZ",
   },
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Bitcoin je mrtvý",
     description:
-      "Kompletní databáze všech případů, kdy byl Bitcoin prohlášen za mrtvý od roku 2010.",
+      "Kolikrát byl Bitcoin prohlášen za mrtvý? Kompletní přehled všech nekrologů od roku 2010 s interaktivním grafem a statistikami.",
   },
 };
 
