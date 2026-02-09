@@ -332,7 +332,7 @@ export function BitcoinChart({ data, currentPriceUsd }: BitcoinChartProps) {
 
   return (
     <div className="w-full overflow-hidden">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-2 px-4 sm:px-0">
+      <div className="mb-4 hidden sm:flex flex-wrap items-center justify-between gap-2 px-4 sm:px-0">
         {/* Period selector - left side */}
         <div className="flex items-center gap-1 rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)] p-1">
           {periodOptions.map((option) => (
@@ -433,7 +433,7 @@ export function BitcoinChart({ data, currentPriceUsd }: BitcoinChartProps) {
         </ComposedChart>
       </ResponsiveContainer>
 
-      <div className="mt-4 flex flex-wrap items-center justify-center gap-6 px-4 text-xs text-neutral-400 sm:px-0">
+      <div className="mt-4 hidden sm:flex flex-wrap items-center justify-center gap-6 px-4 text-xs text-neutral-400 sm:px-0">
         <div className="flex items-center gap-2">
           <div className="h-0.5 w-6 bg-[var(--bitcoin-orange)]" />
           <span>Cena BTC (CZK)</span>
