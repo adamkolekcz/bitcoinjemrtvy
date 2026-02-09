@@ -50,11 +50,11 @@ export default async function Home() {
       <footer className="border-t border-[var(--card-border)] py-8 text-center text-sm text-neutral-500">
         <p className="flex items-center justify-center gap-1 flex-wrap">
           Původní verzi{" "}
-          <a href="https://bitcoindeaths.com" target="_blank" rel="noopener noreferrer" className="hover:text-white">
+          <a href="https://bitcoindeaths.com" target="_blank" rel="noopener noreferrer" className="">
             Bitcoinisdead
           </a>{" "}
           přeložil a upravil{" "}
-          <a href="https://x.com/adkolek" target="_blank" rel="noopener noreferrer" className="hover:text-white">
+          <a href="https://x.com/adkolek" target="_blank" rel="noopener noreferrer" className="">
             Adam Kolek
           </a>
         </p>

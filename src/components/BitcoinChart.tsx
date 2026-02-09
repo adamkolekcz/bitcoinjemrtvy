@@ -103,7 +103,7 @@ function DeathMarker(props: Record<string, unknown>) {
 
 
 export function BitcoinChart({ data }: BitcoinChartProps) {
-  const [scale, setScale] = useState<"log" | "linear">("log");
+  const [scale, setScale] = useState<"log" | "linear">("linear");
 
   const domain = useMemo(() => {
     const timestamps = data.map((d) => d.timestamp);
@@ -121,22 +121,7 @@ export function BitcoinChart({ data }: BitcoinChartProps) {
 
   return (
     <div className="w-full">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-4 px-4 text-xs text-neutral-400 sm:px-0">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2">
-            <div className="h-0.5 w-6 bg-[var(--bitcoin-orange)]" />
-            <span>Cena BTC (CZK)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-[var(--death-red)]" />
-            <span>&quot;Bitcoin je mrtvý&quot;</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-green-600" />
-            <span>Aktuální cena</span>
-          </div>
-        </div>
-
+      <div className="mb-4 flex justify-end px-4 sm:px-0">
         <div className="flex items-center gap-1 rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)] p-1">
           <button
             onClick={() => setScale("log")}
@@ -228,6 +213,21 @@ export function BitcoinChart({ data }: BitcoinChartProps) {
           )}
         </ComposedChart>
       </ResponsiveContainer>
+
+      <div className="mt-4 flex flex-wrap items-center justify-center gap-6 px-4 text-xs text-neutral-400 sm:px-0">
+        <div className="flex items-center gap-2">
+          <div className="h-0.5 w-6 bg-[var(--bitcoin-orange)]" />
+          <span>Cena BTC (CZK)</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="h-2 w-2 rounded-full bg-[var(--death-red)]" />
+          <span>Bitcoin je mrtvý</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-green-600" />
+          <span>Aktuální cena</span>
+        </div>
+      </div>
     </div>
   );
 }

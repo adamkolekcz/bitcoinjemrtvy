@@ -26,7 +26,7 @@ export function Header({ deathCount, btcPriceCzk }: HeaderProps) {
 
           <div className="flex items-center gap-3">
             {btcPriceCzk && (
-              <div className="flex items-center gap-2 rounded-lg bg-green-500/10 px-4 py-2 border border-green-500/20">
+              <div className="hidden sm:flex items-center gap-2 rounded-lg bg-green-500/10 px-4 py-2 border border-green-500/20">
                 <span className="text-2xl font-bold text-green-500 sm:text-3xl">
                   {btcPriceCzk.toLocaleString("cs-CZ", { maximumFractionDigits: 0 })}
                 </span>
