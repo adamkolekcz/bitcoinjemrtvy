@@ -37,7 +37,7 @@ export default async function Home() {
 
       <main>
         <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <BitcoinChart data={chartData} />
+          <BitcoinChart data={chartData} currentPriceUsd={currentBtcPriceUsd} />
         </section>
 
         <StatsSection
