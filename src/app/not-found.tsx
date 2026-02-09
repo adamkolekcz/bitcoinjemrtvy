@@ -1,27 +1,10 @@
 import Link from "next/link";
+import { Header } from "@/components/Header";
 
 export default function NotFound() {
   return (
     <div className="min-h-screen bg-[var(--background)]">
-      <header className="border-b border-[var(--card-border)] bg-[var(--card-bg)]">
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <Link href="/" className="group">
-                <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-                  <span className="text-[var(--bitcoin-orange)] transition-colors group-hover:text-[var(--bitcoin-orange)]/80">
-                    Bitcoin
-                  </span>{" "}
-                  je mrtvý
-                </h1>
-              </Link>
-              <p className="mt-1 text-sm text-neutral-400">
-                Sledujeme každé prohlášení o&nbsp;úmrtí Bitcoinu již od&nbsp;roku 2010
-              </p>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       <main className="mx-auto max-w-3xl px-4 py-16 sm:px-6 text-center">
         <div className="mb-8">

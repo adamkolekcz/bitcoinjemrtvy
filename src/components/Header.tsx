@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 interface HeaderProps {
-  deathCount: number;
+  deathCount?: number;
   btcPriceCzk?: number;
 }
 
@@ -20,17 +20,19 @@ export function Header({ deathCount, btcPriceCzk }: HeaderProps) {
             </h1>
           </Link>
 
-          <Link
-            href="/prohlaseni"
-            className="flex items-center gap-2 rounded-lg bg-[var(--death-red)]/10 px-3 py-1.5 border border-[var(--death-red)]/20 transition-colors hover:bg-[var(--death-red)]/20 hover:border-[var(--death-red)]/40"
-          >
-            <span className="text-xl font-bold text-[var(--death-red)]">
-              {deathCount}&times;
-            </span>
-            <span className="text-xs text-[var(--death-red)]">
-              prohlášen<br />za mrtvý
-            </span>
-          </Link>
+          {deathCount !== undefined && (
+            <Link
+              href="/prohlaseni"
+              className="flex items-center gap-2 rounded-lg bg-[var(--death-red)]/10 px-3 py-1.5 border border-[var(--death-red)]/20 transition-colors hover:bg-[var(--death-red)]/20 hover:border-[var(--death-red)]/40"
+            >
+              <span className="text-xl font-bold text-[var(--death-red)]">
+                {deathCount}&times;
+              </span>
+              <span className="text-xs text-[var(--death-red)]">
+                prohlášen<br />za mrtvý
+              </span>
+            </Link>
+          )}
         </div>
 
         {/* Desktop: full layout */}
@@ -49,30 +51,34 @@ export function Header({ deathCount, btcPriceCzk }: HeaderProps) {
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
-            {btcPriceCzk && (
-              <div className="hidden lg:flex items-center gap-2 rounded-lg bg-green-500/10 px-4 py-2 border border-green-500/20">
-                <span className="text-3xl font-bold text-green-500">
-                  {btcPriceCzk.toLocaleString("cs-CZ", { maximumFractionDigits: 0 })}
-                </span>
-                <span className="text-sm text-green-500">
-                  Kč<br />za BTC
-                </span>
-              </div>
-            )}
+          {(deathCount !== undefined || btcPriceCzk) && (
+            <div className="flex items-center gap-3">
+              {btcPriceCzk && (
+                <div className="hidden lg:flex items-center gap-2 rounded-lg bg-green-500/10 px-4 py-2 border border-green-500/20">
+                  <span className="text-3xl font-bold text-green-500">
+                    {btcPriceCzk.toLocaleString("cs-CZ", { maximumFractionDigits: 0 })}
+                  </span>
+                  <span className="text-sm text-green-500">
+                    Kč<br />za BTC
+                  </span>
+                </div>
+              )}
 
-            <Link
-              href="/prohlaseni"
-              className="flex items-center gap-2 rounded-lg bg-[var(--death-red)]/10 px-4 py-2 border border-[var(--death-red)]/20 transition-colors hover:bg-[var(--death-red)]/20 hover:border-[var(--death-red)]/40"
-            >
-              <span className="text-3xl font-bold text-[var(--death-red)]">
-                {deathCount}&times;
-              </span>
-              <span className="text-sm text-[var(--death-red)]">
-                prohlášen<br />za mrtvý
-              </span>
-            </Link>
-          </div>
+              {deathCount !== undefined && (
+                <Link
+                  href="/prohlaseni"
+                  className="flex items-center gap-2 rounded-lg bg-[var(--death-red)]/10 px-4 py-2 border border-[var(--death-red)]/20 transition-colors hover:bg-[var(--death-red)]/20 hover:border-[var(--death-red)]/40"
+                >
+                  <span className="text-3xl font-bold text-[var(--death-red)]">
+                    {deathCount}&times;
+                  </span>
+                  <span className="text-sm text-[var(--death-red)]">
+                    prohlášen<br />za mrtvý
+                  </span>
+                </Link>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </header>
