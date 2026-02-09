@@ -44,14 +44,14 @@ export function Header({ deathCount, btcPriceCzk }: HeaderProps) {
                 je mrtvý
               </h1>
             </Link>
-            <p className="mt-1 text-sm text-neutral-400">
+            <p className="mt-1 text-sm text-neutral-400 whitespace-nowrap">
               Sledujeme každé prohlášení o&nbsp;úmrtí Bitcoinu již od&nbsp;roku 2010
             </p>
           </div>
 
           <div className="flex items-center gap-3">
             {btcPriceCzk && (
-              <div className="flex items-center gap-2 rounded-lg bg-green-500/10 px-4 py-2 border border-green-500/20">
+              <div className="hidden lg:flex items-center gap-2 rounded-lg bg-green-500/10 px-4 py-2 border border-green-500/20">
                 <span className="text-3xl font-bold text-green-500">
                   {btcPriceCzk.toLocaleString("cs-CZ", { maximumFractionDigits: 0 })}
                 </span>
