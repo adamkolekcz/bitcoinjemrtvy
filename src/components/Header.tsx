@@ -23,17 +23,20 @@ export function Header({ deathCount, btcPriceCzk }: HeaderProps) {
           {deathCount !== undefined && (
             <Link
               href="/prohlaseni"
-              className="flex items-center gap-2 rounded-lg bg-[var(--death-red)]/10 px-3 py-1.5 border border-[var(--death-red)]/20 transition-colors hover:bg-[var(--death-red)]/20 hover:border-[var(--death-red)]/40"
+              className="flex items-center gap-1.5 rounded-lg bg-[var(--death-red)]/10 px-3 py-1 border border-[var(--death-red)]/20 transition-colors hover:bg-[var(--death-red)]/20 hover:border-[var(--death-red)]/40"
             >
-              <span className="text-xl font-bold text-[var(--death-red)]">
+              <span className="text-sm font-bold text-[var(--death-red)]">
                 {deathCount}&times;
               </span>
               <span className="text-xs text-[var(--death-red)]">
-                prohlášen<br />za mrtvý
+                prohlášen za&nbsp;mrtvý
               </span>
             </Link>
           )}
         </div>
+        <p className="mt-1.5 text-xs text-neutral-400 sm:hidden">
+          Sledujeme každé prohlášení o&nbsp;úmrtí Bitcoinu již od&nbsp;roku 2010
+        </p>
 
         {/* Desktop: full layout */}
         <div className="hidden sm:flex sm:items-center sm:justify-between">

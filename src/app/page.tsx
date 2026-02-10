@@ -1,8 +1,8 @@
 import { Header } from "@/components/Header";
-import { BitcoinChart } from "@/components/BitcoinChart";
+import { BitcoinChartLazy } from "@/components/BitcoinChartLazy";
 import { StatsSection } from "@/components/StatsSection";
 import { prepareChartData, calculateInvestment, parseDate } from "@/lib/calculations";
-import { getDeathsData, getBtcPriceCzk } from "@/lib/deaths-data";
+import { getDeathsData, getBtcCoinGeckoData } from "@/lib/deaths-data";
 
 export const revalidate = 3600; // ISR - revalidace každou hodinu
 
@@ -10,10 +10,12 @@ const INVESTMENT_PER_DEATH_CZK = 1000;
 const CZK_TO_USD = 0.042;
 
 export default async function Home() {
-  const [{ deaths }, btcPriceCzk] = await Promise.all([
+  const [{ deaths }, coinGeckoData] = await Promise.all([
     getDeathsData(),
-    getBtcPriceCzk(),
+    getBtcCoinGeckoData(),
   ]);
+  const btcPriceCzk = coinGeckoData.priceCzk;
+  const btcMarketCapCzk = coinGeckoData.marketCapCzk;
   const chartData = prepareChartData(deaths);
 
   // Fallback na nejnovější záznam pokud CoinGecko selže
@@ -37,13 +39,14 @@ export default async function Home() {
 
       <main>
         <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <BitcoinChart data={chartData} currentPriceUsd={currentBtcPriceUsd} />
+          <BitcoinChartLazy data={chartData} currentPriceUsd={currentBtcPriceUsd} />
         </section>
 
         <StatsSection
           investment={investment}
           currentBtcPriceCzk={currentBtcPriceCzk}
           investmentPerDeath={INVESTMENT_PER_DEATH_CZK}
+          btcMarketCapCzk={btcMarketCapCzk}
         />
       </main>
 

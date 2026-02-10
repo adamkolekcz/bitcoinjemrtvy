@@ -69,12 +69,17 @@ function validateDeathsData(data: unknown): data is DeathEvent[] {
  * Načte data o Bitcoin obituaries
  * Primárně z bitcoindeaths.com, s fallbackem na statický JSON
  */
-const COINGECKO_API = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=czk";
+const COINGECKO_API = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=czk&include_market_cap=true";
+
+interface BtcCoinGeckoData {
+  priceCzk: number | null;
+  marketCapCzk: number | null;
+}
 
 /**
- * Načte aktuální cenu BTC v CZK z CoinGecko API
+ * Načte aktuální cenu BTC v CZK a market cap z CoinGecko API
  */
-export async function getBtcPriceCzk(): Promise<number | null> {
+export async function getBtcCoinGeckoData(): Promise<BtcCoinGeckoData> {
   try {
     const response = await fetch(COINGECKO_API, {
       next: { revalidate: 300 }, // 5 minut cache
@@ -84,22 +89,32 @@ export async function getBtcPriceCzk(): Promise<number | null> {
       throw new Error(`HTTP ${response.status}`);
     }
 
-    const data = (await response.json()) as { bitcoin?: { czk?: number } };
-    const price = data?.bitcoin?.czk;
+    const data = (await response.json()) as {
+      bitcoin?: { czk?: number; czk_market_cap?: number };
+    };
+    const price = data?.bitcoin?.czk ?? null;
+    const marketCap = data?.bitcoin?.czk_market_cap ?? null;
 
-    if (typeof price !== "number") {
-      throw new Error("Invalid price data");
+    if (typeof price === "number") {
+      console.log(`[deaths-data] BTC price from CoinGecko: ${price.toLocaleString("cs-CZ")} Kč`);
     }
 
-    console.log(`[deaths-data] BTC price from CoinGecko: ${price.toLocaleString("cs-CZ")} Kč`);
-    return price;
+    return { priceCzk: price, marketCapCzk: marketCap };
   } catch (error) {
     console.warn(
-      "[deaths-data] Failed to fetch BTC price from CoinGecko:",
+      "[deaths-data] Failed to fetch BTC data from CoinGecko:",
       error instanceof Error ? error.message : "Unknown error"
     );
-    return null;
+    return { priceCzk: null, marketCapCzk: null };
   }
+}
+
+/**
+ * Convenience wrapper — vrací pouze cenu BTC v CZK
+ */
+export async function getBtcPriceCzk(): Promise<number | null> {
+  const data = await getBtcCoinGeckoData();
+  return data.priceCzk;
 }
 
 export async function getDeathsData(): Promise<DeathsDataResult> {
