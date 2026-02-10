@@ -9,6 +9,7 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.bitcoinjemrtvy.cz"),
   title: "Bitcoin je mrtvý — Kolikrát byl Bitcoin prohlášen za mrtvý",
   description:
     "Kolikrát byl Bitcoin prohlášen za mrtvý? Kompletní přehled všech nekrologů od roku 2010 s interaktivním grafem a statistikami.",
@@ -19,6 +20,7 @@ export const metadata: Metadata = {
       "Kolikrát byl Bitcoin prohlášen za mrtvý? Kompletní přehled všech nekrologů od roku 2010 s interaktivním grafem a statistikami.",
     type: "website",
     locale: "cs_CZ",
+    url: "https://www.bitcoinjemrtvy.cz",
   },
   twitter: {
     card: "summary_large_image",
