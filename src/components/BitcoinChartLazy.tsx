@@ -17,8 +17,9 @@ const BitcoinChart = dynamic(
 interface BitcoinChartLazyProps {
   data: ChartDataPoint[];
   currentPriceUsd: number;
+  currentPriceCzk: number;
 }
 
-export function BitcoinChartLazy({ data, currentPriceUsd }: BitcoinChartLazyProps) {
-  return <BitcoinChart data={data} currentPriceUsd={currentPriceUsd} />;
+export function BitcoinChartLazy({ data, currentPriceUsd, currentPriceCzk }: BitcoinChartLazyProps) {
+  return <BitcoinChart data={data} currentPriceUsd={currentPriceUsd} currentPriceCzk={currentPriceCzk} />;
 }

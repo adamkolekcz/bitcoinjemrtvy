@@ -18,6 +18,7 @@ const USD_TO_CZK = 23.81; // 1 / 0.042
 interface BitcoinChartProps {
   data: ChartDataPoint[];
   currentPriceUsd: number;
+  currentPriceCzk: number;
 }
 
 interface CustomTooltipProps {
@@ -25,9 +26,10 @@ interface CustomTooltipProps {
   payload?: Array<{
     payload: ChartDataPoint;
   }>;
+  currentPriceCzk?: number;
 }
 
-function CustomTooltip({ active, payload }: CustomTooltipProps) {
+function CustomTooltip({ active, payload, currentPriceCzk }: CustomTooltipProps) {
   if (!active || !payload?.[0]) return null;
 
   const point = payload[0].payload;
@@ -35,12 +37,13 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
 
   // Current price tooltip (no death event)
   if (!death) {
+    const displayPriceCzk = currentPriceCzk ?? point.price * USD_TO_CZK;
     return (
       <div className="rounded-lg border border-[var(--card-border)] bg-[#1a1a1a] p-3 shadow-xl">
         <div className="flex items-center justify-between gap-6">
           <span className="text-sm font-medium text-green-500">Aktuální cena</span>
           <span className="text-sm font-bold text-green-500">
-            {(point.price * USD_TO_CZK).toLocaleString("cs-CZ", { maximumFractionDigits: 0 })} Kč
+            {displayPriceCzk.toLocaleString("cs-CZ", { maximumFractionDigits: 0 })} Kč
           </span>
         </div>
         <p className="mt-1 text-xs text-neutral-300">
@@ -171,7 +174,7 @@ function ChartMarker(props: Record<string, unknown>) {
 
 type Period = "all" | "5y" | "3y" | "1y";
 
-export function BitcoinChart({ data, currentPriceUsd }: BitcoinChartProps) {
+export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk }: BitcoinChartProps) {
   const [scale, setScale] = useState<"log" | "linear">("linear");
   const [period, setPeriod] = useState<Period>("all");
 
@@ -411,7 +414,7 @@ export function BitcoinChart({ data, currentPriceUsd }: BitcoinChartProps) {
           />
 
           <Tooltip
-            content={<CustomTooltip />}
+            content={<CustomTooltip currentPriceCzk={currentPriceCzk} />}
             cursor={{ stroke: "#404040", strokeDasharray: "3 3" }}
           />
 

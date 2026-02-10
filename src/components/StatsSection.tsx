@@ -156,6 +156,7 @@ export function StatsSection({
               href="https://www.anycoin.cz/?ref=gj8cyz"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Anycoin - koupit Bitcoin"
               className="transition-opacity hover:opacity-80"
             >
               <svg width="197.6" height="52" viewBox="0 0 190 50" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -170,6 +171,7 @@ export function StatsSection({
               href="https://coinmate.io?invite=WHpsQ05pMTZXR3RPT1RsalYwa3llV3BFY1hSVFVRPT0"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Coinmate - koupit Bitcoin"
               className="transition-opacity hover:opacity-80"
             >
               <svg width="230" height="45" viewBox="0 0 183 36" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -193,6 +195,7 @@ export function StatsSection({
               href="https://affil.trezor.io/SH10i"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Trezor - hardwarová peněženka pro Bitcoin"
               className="transition-opacity hover:opacity-80"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 161.768 40.771" fill="none" width="162" height="41">

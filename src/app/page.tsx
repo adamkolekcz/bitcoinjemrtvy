@@ -39,7 +39,7 @@ export default async function Home() {
 
       <main>
         <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <BitcoinChartLazy data={chartData} currentPriceUsd={currentBtcPriceUsd} />
+          <BitcoinChartLazy data={chartData} currentPriceUsd={currentBtcPriceUsd} currentPriceCzk={currentBtcPriceCzk} />
         </section>
 
         <StatsSection
