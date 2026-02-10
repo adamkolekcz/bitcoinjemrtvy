@@ -15,7 +15,7 @@ export default function NotFound() {
           Tato stránka je mrtvá
         </h2>
 
-        <p className="mb-8 text-neutral-400">
+        <p className="mb-8 text-neutral-300">
           Na rozdíl od&nbsp;Bitcoinu, tato stránka skutečně neexistuje.
         </p>
 
@@ -30,7 +30,7 @@ export default function NotFound() {
         </Link>
       </main>
 
-      <footer className="border-t border-[var(--card-border)] py-8 text-center text-sm text-neutral-500">
+      <footer className="border-t border-[var(--card-border)] py-8 text-center text-sm text-neutral-400">
         <p className="flex items-center justify-center gap-1 flex-wrap">
           Původní verzi{" "}
           <a href="https://bitcoindeaths.com" target="_blank" rel="noopener noreferrer" className="">

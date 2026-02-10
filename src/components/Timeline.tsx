@@ -70,14 +70,14 @@ export function Timeline({ deaths }: TimelineProps) {
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6">
       <div className="mb-6 flex items-center justify-end gap-2">
-        <span className="text-sm text-neutral-400">Řazení:</span>
+        <span className="text-sm text-neutral-300">Řazení:</span>
         <div className="flex items-center gap-1 rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)] p-1">
           <button
             onClick={() => setSortOrder("newest")}
             className={`rounded px-3 py-1 text-xs font-medium transition-colors ${
               sortOrder === "newest"
                 ? "bg-[var(--bitcoin-orange)] text-black"
-                : "text-neutral-400 hover:text-white"
+                : "text-neutral-300 hover:text-white"
             }`}
           >
             Nejnovější
@@ -87,7 +87,7 @@ export function Timeline({ deaths }: TimelineProps) {
             className={`rounded px-3 py-1 text-xs font-medium transition-colors ${
               sortOrder === "oldest"
                 ? "bg-[var(--bitcoin-orange)] text-black"
-                : "text-neutral-400 hover:text-white"
+                : "text-neutral-300 hover:text-white"
             }`}
           >
             Nejstarší
@@ -126,7 +126,7 @@ function TimelineCard({ death }: TimelineCardProps) {
     <Link href={`/prohlaseni/${slug}`} className="block">
       <article className="group rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-5 transition-all hover:border-[var(--death-red)]/40 hover:shadow-lg hover:shadow-[var(--death-red)]/5 cursor-pointer">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <time className="text-sm text-neutral-400">
+          <time className="text-sm text-neutral-300">
             {formatCzechDate(death.date)}
           </time>
           <div className="flex items-center gap-2">
@@ -141,21 +141,21 @@ function TimelineCard({ death }: TimelineCardProps) {
         </h3>
 
         {death.quote && (
-          <blockquote className="mb-3 border-l-2 border-[var(--death-red)]/50 pl-3 text-sm italic text-neutral-400">
+          <blockquote className="mb-3 border-l-2 border-[var(--death-red)]/50 pl-3 text-sm italic text-neutral-300">
             &ldquo;{death.quote}&rdquo;
           </blockquote>
         )}
 
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-neutral-500">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-neutral-400">
           <span className="font-medium text-neutral-300">{death.person}</span>
           {death.jobTitle && (
             <>
-              <span className="text-neutral-600">•</span>
+              <span className="text-neutral-500">•</span>
               <span>{death.jobTitle}</span>
             </>
           )}
-          <span className="text-neutral-600">•</span>
-          <span className="text-neutral-400">{death.publicationName}</span>
+          <span className="text-neutral-500">•</span>
+          <span className="text-neutral-300">{death.publicationName}</span>
         </div>
       </article>
     </Link>

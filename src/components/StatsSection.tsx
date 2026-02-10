@@ -97,7 +97,7 @@ export function StatsSection({
           className="mt-6 inline-flex items-center gap-2 rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)] px-4 py-3 transition-all hover:border-[var(--bitcoin-orange)]/40 hover:bg-[var(--card-bg)]/80"
         >
           <span className="text-sm font-medium text-white">Seznam nekrologů</span>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-400">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300">
             <path d="M6 12L10 8L6 4" />
           </svg>
         </a>
@@ -117,17 +117,17 @@ export function StatsSection({
           <div className="text-center">
             <div className="mb-2 text-3xl">⚡</div>
             <p className="font-semibold text-white">Běží nepřetržitě</p>
-            <p className="text-sm text-neutral-400">Bitcoin funguje 24/7 a&nbsp;nové transakce se potvrzují přibližně každých 10&nbsp;minut</p>
+            <p className="text-sm text-neutral-300">Bitcoin funguje 24/7 a&nbsp;nové transakce se potvrzují přibližně každých 10&nbsp;minut</p>
           </div>
           <div className="text-center">
             <div className="mb-2 text-3xl">🌐</div>
             <p className="font-semibold text-white">Globální decentralizovaná síť</p>
-            <p className="text-sm text-neutral-400">Síť běží současně na desítkách tisíců počítačů po celém světě — neovládá ji žádná společnost ani stát</p>
+            <p className="text-sm text-neutral-300">Síť běží současně na desítkách tisíců počítačů po celém světě — neovládá ji žádná společnost ani stát</p>
           </div>
           <div className="text-center">
             <div className="mb-2 text-3xl">📈</div>
             <p className="font-semibold text-white">Aktivní vývoj</p>
-            <p className="text-sm text-neutral-400">Software Bitcoinu se průběžně vyvíjí a&nbsp;postupně se zlepšuje bezpečnost i&nbsp;možnosti sítě</p>
+            <p className="text-sm text-neutral-300">Software Bitcoinu se průběžně vyvíjí a&nbsp;postupně se zlepšuje bezpečnost i&nbsp;možnosti sítě</p>
           </div>
         </div>
 
@@ -230,13 +230,13 @@ function StatCard({ label, value, sublabel, highlight, green }: StatCardProps) {
   return (
     <div className={`rounded-xl border p-5 ${getBorderBg()}`}>
       <p
-        className="text-xs font-medium uppercase tracking-wider text-neutral-400"
+        className="text-xs font-medium uppercase tracking-wider text-neutral-300"
         dangerouslySetInnerHTML={{ __html: label }}
       />
       <p className={`mt-2 text-2xl font-bold ${getTextColor()}`}>
         {value}
       </p>
-      <p className="mt-1 text-xs text-neutral-500">{sublabel}</p>
+      <p className="mt-1 text-xs text-neutral-400">{sublabel}</p>
     </div>
   );
 }

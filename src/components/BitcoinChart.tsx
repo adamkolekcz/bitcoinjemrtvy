@@ -43,7 +43,7 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
             {(point.price * USD_TO_CZK).toLocaleString("cs-CZ", { maximumFractionDigits: 0 })} Kč
           </span>
         </div>
-        <p className="mt-1 text-xs text-neutral-400">
+        <p className="mt-1 text-xs text-neutral-300">
           {formatCzechDate(point.date)}
         </p>
       </div>
@@ -58,7 +58,7 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
   return (
     <div className="max-w-[260px] sm:max-w-xs rounded-lg border border-[var(--card-border)] bg-[#1a1a1a] p-2 sm:p-3 shadow-xl">
       <div className="mb-2 flex items-center justify-between gap-2 sm:gap-4">
-        <span className="text-xs text-neutral-400 whitespace-nowrap">
+        <span className="text-xs text-neutral-300 whitespace-nowrap">
           {formatCzechDate(death.date)}
         </span>
         <span className="text-xs sm:text-sm font-bold text-[var(--bitcoin-orange)] whitespace-nowrap">
@@ -69,15 +69,15 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
         {death.articleTitle}
       </p>
       {truncatedQuote && (
-        <p className="mb-2 border-l-2 border-[var(--death-red)] pl-2 text-xs italic text-neutral-400 line-clamp-3">
+        <p className="mb-2 border-l-2 border-[var(--death-red)] pl-2 text-xs italic text-neutral-300 line-clamp-3">
           &ldquo;{truncatedQuote}&rdquo;
         </p>
       )}
-      <p className="text-xs text-neutral-400 truncate">
+      <p className="text-xs text-neutral-300 truncate">
         {death.person}
         {death.jobTitle ? ` — ${death.jobTitle}` : ""}
       </p>
-      <p className="text-xs text-neutral-500 truncate">{death.publicationName}</p>
+      <p className="text-xs text-neutral-400 truncate">{death.publicationName}</p>
     </div>
   );
 }
@@ -342,7 +342,7 @@ export function BitcoinChart({ data, currentPriceUsd }: BitcoinChartProps) {
               className={`rounded px-3 py-1 text-xs font-medium transition-colors ${
                 period === option.value
                   ? "bg-[var(--bitcoin-orange)] text-black"
-                  : "text-neutral-400 hover:text-white"
+                  : "text-neutral-300 hover:text-white"
               }`}
             >
               {option.label}
@@ -357,7 +357,7 @@ export function BitcoinChart({ data, currentPriceUsd }: BitcoinChartProps) {
             className={`rounded px-3 py-1 text-xs font-medium transition-colors ${
               scale === "log"
                 ? "bg-[var(--bitcoin-orange)] text-black"
-                : "text-neutral-400 hover:text-white"
+                : "text-neutral-300 hover:text-white"
             }`}
           >
             Log
@@ -367,7 +367,7 @@ export function BitcoinChart({ data, currentPriceUsd }: BitcoinChartProps) {
             className={`rounded px-3 py-1 text-xs font-medium transition-colors ${
               scale === "linear"
                 ? "bg-[var(--bitcoin-orange)] text-black"
-                : "text-neutral-400 hover:text-white"
+                : "text-neutral-300 hover:text-white"
             }`}
           >
             Lineární
@@ -394,7 +394,7 @@ export function BitcoinChart({ data, currentPriceUsd }: BitcoinChartProps) {
             ticks={xTicks}
             tickFormatter={formatXTick}
             stroke="#404040"
-            tick={{ fill: "#737373", fontSize: 12 }}
+            tick={{ fill: "#a3a3a3", fontSize: 12 }}
             axisLine={{ stroke: "#262626" }}
           />
 
@@ -405,7 +405,7 @@ export function BitcoinChart({ data, currentPriceUsd }: BitcoinChartProps) {
             ticks={scale === "linear" ? yTicksLinear : yTicksLog}
             tickFormatter={formatYTick}
             stroke="#404040"
-            tick={{ fill: "#737373", fontSize: 12 }}
+            tick={{ fill: "#a3a3a3", fontSize: 12 }}
             axisLine={{ stroke: "#262626" }}
             width={80}
           />
@@ -433,7 +433,7 @@ export function BitcoinChart({ data, currentPriceUsd }: BitcoinChartProps) {
         </ComposedChart>
       </ResponsiveContainer>
 
-      <div className="mt-4 hidden sm:flex flex-wrap items-center justify-center gap-6 px-4 text-xs text-neutral-400 sm:px-0">
+      <div className="mt-4 hidden sm:flex flex-wrap items-center justify-center gap-6 px-4 text-xs text-neutral-300 sm:px-0">
         <div className="flex items-center gap-2">
           <div className="h-0.5 w-6 bg-[var(--bitcoin-orange)]" />
           <span>Cena BTC (CZK)</span>

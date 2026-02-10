@@ -77,7 +77,7 @@ export default async function DeathDetailPage({ params }: PageProps) {
       <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
         <article>
           <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-            <time className="text-sm text-neutral-400">
+            <time className="text-sm text-neutral-300">
               {formatCzechDate(death.date)}
             </time>
             <div className="flex items-center gap-3">
@@ -102,14 +102,14 @@ export default async function DeathDetailPage({ params }: PageProps) {
           <div className="mb-8 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-6">
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <p className="text-xs font-medium uppercase tracking-wider text-neutral-500">Autor</p>
+                <p className="text-xs font-medium uppercase tracking-wider text-neutral-400">Autor</p>
                 <p className="mt-1 text-white font-medium">{death.person}</p>
                 {death.jobTitle && (
-                  <p className="text-sm text-neutral-400">{death.jobTitle}</p>
+                  <p className="text-sm text-neutral-300">{death.jobTitle}</p>
                 )}
               </div>
               <div>
-                <p className="text-xs font-medium uppercase tracking-wider text-neutral-500">Zdroj</p>
+                <p className="text-xs font-medium uppercase tracking-wider text-neutral-400">Zdroj</p>
                 <p className="mt-1 text-white">{death.publicationName}</p>
               </div>
             </div>
@@ -117,24 +117,24 @@ export default async function DeathDetailPage({ params }: PageProps) {
           </div>
 
           <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-6">
-            <h2 className="mb-4 text-sm font-medium uppercase tracking-wider text-neutral-500">
+            <h2 className="mb-4 text-sm font-medium uppercase tracking-wider text-neutral-400">
               Vývoj ceny od&nbsp;prohlášení
             </h2>
             <div className="grid gap-4 sm:grid-cols-3">
               <div>
-                <p className="text-xs text-neutral-500">Cena v&nbsp;den prohlášení</p>
+                <p className="text-xs text-neutral-400">Cena v&nbsp;den prohlášení</p>
                 <p className="mt-1 text-lg font-bold text-white">
                   {priceCzk.toLocaleString("cs-CZ", { maximumFractionDigits: 0 })} Kč
                 </p>
               </div>
               <div>
-                <p className="text-xs text-neutral-500">Aktuální cena</p>
+                <p className="text-xs text-neutral-400">Aktuální cena</p>
                 <p className="mt-1 text-lg font-bold text-[var(--bitcoin-orange)]">
                   {currentPriceCzk.toLocaleString("cs-CZ", { maximumFractionDigits: 0 })} Kč
                 </p>
               </div>
               <div>
-                <p className="text-xs text-neutral-500">Změna</p>
+                <p className="text-xs text-neutral-400">Změna</p>
                 <p className={`mt-1 text-lg font-bold ${priceChange >= 0 ? "text-green-500" : "text-red-500"}`}>
                   {priceChange >= 0 ? "+" : ""}{priceChange.toLocaleString("cs-CZ", { maximumFractionDigits: 0 })} %
                 </p>
@@ -149,7 +149,7 @@ export default async function DeathDetailPage({ params }: PageProps) {
               href={`/prohlaseni/${generateDeathSlug(prev)}`}
               className="flex items-center gap-2 rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)] px-4 py-3 transition-all hover:border-[var(--bitcoin-orange)]/40 hover:bg-[var(--card-bg)]/80"
             >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-400">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300">
                 <path d="M10 12L6 8L10 4" />
               </svg>
               <span className="text-sm font-medium text-white">Novější</span>
@@ -164,7 +164,7 @@ export default async function DeathDetailPage({ params }: PageProps) {
               className="flex items-center gap-2 rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)] px-4 py-3 transition-all hover:border-[var(--bitcoin-orange)]/40 hover:bg-[var(--card-bg)]/80"
             >
               <span className="text-sm font-medium text-white">Starší</span>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-400">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300">
                 <path d="M6 12L10 8L6 4" />
               </svg>
             </Link>
@@ -174,7 +174,7 @@ export default async function DeathDetailPage({ params }: PageProps) {
         </nav>
       </main>
 
-      <footer className="border-t border-[var(--card-border)] py-8 text-center text-sm text-neutral-500">
+      <footer className="border-t border-[var(--card-border)] py-8 text-center text-sm text-neutral-400">
         <p className="flex items-center justify-center gap-1 flex-wrap">
           Původní verzi{" "}
           <a href="https://bitcoindeaths.com" target="_blank" rel="noopener noreferrer" className="">

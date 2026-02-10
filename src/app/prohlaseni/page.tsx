@@ -23,7 +23,7 @@ export default async function PostsPage() {
         <Timeline deaths={deaths} />
       </main>
 
-      <footer className="border-t border-[var(--card-border)] py-8 text-center text-sm text-neutral-500">
+      <footer className="border-t border-[var(--card-border)] py-8 text-center text-sm text-neutral-400">
         <p className="flex items-center justify-center gap-1 flex-wrap">
           Původní verzi{" "}
           <a href="https://bitcoindeaths.com" target="_blank" rel="noopener noreferrer" className="">
