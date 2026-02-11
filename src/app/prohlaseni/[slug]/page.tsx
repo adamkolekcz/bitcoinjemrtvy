@@ -5,9 +5,16 @@ import { getDeathsData, getBtcPriceCzk } from "@/lib/deaths-data";
 import { formatCzechDate, generateDeathSlug, parseDate } from "@/lib/calculations";
 import type { DeathEvent } from "@/lib/calculations";
 
-export const revalidate = 3600;
+export const revalidate = 86400; // ISR - revalidace jednou za 24 hodin (historická data se mění zřídka)
 
 const USD_TO_CZK = 23.81;
+
+export async function generateStaticParams() {
+  const { deaths } = await getDeathsData();
+  return deaths.map((death) => ({
+    slug: generateDeathSlug(death),
+  }));
+}
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -39,7 +46,7 @@ function getAdjacentDeaths(
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
-  const { deaths } = await getDeathsData();
+  const { deaths } = await getDeathsData(86400);
   const death = findDeathBySlug(deaths, slug);
 
   if (!death) {
@@ -55,8 +62,8 @@ export async function generateMetadata({ params }: PageProps) {
 export default async function DeathDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const [{ deaths }, btcPriceCzk] = await Promise.all([
-    getDeathsData(),
-    getBtcPriceCzk(),
+    getDeathsData(86400),
+    getBtcPriceCzk(86400),
   ]);
 
   const death = findDeathBySlug(deaths, slug);

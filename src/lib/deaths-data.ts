@@ -79,10 +79,10 @@ interface BtcCoinGeckoData {
 /**
  * Načte aktuální cenu BTC v CZK a market cap z CoinGecko API
  */
-export async function getBtcCoinGeckoData(): Promise<BtcCoinGeckoData> {
+export async function getBtcCoinGeckoData(revalidateSeconds = REVALIDATE_SECONDS): Promise<BtcCoinGeckoData> {
   try {
     const response = await fetch(COINGECKO_API, {
-      next: { revalidate: 300 }, // 5 minut cache
+      next: { revalidate: revalidateSeconds },
     });
 
     if (!response.ok) {
@@ -112,15 +112,15 @@ export async function getBtcCoinGeckoData(): Promise<BtcCoinGeckoData> {
 /**
  * Convenience wrapper — vrací pouze cenu BTC v CZK
  */
-export async function getBtcPriceCzk(): Promise<number | null> {
-  const data = await getBtcCoinGeckoData();
+export async function getBtcPriceCzk(revalidateSeconds?: number): Promise<number | null> {
+  const data = await getBtcCoinGeckoData(revalidateSeconds);
   return data.priceCzk;
 }
 
-export async function getDeathsData(): Promise<DeathsDataResult> {
+export async function getDeathsData(revalidateSeconds = REVALIDATE_SECONDS): Promise<DeathsDataResult> {
   try {
     const response = await fetch(BITCOINDEATHS_URL, {
-      next: { revalidate: REVALIDATE_SECONDS },
+      next: { revalidate: revalidateSeconds },
     });
 
     if (!response.ok) {
