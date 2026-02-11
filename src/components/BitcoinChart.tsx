@@ -114,12 +114,11 @@ function makeFormatYTick(usdToCzk: number) {
   return function formatYTick(value: number): string {
     const czk = Math.round(value * usdToCzk);
     if (czk === 0) return "0 Kč";
-    if (czk >= 1_000_000) {
+    if (czk >= 500_000) {
       const millions = czk / 1_000_000;
-      // Show .5 only if it's exactly half million
-      return millions % 0.5 === 0 && millions % 1 !== 0
-        ? `${millions.toFixed(1)}M Kč`
-        : `${Math.round(millions)}M Kč`;
+      return millions % 1 === 0
+        ? `${millions.toFixed(0)}M Kč`
+        : `${millions.toFixed(1).replace(".", ",")}M Kč`;
     }
     if (czk >= 1_000) return `${(czk / 1_000).toFixed(0)}k Kč`;
     if (czk >= 1) return `${czk.toFixed(0)} Kč`;

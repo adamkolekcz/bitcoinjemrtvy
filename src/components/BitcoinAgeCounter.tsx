@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 
-const GENESIS_TIME = new Date("2009-01-03T18:15:05Z").getTime();
+// Genesis block (block 0) timestamp: 2009-01-03 18:15:05 UTC
+// Prague (CET, UTC+1): 2009-01-03 19:15:05
+const GENESIS = new Date("2009-01-03T18:15:05Z");
 
 interface TimeDiff {
   years: number;
@@ -13,11 +15,19 @@ interface TimeDiff {
 }
 
 function calculateDiff(): TimeDiff {
-  const now = Date.now();
-  let remaining = Math.floor((now - GENESIS_TIME) / 1000);
+  const now = new Date();
 
-  const years = Math.floor(remaining / (365.25 * 24 * 3600));
-  remaining -= Math.floor(years * 365.25 * 24 * 3600);
+  // Calculate full years using actual calendar dates (handles leap years)
+  let years = now.getUTCFullYear() - GENESIS.getUTCFullYear();
+  const anniversary = new Date(GENESIS);
+  anniversary.setUTCFullYear(GENESIS.getUTCFullYear() + years);
+  if (now.getTime() < anniversary.getTime()) {
+    years--;
+    anniversary.setUTCFullYear(GENESIS.getUTCFullYear() + years);
+  }
+
+  // Remaining seconds after full years
+  let remaining = Math.floor((now.getTime() - anniversary.getTime()) / 1000);
 
   const days = Math.floor(remaining / (24 * 3600));
   remaining -= days * 24 * 3600;
