@@ -112,7 +112,7 @@ function formatXTick(timestamp: number): string {
 
 function makeFormatYTick(usdToCzk: number) {
   return function formatYTick(value: number): string {
-    const czk = value * usdToCzk;
+    const czk = Math.round(value * usdToCzk);
     if (czk === 0) return "0 Kč";
     if (czk >= 1_000_000) {
       const millions = czk / 1_000_000;
