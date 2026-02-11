@@ -69,11 +69,13 @@ function validateDeathsData(data: unknown): data is DeathEvent[] {
  * Načte data o Bitcoin obituaries
  * Primárně z bitcoindeaths.com, s fallbackem na statický JSON
  */
-const COINGECKO_API = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=czk&include_market_cap=true";
+const COINGECKO_API = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=czk,usd&include_market_cap=true";
+const FALLBACK_USD_TO_CZK = 23.81;
 
 interface BtcCoinGeckoData {
   priceCzk: number | null;
   marketCapCzk: number | null;
+  usdToCzk: number;
 }
 
 /**
@@ -83,6 +85,7 @@ export async function getBtcCoinGeckoData(revalidateSeconds = REVALIDATE_SECONDS
   try {
     const response = await fetch(COINGECKO_API, {
       next: { revalidate: revalidateSeconds },
+      signal: AbortSignal.timeout(10_000),
     });
 
     if (!response.ok) {
@@ -90,37 +93,36 @@ export async function getBtcCoinGeckoData(revalidateSeconds = REVALIDATE_SECONDS
     }
 
     const data = (await response.json()) as {
-      bitcoin?: { czk?: number; czk_market_cap?: number };
+      bitcoin?: { czk?: number; usd?: number; czk_market_cap?: number };
     };
-    const price = data?.bitcoin?.czk ?? null;
+    const priceCzk = data?.bitcoin?.czk ?? null;
+    const priceUsd = data?.bitcoin?.usd ?? null;
     const marketCap = data?.bitcoin?.czk_market_cap ?? null;
 
-    if (typeof price === "number") {
-      console.log(`[deaths-data] BTC price from CoinGecko: ${price.toLocaleString("cs-CZ")} Kč`);
+    const usdToCzk =
+      typeof priceCzk === "number" && typeof priceUsd === "number" && priceUsd > 0
+        ? priceCzk / priceUsd
+        : FALLBACK_USD_TO_CZK;
+
+    if (typeof priceCzk === "number") {
+      console.log(`[deaths-data] BTC price from CoinGecko: ${priceCzk.toLocaleString("cs-CZ")} Kč (USD/CZK: ${usdToCzk.toFixed(2)})`);
     }
 
-    return { priceCzk: price, marketCapCzk: marketCap };
+    return { priceCzk, marketCapCzk: marketCap, usdToCzk };
   } catch (error) {
     console.warn(
       "[deaths-data] Failed to fetch BTC data from CoinGecko:",
       error instanceof Error ? error.message : "Unknown error"
     );
-    return { priceCzk: null, marketCapCzk: null };
+    return { priceCzk: null, marketCapCzk: null, usdToCzk: FALLBACK_USD_TO_CZK };
   }
-}
-
-/**
- * Convenience wrapper — vrací pouze cenu BTC v CZK
- */
-export async function getBtcPriceCzk(revalidateSeconds?: number): Promise<number | null> {
-  const data = await getBtcCoinGeckoData(revalidateSeconds);
-  return data.priceCzk;
 }
 
 export async function getDeathsData(revalidateSeconds = REVALIDATE_SECONDS): Promise<DeathsDataResult> {
   try {
     const response = await fetch(BITCOINDEATHS_URL, {
       next: { revalidate: revalidateSeconds },
+      signal: AbortSignal.timeout(10_000),
     });
 
     if (!response.ok) {

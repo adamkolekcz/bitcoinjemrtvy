@@ -7,7 +7,6 @@ import { getDeathsData, getBtcCoinGeckoData } from "@/lib/deaths-data";
 export const revalidate = 3600; // ISR - revalidace každou hodinu
 
 const INVESTMENT_PER_DEATH_CZK = 1000;
-const CZK_TO_USD = 0.042;
 
 export default async function Home() {
   const [{ deaths }, coinGeckoData] = await Promise.all([
@@ -16,6 +15,8 @@ export default async function Home() {
   ]);
   const btcPriceCzk = coinGeckoData.priceCzk;
   const btcMarketCapCzk = coinGeckoData.marketCapCzk;
+  const usdToCzk = coinGeckoData.usdToCzk;
+  const czkToUsd = 1 / usdToCzk;
   const chartData = prepareChartData(deaths);
 
   // Fallback na nejnovější záznam pokud CoinGecko selže
@@ -23,14 +24,14 @@ export default async function Home() {
     (a, b) => parseDate(b.date).getTime() - parseDate(a.date).getTime()
   );
   const fallbackPriceUsd = sortedByDate[0]?.bitcoinPrice ?? 0;
-  const currentBtcPriceCzk = btcPriceCzk ?? fallbackPriceUsd * (1 / CZK_TO_USD);
-  const currentBtcPriceUsd = btcPriceCzk ? btcPriceCzk * CZK_TO_USD : fallbackPriceUsd;
+  const currentBtcPriceCzk = btcPriceCzk ?? fallbackPriceUsd * usdToCzk;
+  const currentBtcPriceUsd = btcPriceCzk ? btcPriceCzk * czkToUsd : fallbackPriceUsd;
 
   const investment = calculateInvestment(
     deaths,
     INVESTMENT_PER_DEATH_CZK,
     currentBtcPriceUsd,
-    CZK_TO_USD
+    czkToUsd
   );
 
   return (
@@ -39,7 +40,7 @@ export default async function Home() {
 
       <main>
         <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <BitcoinChartLazy data={chartData} currentPriceUsd={currentBtcPriceUsd} currentPriceCzk={currentBtcPriceCzk} />
+          <BitcoinChartLazy data={chartData} currentPriceUsd={currentBtcPriceUsd} currentPriceCzk={currentBtcPriceCzk} usdToCzk={usdToCzk} />
         </section>
 
         <StatsSection

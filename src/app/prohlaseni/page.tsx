@@ -1,6 +1,6 @@
 import { Header } from "@/components/Header";
 import { Timeline } from "@/components/Timeline";
-import { getDeathsData, getBtcPriceCzk } from "@/lib/deaths-data";
+import { getDeathsData, getBtcCoinGeckoData } from "@/lib/deaths-data";
 
 export const revalidate = 3600; // ISR - revalidace každou hodinu
 
@@ -10,17 +10,18 @@ export const metadata = {
 };
 
 export default async function PostsPage() {
-  const [{ deaths }, btcPriceCzk] = await Promise.all([
+  const [{ deaths }, coinGeckoData] = await Promise.all([
     getDeathsData(),
-    getBtcPriceCzk(),
+    getBtcCoinGeckoData(),
   ]);
+  const btcPriceCzk = coinGeckoData.priceCzk;
 
   return (
     <div className="min-h-screen bg-[var(--background)]">
       <Header deathCount={deaths.length} btcPriceCzk={btcPriceCzk ?? undefined} />
 
       <main>
-        <Timeline deaths={deaths} />
+        <Timeline deaths={deaths} usdToCzk={coinGeckoData.usdToCzk} />
       </main>
 
       <footer className="border-t border-[var(--card-border)] py-8 text-center text-sm text-neutral-400">

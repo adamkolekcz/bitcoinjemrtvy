@@ -13,12 +13,11 @@ import {
 import type { ChartDataPoint } from "@/lib/calculations";
 import { formatCzechDate } from "@/lib/calculations";
 
-const USD_TO_CZK = 23.81; // 1 / 0.042
-
 interface BitcoinChartProps {
   data: ChartDataPoint[];
   currentPriceUsd: number;
   currentPriceCzk: number;
+  usdToCzk: number;
 }
 
 interface CustomTooltipProps {
@@ -27,9 +26,10 @@ interface CustomTooltipProps {
     payload: ChartDataPoint;
   }>;
   currentPriceCzk?: number;
+  usdToCzk: number;
 }
 
-function CustomTooltip({ active, payload, currentPriceCzk }: CustomTooltipProps) {
+function CustomTooltip({ active, payload, currentPriceCzk, usdToCzk }: CustomTooltipProps) {
   if (!active || !payload?.[0]) return null;
 
   const point = payload[0].payload;
@@ -37,7 +37,7 @@ function CustomTooltip({ active, payload, currentPriceCzk }: CustomTooltipProps)
 
   // Current price tooltip (no death event)
   if (!death) {
-    const displayPriceCzk = currentPriceCzk ?? point.price * USD_TO_CZK;
+    const displayPriceCzk = currentPriceCzk ?? point.price * usdToCzk;
     return (
       <div className="rounded-lg border border-[var(--card-border)] bg-[#1a1a1a] p-3 shadow-xl">
         <div className="flex items-center justify-between gap-6">
@@ -65,7 +65,7 @@ function CustomTooltip({ active, payload, currentPriceCzk }: CustomTooltipProps)
           {formatCzechDate(death.date)}
         </span>
         <span className="text-xs sm:text-sm font-bold text-[var(--bitcoin-orange)] whitespace-nowrap">
-          {(death.bitcoinPrice * USD_TO_CZK).toLocaleString("cs-CZ", { maximumFractionDigits: 0 })} Kč
+          {(death.bitcoinPrice * usdToCzk).toLocaleString("cs-CZ", { maximumFractionDigits: 0 })} Kč
         </span>
       </div>
       <p className="mb-2 text-xs sm:text-sm font-semibold text-white leading-snug line-clamp-2">
@@ -110,19 +110,21 @@ function formatXTick(timestamp: number): string {
   return `${MONTH_NAMES[month]} ${year.toString().slice(-2)}`;
 }
 
-function formatYTick(value: number): string {
-  const czk = value * USD_TO_CZK;
-  if (czk === 0) return "0 Kč";
-  if (czk >= 1_000_000) {
-    const millions = czk / 1_000_000;
-    // Show .5 only if it's exactly half million
-    return millions % 0.5 === 0 && millions % 1 !== 0
-      ? `${millions.toFixed(1)}M Kč`
-      : `${Math.round(millions)}M Kč`;
-  }
-  if (czk >= 1_000) return `${(czk / 1_000).toFixed(0)}k Kč`;
-  if (czk >= 1) return `${czk.toFixed(0)} Kč`;
-  return `${czk.toFixed(2)} Kč`;
+function makeFormatYTick(usdToCzk: number) {
+  return function formatYTick(value: number): string {
+    const czk = value * usdToCzk;
+    if (czk === 0) return "0 Kč";
+    if (czk >= 1_000_000) {
+      const millions = czk / 1_000_000;
+      // Show .5 only if it's exactly half million
+      return millions % 0.5 === 0 && millions % 1 !== 0
+        ? `${millions.toFixed(1)}M Kč`
+        : `${Math.round(millions)}M Kč`;
+    }
+    if (czk >= 1_000) return `${(czk / 1_000).toFixed(0)}k Kč`;
+    if (czk >= 1) return `${czk.toFixed(0)} Kč`;
+    return `${czk.toFixed(2)} Kč`;
+  };
 }
 
 // Combined scatter shape - red for death events, green pulsing for current price
@@ -174,9 +176,10 @@ function ChartMarker(props: Record<string, unknown>) {
 
 type Period = "all" | "5y" | "3y" | "1y";
 
-export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk }: BitcoinChartProps) {
+export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk }: BitcoinChartProps) {
   const [scale, setScale] = useState<"log" | "linear">("linear");
   const [period, setPeriod] = useState<Period>("all");
+  const formatYTick = useMemo(() => makeFormatYTick(usdToCzk), [usdToCzk]);
 
   // Merge data with current price point
   const chartData = useMemo(() => {
@@ -220,7 +223,7 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk }: Bitcoin
     if (filteredChartData.length === 0) return [];
 
     const maxPrice = Math.max(...filteredChartData.map(d => d.price));
-    const maxCzk = maxPrice * USD_TO_CZK;
+    const maxCzk = maxPrice * usdToCzk;
 
     // Nice intervals in CZK - aim for 5-6 ticks on the Y axis
     const niceIntervals = [100_000, 250_000, 500_000, 1_000_000, 2_500_000, 5_000_000, 10_000_000];
@@ -234,11 +237,11 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk }: Bitcoin
     // Generate ticks from 0 up to max value
     const ticks: number[] = [];
     for (let czk = 0; czk <= maxCzk * 1.05; czk += interval) {
-      ticks.push(czk / USD_TO_CZK); // Convert back to USD for YAxis
+      ticks.push(czk / usdToCzk); // Convert back to USD for YAxis
     }
 
     return ticks;
-  }, [filteredChartData]);
+  }, [filteredChartData, usdToCzk]);
 
   // Calculate nice Y-axis ticks for logarithmic scale
   const yTicksLog = useMemo(() => {
@@ -257,13 +260,13 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk }: Bitcoin
       10_000_000,
     ];
 
-    const minCzk = minPrice * USD_TO_CZK;
-    const maxCzk = maxPrice * USD_TO_CZK;
+    const minCzk = minPrice * usdToCzk;
+    const maxCzk = maxPrice * usdToCzk;
 
     // Filter values within data range (tight upper bound to avoid irrelevant values)
     let ticks = niceLogValues
       .filter(czk => czk >= minCzk * 0.5 && czk <= maxCzk * 1.15)
-      .map(czk => czk / USD_TO_CZK); // Convert back to USD
+      .map(czk => czk / usdToCzk); // Convert back to USD
 
     // If we have too many ticks, keep only every other one
     if (ticks.length > 6) {
@@ -271,7 +274,7 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk }: Bitcoin
     }
 
     return ticks;
-  }, [filteredChartData]);
+  }, [filteredChartData, usdToCzk]);
 
   // Calculate X-axis ticks based on selected period
   const xTicks = useMemo(() => {
@@ -414,7 +417,7 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk }: Bitcoin
           />
 
           <Tooltip
-            content={<CustomTooltip currentPriceCzk={currentPriceCzk} />}
+            content={<CustomTooltip currentPriceCzk={currentPriceCzk} usdToCzk={usdToCzk} />}
             cursor={{ stroke: "#404040", strokeDasharray: "3 3" }}
           />
 

@@ -18,8 +18,9 @@ interface BitcoinChartLazyProps {
   data: ChartDataPoint[];
   currentPriceUsd: number;
   currentPriceCzk: number;
+  usdToCzk: number;
 }
 
-export function BitcoinChartLazy({ data, currentPriceUsd, currentPriceCzk }: BitcoinChartLazyProps) {
-  return <BitcoinChart data={data} currentPriceUsd={currentPriceUsd} currentPriceCzk={currentPriceCzk} />;
+export function BitcoinChartLazy({ data, currentPriceUsd, currentPriceCzk, usdToCzk }: BitcoinChartLazyProps) {
+  return <BitcoinChart data={data} currentPriceUsd={currentPriceUsd} currentPriceCzk={currentPriceCzk} usdToCzk={usdToCzk} />;
 }

@@ -1,13 +1,11 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Header } from "@/components/Header";
-import { getDeathsData, getBtcPriceCzk } from "@/lib/deaths-data";
+import { getDeathsData, getBtcCoinGeckoData } from "@/lib/deaths-data";
 import { formatCzechDate, generateDeathSlug, parseDate } from "@/lib/calculations";
 import type { DeathEvent } from "@/lib/calculations";
 
 export const revalidate = 86400; // ISR - revalidace jednou za 24 hodin (historická data se mění zřídka)
-
-const USD_TO_CZK = 23.81;
 
 export async function generateStaticParams() {
   const { deaths } = await getDeathsData();
@@ -61,10 +59,12 @@ export async function generateMetadata({ params }: PageProps) {
 
 export default async function DeathDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const [{ deaths }, btcPriceCzk] = await Promise.all([
+  const [{ deaths }, coinGeckoData] = await Promise.all([
     getDeathsData(86400),
-    getBtcPriceCzk(86400),
+    getBtcCoinGeckoData(86400),
   ]);
+  const btcPriceCzk = coinGeckoData.priceCzk;
+  const usdToCzk = coinGeckoData.usdToCzk;
 
   const death = findDeathBySlug(deaths, slug);
 
@@ -73,8 +73,8 @@ export default async function DeathDetailPage({ params }: PageProps) {
   }
 
   const { prev, next } = getAdjacentDeaths(deaths, death);
-  const priceCzk = death.bitcoinPrice * USD_TO_CZK;
-  const currentPriceCzk = btcPriceCzk ?? death.bitcoinPrice * USD_TO_CZK;
+  const priceCzk = death.bitcoinPrice * usdToCzk;
+  const currentPriceCzk = btcPriceCzk ?? death.bitcoinPrice * usdToCzk;
   const priceChange = ((currentPriceCzk - priceCzk) / priceCzk) * 100;
 
   return (

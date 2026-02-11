@@ -5,10 +5,9 @@ import Link from "next/link";
 import type { DeathEvent } from "@/lib/calculations";
 import { parseDate, formatCzechDate, generateDeathSlug } from "@/lib/calculations";
 
-const USD_TO_CZK = 23.81; // 1 / 0.042
-
 interface TimelineProps {
   deaths: DeathEvent[];
+  usdToCzk: number;
 }
 
 interface GroupedDeaths {
@@ -33,7 +32,7 @@ const CZECH_MONTHS = [
   "Prosinec",
 ];
 
-export function Timeline({ deaths }: TimelineProps) {
+export function Timeline({ deaths, usdToCzk }: TimelineProps) {
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
 
   const groupedDeaths = useMemo(() => {
@@ -106,7 +105,7 @@ export function Timeline({ deaths }: TimelineProps) {
 
           <div className="space-y-6">
             {group.deaths.map((death, i) => (
-              <TimelineCard key={`${death.slug}-${i}`} death={death} />
+              <TimelineCard key={`${death.slug}-${i}`} death={death} usdToCzk={usdToCzk} />
             ))}
           </div>
         </div>
@@ -117,9 +116,10 @@ export function Timeline({ deaths }: TimelineProps) {
 
 interface TimelineCardProps {
   death: DeathEvent;
+  usdToCzk: number;
 }
 
-function TimelineCard({ death }: TimelineCardProps) {
+function TimelineCard({ death, usdToCzk }: TimelineCardProps) {
   const slug = generateDeathSlug(death);
 
   return (
@@ -131,7 +131,7 @@ function TimelineCard({ death }: TimelineCardProps) {
           </time>
           <div className="flex items-center gap-2">
             <span className="rounded bg-[var(--bitcoin-orange)]/10 px-2 py-0.5 text-sm font-semibold text-[var(--bitcoin-orange)]">
-              {(death.bitcoinPrice * USD_TO_CZK).toLocaleString("cs-CZ", { maximumFractionDigits: 0 })} Kč
+              {(death.bitcoinPrice * usdToCzk).toLocaleString("cs-CZ", { maximumFractionDigits: 0 })} Kč
             </span>
           </div>
         </div>
