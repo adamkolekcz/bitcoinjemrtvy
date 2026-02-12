@@ -10,17 +10,17 @@ const geistSans = Geist({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.bitcoinjemrtvy.cz"),
-  title: "Bitcoin je mrtvý — Kolikrát byl Bitcoin prohlášen za mrtvý",
+  title: "Bitcoin je mrtvý — Kolikrát byl Bitcoin prohlášen za mrtvý?",
   description:
-    "Kolikrát byl Bitcoin prohlášen za mrtvý? Kompletní přehled všech nekrologů od roku 2010 s interaktivním grafem a statistikami.",
+    'Bitcoin byl více než 470× prohlášen za mrtvý, a přesto žije. Kolik byste vydělali, kdybyste při každém "úmrtí" Bitcoin nakoupili?',
   keywords: ["bitcoin", "bitcoin je mrtvý", "bitcoin deaths", "bitcoin obituary", "kryptoměny"],
   alternates: {
     canonical: "https://www.bitcoinjemrtvy.cz",
   },
   openGraph: {
-    title: "Bitcoin je mrtvý — Kolikrát byl Bitcoin prohlášen za mrtvý",
+    title: "Bitcoin je mrtvý — Kolikrát byl Bitcoin prohlášen za mrtvý?",
     description:
-      "Kolikrát byl Bitcoin prohlášen za mrtvý? Kompletní přehled všech nekrologů od roku 2010 s interaktivním grafem a statistikami.",
+      'Bitcoin byl více než 470× prohlášen za mrtvý, a přesto žije. Kolik byste vydělali, kdybyste při každém "úmrtí" Bitcoin nakoupili?',
     type: "website",
     locale: "cs_CZ",
     url: "https://www.bitcoinjemrtvy.cz",
@@ -28,9 +28,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Bitcoin je mrtvý",
+    title: "Bitcoin je mrtvý — Kolikrát byl Bitcoin prohlášen za mrtvý?",
     description:
-      "Kolikrát byl Bitcoin prohlášen za mrtvý? Kompletní přehled všech nekrologů od roku 2010 s interaktivním grafem a statistikami.",
+      'Bitcoin byl více než 470× prohlášen za mrtvý, a přesto žije. Kolik byste vydělali, kdybyste při každém "úmrtí" Bitcoin nakoupili?',
   },
 };
 
