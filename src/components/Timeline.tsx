@@ -72,6 +72,7 @@ export function Timeline({ deaths, usdToCzk }: TimelineProps) {
         <span className="text-sm text-neutral-300">Řazení:</span>
         <div className="flex items-center gap-1 rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)] p-1">
           <button
+            type="button"
             onClick={() => setSortOrder("newest")}
             className={`rounded px-3 py-1 text-xs font-medium transition-colors ${
               sortOrder === "newest"
@@ -82,6 +83,7 @@ export function Timeline({ deaths, usdToCzk }: TimelineProps) {
             Nejnovější
           </button>
           <button
+            type="button"
             onClick={() => setSortOrder("oldest")}
             className={`rounded px-3 py-1 text-xs font-medium transition-colors ${
               sortOrder === "oldest"

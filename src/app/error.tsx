@@ -23,6 +23,7 @@ export default function Error({ reset }: { error: Error; reset: () => void }) {
 
         <div className="flex flex-wrap items-center justify-center gap-4">
           <button
+            type="button"
             onClick={reset}
             className="inline-flex items-center gap-2 rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)] px-6 py-3 font-semibold text-white transition-colors hover:border-[var(--bitcoin-orange)]/40"
           >
@@ -32,7 +33,7 @@ export default function Error({ reset }: { error: Error; reset: () => void }) {
             href="/"
             className="inline-flex items-center gap-2 rounded-lg bg-[var(--bitcoin-orange)] px-6 py-3 font-semibold text-black transition-colors hover:bg-[var(--bitcoin-orange)]/80"
           >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M10 12L6 8L10 4" />
             </svg>
             Zpět na hlavní stránku

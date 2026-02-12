@@ -14,6 +14,9 @@ export const metadata: Metadata = {
   description:
     "Kolikrát byl Bitcoin prohlášen za mrtvý? Kompletní přehled všech nekrologů od roku 2010 s interaktivním grafem a statistikami.",
   keywords: ["bitcoin", "bitcoin je mrtvý", "bitcoin deaths", "bitcoin obituary", "kryptoměny"],
+  alternates: {
+    canonical: "https://www.bitcoinjemrtvy.cz",
+  },
   openGraph: {
     title: "Bitcoin je mrtvý — Kolikrát byl Bitcoin prohlášen za mrtvý",
     description:
@@ -21,6 +24,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "cs_CZ",
     url: "https://www.bitcoinjemrtvy.cz",
+    siteName: "Bitcoin je mrtvý",
   },
   twitter: {
     card: "summary_large_image",
@@ -41,6 +45,18 @@ export default function RootLayout({
         className={`${geistSans.variable} antialiased`}
         suppressHydrationWarning
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "Bitcoin je mrtvý",
+              "url": "https://www.bitcoinjemrtvy.cz",
+              "description": "Kolikrát byl Bitcoin prohlášen za mrtvý? Kompletní přehled všech nekrologů od roku 2010.",
+            }),
+          }}
+        />
         {children}
         <AnalyticsLazy />
       </body>

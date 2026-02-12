@@ -51,9 +51,21 @@ export async function generateMetadata({ params }: PageProps) {
     return { title: "Nenalezeno" };
   }
 
+  const url = `https://www.bitcoinjemrtvy.cz/prohlaseni/${slug}`;
+
   return {
     title: `${death.articleTitle} — Bitcoin je mrtvý`,
     description: death.quote || `${death.person} prohlásil Bitcoin za mrtvý`,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      title: `${death.articleTitle} — Bitcoin je mrtvý`,
+      description: death.quote || `${death.person} prohlásil Bitcoin za mrtvý`,
+      url,
+      siteName: "Bitcoin je mrtvý",
+      type: "article",
+    },
   };
 }
 
@@ -77,9 +89,23 @@ export default async function DeathDetailPage({ params }: PageProps) {
   const currentPriceCzk = btcPriceCzk ?? death.bitcoinPrice * usdToCzk;
   const priceChange = ((currentPriceCzk - priceCzk) / priceCzk) * 100;
 
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": death.articleTitle,
+    "author": { "@type": "Person", "name": death.person },
+    "publisher": { "@type": "Organization", "name": death.publicationName },
+    "datePublished": parseDate(death.date).toISOString().split("T")[0],
+    "url": `https://www.bitcoinjemrtvy.cz/prohlaseni/${slug}`,
+  };
+
   return (
     <div className="min-h-screen bg-[var(--background)]">
       <Header deathCount={deaths.length} btcPriceCzk={btcPriceCzk ?? undefined} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
 
       <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
         <article>
@@ -156,7 +182,7 @@ export default async function DeathDetailPage({ params }: PageProps) {
               href={`/prohlaseni/${generateDeathSlug(prev)}`}
               className="flex items-center gap-2 rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)] px-4 py-3 transition-all hover:border-[var(--bitcoin-orange)]/40 hover:bg-[var(--card-bg)]/80"
             >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300">
+              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300">
                 <path d="M10 12L6 8L10 4" />
               </svg>
               <span className="text-sm font-medium text-white">Novější</span>
@@ -171,7 +197,7 @@ export default async function DeathDetailPage({ params }: PageProps) {
               className="flex items-center gap-2 rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)] px-4 py-3 transition-all hover:border-[var(--bitcoin-orange)]/40 hover:bg-[var(--card-bg)]/80"
             >
               <span className="text-sm font-medium text-white">Starší</span>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300">
+              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300">
                 <path d="M6 12L10 8L6 4" />
               </svg>
             </Link>
@@ -184,11 +210,11 @@ export default async function DeathDetailPage({ params }: PageProps) {
       <footer className="border-t border-[var(--card-border)] py-8 text-center text-sm text-neutral-400">
         <p className="flex items-center justify-center gap-1 flex-wrap">
           Původní verzi{" "}
-          <a href="https://bitcoindeaths.com" target="_blank" rel="noopener noreferrer" className="">
+          <a href="https://bitcoindeaths.com" target="_blank" rel="noopener noreferrer" aria-label="Bitcoinisdead (otevře se v novém okně)">
             Bitcoinisdead
           </a>{" "}
           přeložil a upravil{" "}
-          <a href="https://x.com/adkolek" target="_blank" rel="noopener noreferrer" className="">
+          <a href="https://x.com/adkolek" target="_blank" rel="noopener noreferrer" aria-label="Adam Kolek na X (otevře se v novém okně)">
             Adam Kolek
           </a>
         </p>

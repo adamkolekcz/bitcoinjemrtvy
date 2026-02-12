@@ -23,7 +23,7 @@ export default function NotFound() {
           href="/"
           className="inline-flex items-center gap-2 rounded-lg bg-[var(--bitcoin-orange)] px-6 py-3 font-semibold text-black transition-colors hover:bg-[var(--bitcoin-orange)]/80"
         >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M10 12L6 8L10 4" />
           </svg>
           Zpět na hlavní stránku
@@ -33,11 +33,11 @@ export default function NotFound() {
       <footer className="border-t border-[var(--card-border)] py-8 text-center text-sm text-neutral-400">
         <p className="flex items-center justify-center gap-1 flex-wrap">
           Původní verzi{" "}
-          <a href="https://bitcoindeaths.com" target="_blank" rel="noopener noreferrer" className="">
+          <a href="https://bitcoindeaths.com" target="_blank" rel="noopener noreferrer" aria-label="Bitcoinisdead (otevře se v novém okně)">
             Bitcoinisdead
           </a>{" "}
           přeložil a upravil{" "}
-          <a href="https://x.com/adkolek" target="_blank" rel="noopener noreferrer" className="">
+          <a href="https://x.com/adkolek" target="_blank" rel="noopener noreferrer" aria-label="Adam Kolek na X (otevře se v novém okně)">
             Adam Kolek
           </a>
         </p>
