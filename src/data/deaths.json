@@ -1,5 +1,38 @@
 [
   {
+    "date": "02/11/2026",
+    "bitcoinPrice": 67546.46,
+    "articleTitle": "Bitcoin Is No Longer 'Digital Gold'",
+    "person": "Marion Laboure",
+    "publicationName": "Yahoo Finance",
+    "slug": "2026-02-11-bitcoin-is-no-longer-digital-gold",
+    "type": "Obituary",
+    "quote": "Gold outperformed by 65% in 2025. Bitcoin declined by 6.5%.",
+    "jobTitle": "Strategist, Deutsche Bank"
+  },
+  {
+    "date": "02/10/2026",
+    "bitcoinPrice": 68793.96,
+    "articleTitle": "Bitcoin Is In Its Final Stages",
+    "person": "Jacob King",
+    "publicationName": "Twitter",
+    "slug": "2026-02-10-bitcoin-is-in-its-final-stages",
+    "type": "Obituary",
+    "quote": "Bitcoin is in its final stages.\n\nHundreds of billions have been invested into something with literally zero utility or intrinsic value.\n\nIt was created by gamblers, pedophiles, and criminals, then sold to the masses through fabricated narratives like “inflation hedge,” “store of value,” and “digital gold” to inflate prices for insiders.\n\nThis will be the largest destruction of wealth in history. It is a giant game of musical chairs, and the music has stopped.",
+    "jobTitle": "CEO, WhaleWire"
+  },
+  {
+    "date": "02/09/2026",
+    "bitcoinPrice": 70120.78,
+    "articleTitle": "The $126K ATH May Have Been The Final ATH",
+    "person": "Peter Schiff",
+    "publicationName": "Twitter",
+    "slug": "2026-02-09-the-126k-ath-may-have-been-the-final-ath",
+    "type": "Obituary",
+    "quote": "Despite unprecedented support from the media, Wall Street, and government, Bitcoin is trading below the $69K ATH it first hit in Nov. 2021. At no point in its 16-year history did Bitcoin ever trade below a prior ATH four years later. The $126K ATH may have been the final ATH.",
+    "jobTitle": "Stock Broker / Economist"
+  },
+  {
     "date": "02/08/2026",
     "bitcoinPrice": 69281.97,
     "articleTitle": "Bitcoin Is Still About $69,000 Too High",

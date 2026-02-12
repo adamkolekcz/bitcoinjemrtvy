@@ -60,7 +60,7 @@ export function StatsSection({
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          label="Investice při každém &quot;úmrtí&quot;"
+          label={<>Investice při každém &quot;úmrtí&quot;</>}
           value={formatCurrency(investmentPerDeath)}
           sublabel={`${investment.numberOfDeaths} investic celkem`}
         />
@@ -137,7 +137,7 @@ export function StatsSection({
         <BitcoinAgeCounter />
 
         <StatCard
-          label="Hodnota všech bitcoinů v&nbsp;oběhu"
+          label={<>Hodnota všech bitcoinů v{"\u00A0"}oběhu</>}
           value={btcMarketCapCzk !== null
             ? `${Math.round(btcMarketCapCzk).toLocaleString("cs-CZ")} Kč`
             : "—"}
@@ -210,7 +210,7 @@ export function StatsSection({
 }
 
 interface StatCardProps {
-  label: string;
+  label: React.ReactNode;
   value: string;
   sublabel: string;
   highlight?: boolean;
@@ -232,10 +232,9 @@ function StatCard({ label, value, sublabel, highlight, green }: StatCardProps) {
 
   return (
     <div className={`rounded-xl border p-5 ${getBorderBg()}`}>
-      <p
-        className="text-xs font-medium uppercase tracking-wider text-neutral-300"
-        dangerouslySetInnerHTML={{ __html: label }}
-      />
+      <p className="text-xs font-medium uppercase tracking-wider text-neutral-300">
+        {label}
+      </p>
       <p className={`mt-2 text-2xl font-bold ${getTextColor()}`}>
         {value}
       </p>
