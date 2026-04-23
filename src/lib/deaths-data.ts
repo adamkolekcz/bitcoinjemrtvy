@@ -84,6 +84,7 @@ function validateDeathsData(data: unknown): data is DeathEvent[] {
 const BINANCE_PRICE_API = "https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT";
 const FRANKFURTER_API = "https://api.frankfurter.app/latest?base=USD&symbols=CZK";
 const COINGECKO_API = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=czk,usd&include_market_cap=true";
+const BLOCKCHAIN_SUPPLY_API = "https://blockchain.info/q/totalbc";
 const FALLBACK_USD_TO_CZK = 23.0;
 
 interface BtcCoinGeckoData {
@@ -124,16 +125,19 @@ export async function getBtcCoinGeckoData(revalidateSeconds = REVALIDATE_SECONDS
     const usdToCzk = fxData?.rates?.CZK ?? FALLBACK_USD_TO_CZK;
     const priceCzk = priceUsd * usdToCzk;
 
-    // Volitelně načte market cap z CoinGecko (nekritické)
+    // Volitelně spočítá market cap z počtu BTC v oběhu (Blockchain.info)
     let marketCapCzk: number | null = null;
     try {
-      const cgRes = await fetch(COINGECKO_API, {
+      const supplyRes = await fetch(BLOCKCHAIN_SUPPLY_API, {
         next: { revalidate: revalidateSeconds },
         signal: AbortSignal.timeout(5_000),
       });
-      if (cgRes.ok) {
-        const cgData = (await cgRes.json()) as { bitcoin?: { czk_market_cap?: number } };
-        marketCapCzk = cgData?.bitcoin?.czk_market_cap ?? null;
+      if (supplyRes.ok) {
+        const satoshis = parseInt(await supplyRes.text(), 10);
+        if (!isNaN(satoshis) && satoshis > 0) {
+          const circulatingBtc = satoshis / 1e8;
+          marketCapCzk = circulatingBtc * priceUsd * usdToCzk;
+        }
       }
     } catch {
       // market cap je volitelný, tiché selhání
