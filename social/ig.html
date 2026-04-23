@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<!--
+  IG ČTVEREC — 1080×1080 px
+  ────────────────────────────────────────────────────────────────────────────
+  JAK POUŽÍT:
+  1. Otevři v prohlížeči (Chrome doporučen)
+  2. Zoom nastav na 100 % (Cmd+0)
+  3. Nahraď kočičku: v sekci "CAT" vyměň <div class="cat placeholder">
+     za <img src="kocka.png" class="cat"> a odstraň vnitřní <span> elementy
+  4. Screenshot celého okna (nebo použij DevTools → Screenshot node)
+  ────────────────────────────────────────────────────────────────────────────
+-->
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <title>Prodej teď – IG 1080×1080</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 1080px; height: 1080px; overflow: hidden; background: #0a0a0a; }
+
+    .frame {
+      width: 1080px;
+      height: 1080px;
+      position: relative;
+      overflow: hidden;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    }
+
+    /* ── CHART ── */
+    .chart {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ── HEADLINE ── */
+    .headline {
+      position: absolute;
+      top: 68px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      z-index: 10;
+      line-height: 1;
+    }
+    .headline .w { display: block; font-size: 136px; font-weight: 900; color: #ffffff; letter-spacing: -7px; text-transform: uppercase; }
+    .headline .r { display: block; font-size: 136px; font-weight: 900; color: #ef4444; letter-spacing: -7px; text-transform: uppercase; text-shadow: 0 0 80px rgba(239,68,68,0.55); }
+
+    /* ── CAT ── */
+    .cat {
+      position: absolute;
+      bottom: 110px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 360px;
+      height: 360px;
+      z-index: 20;
+      object-fit: contain;
+    }
+
+    /* ── BRANDING ── */
+    .brand {
+      position: absolute;
+      bottom: 42px;
+      left: 64px;
+      color: rgba(255,255,255,0.22);
+      font-size: 17px;
+      letter-spacing: 0.4px;
+      z-index: 20;
+    }
+  </style>
+</head>
+<body>
+<div class="frame">
+
+  <!-- CHART -->
+  <svg class="chart" viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="fill-ig" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"   stop-color="#ef4444" stop-opacity="0.28"/>
+        <stop offset="65%"  stop-color="#ef4444" stop-opacity="0.05"/>
+        <stop offset="100%" stop-color="#ef4444" stop-opacity="0"/>
+      </linearGradient>
+      <filter id="glow-ig" x="-20%" y="-20%" width="140%" height="140%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+
+    <!-- Jemná mřížka -->
+    <g stroke="#171717" stroke-width="1">
+      <line x1="0"    y1="310" x2="1080" y2="310"/>
+      <line x1="0"    y1="490" x2="1080" y2="490"/>
+      <line x1="0"    y1="670" x2="1080" y2="670"/>
+      <line x1="0"    y1="850" x2="1080" y2="850"/>
+      <line x1="216"  y1="0"   x2="216"  y2="1080"/>
+      <line x1="432"  y1="0"   x2="432"  y2="1080"/>
+      <line x1="648"  y1="0"   x2="648"  y2="1080"/>
+      <line x1="864"  y1="0"   x2="864"  y2="1080"/>
+    </g>
+
+    <!-- Výplň pod čarou -->
+    <path
+      d="M 0,330 L 55,305 L 95,318 L 140,288 L 185,302 L 225,268 L 260,276 L 295,255 L 325,248 L 352,242
+         L 372,510 L 400,568 L 422,538 L 448,586 L 485,622 L 520,604 L 556,644 L 602,668 L 652,654
+         L 703,696 L 758,720 L 812,708 L 866,748 L 920,768 L 968,762 L 1018,792 L 1080,818
+         L 1080,1080 L 0,1080 Z"
+      fill="url(#fill-ig)"
+    />
+
+    <!-- Čára grafu -->
+    <path
+      d="M 0,330 L 55,305 L 95,318 L 140,288 L 185,302 L 225,268 L 260,276 L 295,255 L 325,248 L 352,242
+         L 372,510 L 400,568 L 422,538 L 448,586 L 485,622 L 520,604 L 556,644 L 602,668 L 652,654
+         L 703,696 L 758,720 L 812,708 L 866,748 L 920,768 L 968,762 L 1018,792 L 1080,818"
+      fill="none"
+      stroke="#ef4444"
+      stroke-width="5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      filter="url(#glow-ig)"
+    />
+  </svg>
+
+  <!-- HEADLINE -->
+  <div class="headline">
+    <span class="w">PRODEJ</span>
+    <span class="r">TEĎ</span>
+  </div>
+
+  <!-- CAT -->
+  <img src="https://www.pngmart.com/files/22/Crying-Cat-Meme-PNG-Isolated-HD.png" class="cat" alt="plačící kočička">
+
+  <!-- BRANDING -->
+  <div class="brand">bitcoinjemrtvy.cz</div>
+
+</div>
+</body>
+</html>

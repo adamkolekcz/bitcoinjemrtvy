@@ -53,10 +53,11 @@ function CustomTooltip({ active, payload, currentPriceCzk, usdToCzk }: CustomToo
     );
   }
 
-  // Truncate quote for mobile display
-  const truncatedQuote = death.quote && death.quote.length > 120
-    ? death.quote.slice(0, 120) + "..."
-    : death.quote;
+  // Truncate quote for mobile display (preferuje český překlad)
+  const displayQuote = death.quote_cs ?? death.quote;
+  const truncatedQuote = displayQuote && displayQuote.length > 120
+    ? displayQuote.slice(0, 120) + "..."
+    : displayQuote;
 
   return (
     <div className="max-w-[260px] sm:max-w-xs rounded-lg border border-[var(--card-border)] bg-[#1a1a1a] p-2 sm:p-3 shadow-xl">
@@ -69,7 +70,7 @@ function CustomTooltip({ active, payload, currentPriceCzk, usdToCzk }: CustomToo
         </span>
       </div>
       <p className="mb-2 text-xs sm:text-sm font-semibold text-white leading-snug line-clamp-2">
-        {death.articleTitle}
+        {death.articleTitle_cs ?? death.articleTitle}
       </p>
       {truncatedQuote && (
         <p className="mb-2 border-l-2 border-[var(--death-red)] pl-2 text-xs italic text-neutral-300 line-clamp-3">

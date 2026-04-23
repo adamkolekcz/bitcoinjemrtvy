@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "prebuild": "node scripts/sync-deaths.mjs",
+    "prebuild": "node scripts/sync-deaths.mjs && node scripts/fetch-source-urls.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

@@ -1,5 +1,17 @@
 import type { DeathEvent } from "./calculations";
 import staticDeathsData from "@/data/deaths.json";
+import sourceUrlsData from "@/data/source-urls.json";
+import { applyTranslations } from "./translations";
+
+const sourceUrls = sourceUrlsData as Record<string, string>;
+
+function applySourceUrls(deaths: DeathEvent[]): DeathEvent[] {
+  return deaths.map((death) => {
+    const url = sourceUrls[death.slug];
+    if (!url) return death;
+    return { ...death, sourceUrl: url };
+  });
+}
 
 const BITCOINDEATHS_URL = "https://bitcoindeaths.com";
 const REVALIDATE_SECONDS = 3600; // 1 hodina
@@ -188,7 +200,7 @@ export async function getDeathsData(revalidateSeconds = REVALIDATE_SECONDS): Pro
     }
 
     console.log(`[deaths-data] Loaded ${deaths.length} obituaries from bitcoindeaths.com`);
-    return { deaths, source: "live" };
+    return { deaths: applySourceUrls(applyTranslations(deaths)), source: "live" };
   } catch (error) {
     console.warn(
       "[deaths-data] Failed to fetch from bitcoindeaths.com, using static fallback:",
@@ -196,6 +208,6 @@ export async function getDeathsData(revalidateSeconds = REVALIDATE_SECONDS): Pro
     );
 
     const staticDeaths = staticDeathsData as DeathEvent[];
-    return { deaths: staticDeaths, source: "static" };
+    return { deaths: applySourceUrls(applyTranslations(staticDeaths)), source: "static" };
   }
 }

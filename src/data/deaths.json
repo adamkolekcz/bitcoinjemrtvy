@@ -1,5 +1,60 @@
 [
   {
+    "date": "4/9/2026",
+    "bitcoinPrice": 71117.08,
+    "articleTitle": "He Predicted 2008 Crash — Now He Says Bitcoin Could Collapse To Zero. Should Crypto Investors Worry?",
+    "person": "Steve Keen",
+    "publicationName": "Economic Times",
+    "slug": "2026-04-09-he-predicted-2008-crash-now-he-says-bitcoin-could-collapse-to-zero-should-crypto-investors-worry",
+    "type": "Obituary",
+    "quote": "The reason I didn’t [buy Bitcoin] is they explained that the way that the public ledger is kept safe is that it takes too much energy to break it... That means it’s got a huge requirement for energy use.",
+    "jobTitle": "Economist"
+  },
+  {
+    "date": "2/24/2026",
+    "bitcoinPrice": 64080.04,
+    "articleTitle": "$BTC [Is] Done. Cooked. Toast. EL Finito.",
+    "person": "George Noble",
+    "publicationName": "Twitter",
+    "slug": "2026-02-24-btc-is-done-cooked-toast-el-finito",
+    "type": "Obituary",
+    "quote": "You had a hell of a run - well played.\n\nBut now it is game over.\n\nIt always was based on hype, not fundamentals.\n\nNow that the mo is gone, all you are left with is the chart and narrative.\n\nYou can’t defend the valuation. Nobody can. \n\nFour year cycle, stock to flow, digital gold - what is the next BS narrative? \n\nI can’t wait for the haters to go nuts in their responses to this post.\n\nThe ad hominem attacks, the profanity, the hate - that is the way you roll.\n\nAre you capable of fact based, civil discourse? Most unlikely. \n\nOr will you just embarrass yourselves because you can’t be polite. \n\nIt will be my pleasure to block every single one of you. \n\nThe X audience will delight in your display of hate and ignorance \n\nThis will be glorious.",
+    "jobTitle": "Legendary Hedge Fund Manager"
+  },
+  {
+    "date": "2/16/2026",
+    "bitcoinPrice": 68843.16,
+    "articleTitle": "Crypto Is A Victim Of Its Own Success",
+    "person": "James Surowiecki",
+    "publicationName": "The Atlantic",
+    "slug": "2026-02-16-crypto-is-a-victim-of-its-own-success",
+    "type": "Obituary",
+    "quote": "The traditional “fundamental” case for bitcoin has been that because its supply is permanently capped at 21 million coins, it can serve as a hedge against inflation in traditional currencies such as the dollar. But the geopolitical turmoil, economic uncertainty, and drop in the value of the dollar relative to other major currencies in recent months have undermined this case. If bitcoin truly served as a hedge, then its value should have risen sharply. Instead, its value plummeted. That’s because bitcoin is not a hedge: It’s a speculative asset, which is valuable solely because people think it is valuable.",
+    "jobTitle": "Journalist"
+  },
+  {
+    "date": "2/13/2026",
+    "bitcoinPrice": 68857.84,
+    "articleTitle": "Bitcoin’s Plunge Should End The Hype That It Is Digital Gold",
+    "person": "Nick Sargen",
+    "publicationName": "The Hill",
+    "slug": "2026-02-13-bitcoins-plunge-should-end-the-hype-that-it-is-digital-gold",
+    "type": "Obituary",
+    "quote": "That said, gold has been a good store of value over the long term, and its correlation with equities is low. In this respect it is a proven alternative to the U.S. dollar, whereas Bitcoin is neither a vehicle currency nor a good store of value.",
+    "jobTitle": "Senior Economic Advisor, Fort Washington Investment Advisors"
+  },
+  {
+    "date": "2/12/2026",
+    "bitcoinPrice": 66221.84,
+    "articleTitle": "There No Inherent Value To [Bitcoin]",
+    "person": "Jemima Kelly",
+    "publicationName": "CNBC",
+    "slug": "2026-02-12-there-no-inherent-value-to-bitcoin",
+    "type": "Obituary",
+    "quote": "I do genuinely think its value is 0.",
+    "jobTitle": "Columnist"
+  },
+  {
     "date": "02/11/2026",
     "bitcoinPrice": 67546.46,
     "articleTitle": "Bitcoin Is No Longer 'Digital Gold'",

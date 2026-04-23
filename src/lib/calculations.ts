@@ -2,12 +2,15 @@ export interface DeathEvent {
   date: string;
   bitcoinPrice: number;
   articleTitle: string;
+  articleTitle_cs?: string;
   person: string;
   publicationName: string;
   jobTitle: string;
   slug: string;
   type: string;
   quote?: string;
+  quote_cs?: string;
+  sourceUrl?: string;
 }
 
 export interface ChartDataPoint {
@@ -45,7 +48,8 @@ export function generateDeathSlug(death: DeathEvent): string {
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const year = date.getFullYear();
 
-  const titleSlug = death.articleTitle
+  const title = death.articleTitle_cs ?? death.articleTitle;
+  const titleSlug = title
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
