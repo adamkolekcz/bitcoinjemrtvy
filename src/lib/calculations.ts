@@ -18,6 +18,7 @@ export interface ChartDataPoint {
   date: string;
   price: number;
   death?: DeathEvent;
+  isCurrentPrice?: boolean;
 }
 
 export interface InvestmentResult {

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { formatCurrency, type InvestmentResult } from "@/lib/calculations";
 import { BitcoinAgeCounter } from "@/components/BitcoinAgeCounter";
 
@@ -92,7 +93,7 @@ export function StatsSection({
           <strong className="text-[var(--death-red)]">{investment.numberOfDeaths}&times;</strong>, přesto však nadále funguje 24&nbsp;hodin denně, 7&nbsp;dní v&nbsp;týdnu. Nepřetržitě zpracovává transakce. Bitcoin neumírá. Naopak,{" "}
           <strong className="text-green-500">vzkvétá</strong>.
         </p>
-        <a
+        <Link
           href="/prohlaseni"
           className="mt-6 inline-flex items-center gap-2 rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)] px-4 py-3 transition-all hover:border-[var(--bitcoin-orange)]/40 hover:bg-[var(--card-bg)]/80"
         >
@@ -100,7 +101,7 @@ export function StatsSection({
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300">
             <path d="M6 12L10 8L6 4" />
           </svg>
-        </a>
+        </Link>
       </div>
 
       <div className="mt-8 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-8">

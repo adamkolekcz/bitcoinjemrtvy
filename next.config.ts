@@ -1,10 +1,14 @@
 import type { NextConfig } from "next";
+import redirectsData from "./src/data/redirects.json";
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
   experimental: {
     optimizePackageImports: ["recharts"],
+  },
+  async redirects() {
+    return redirectsData;
   },
   async headers() {
     return [

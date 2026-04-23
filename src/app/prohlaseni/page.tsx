@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 export default async function PostsPage() {
   const [{ deaths }, coinGeckoData] = await Promise.all([
     getDeathsData(),
-    getBtcCoinGeckoData(),
+    getBtcCoinGeckoData(3600, false),
   ]);
   const btcPriceCzk = coinGeckoData.priceCzk;
 

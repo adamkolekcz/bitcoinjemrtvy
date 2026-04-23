@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import {
   ComposedChart,
   Area,
@@ -10,8 +11,8 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import type { ChartDataPoint } from "@/lib/calculations";
-import { formatCzechDate } from "@/lib/calculations";
+import type { ChartDataPoint, DeathEvent } from "@/lib/calculations";
+import { formatCzechDate, generateDeathSlug } from "@/lib/calculations";
 
 interface BitcoinChartProps {
   data: ChartDataPoint[];
@@ -82,6 +83,7 @@ function CustomTooltip({ active, payload, currentPriceCzk, usdToCzk }: CustomToo
         {death.jobTitle ? ` — ${death.jobTitle}` : ""}
       </p>
       <p className="text-xs text-neutral-400 truncate">{death.publicationName}</p>
+      <p className="mt-2 text-xs font-medium text-[var(--bitcoin-orange)]">Klikni pro otevření →</p>
     </div>
   );
 }
@@ -127,49 +129,36 @@ function makeFormatYTick(usdToCzk: number) {
   };
 }
 
-// Combined scatter shape - red for death events, green pulsing for current price
-function ChartMarker(props: Record<string, unknown>) {
-  const { cx, cy, payload } = props as { cx: number; cy: number; payload?: { isCurrentPrice?: boolean; death?: unknown } };
+interface ChartMarkerProps {
+  cx: number;
+  cy: number;
+  payload?: { isCurrentPrice?: boolean; death?: DeathEvent };
+  onDeathClick?: (death: DeathEvent) => void;
+}
+
+// Combined scatter shape - red for death events, green for current price
+function ChartMarker({ cx, cy, payload, onDeathClick }: ChartMarkerProps) {
   if (typeof cx !== "number" || typeof cy !== "number") return null;
 
-  // Current price marker (green, pulsing)
+  // Current price marker (green, solid)
   if (payload?.isCurrentPrice) {
-    return (
-      <g>
-        {/* Pulsing outer ring */}
-        <circle cx={cx} cy={cy} r={4} fill="#22C55E" opacity={0.4}>
-          <animate
-            attributeName="r"
-            values="4;12;4"
-            dur="2s"
-            repeatCount="indefinite"
-          />
-          <animate
-            attributeName="opacity"
-            values="0.4;0;0.4"
-            dur="2s"
-            repeatCount="indefinite"
-          />
-        </circle>
-        {/* Solid center dot */}
-        <circle cx={cx} cy={cy} r={4} fill="#22C55E" />
-      </g>
-    );
+    return <circle cx={cx} cy={cy} r={4} fill="#22C55E" />;
   }
 
-  // Death event marker (red) - only show if has death event
+  // Death event marker (red, clickable)
   if (payload?.death) {
     return (
       <circle
         cx={cx}
         cy={cy}
-        r={4}
+        r={5}
         fill="var(--death-red)"
+        style={{ cursor: "pointer" }}
+        onClick={() => onDeathClick?.(payload.death!)}
       />
     );
   }
 
-  // No marker for other points
   return null;
 }
 
@@ -180,6 +169,11 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
   const [scale, setScale] = useState<"log" | "linear">("linear");
   const [period, setPeriod] = useState<Period>("all");
   const formatYTick = useMemo(() => makeFormatYTick(usdToCzk), [usdToCzk]);
+  const router = useRouter();
+
+  const handleDeathClick = useCallback((death: DeathEvent) => {
+    router.push(`/prohlaseni/${generateDeathSlug(death)}`);
+  }, [router]);
 
   // Merge data with current price point
   const chartData = useMemo(() => {
@@ -436,7 +430,7 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
 
           <Scatter
             dataKey="price"
-            shape={<ChartMarker />}
+            shape={(props) => <ChartMarker {...(props as unknown as ChartMarkerProps)} onDeathClick={handleDeathClick} />}
           />
 
         </ComposedChart>
@@ -452,10 +446,7 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
           <span>Bitcoin je mrtvý</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="relative flex h-2 w-2 items-center justify-center">
-            <div className="absolute h-2 w-2 animate-ping-slow rounded-full bg-green-500 opacity-75" />
-            <div className="h-2 w-2 rounded-full bg-green-500" />
-          </div>
+          <div className="h-2 w-2 rounded-full bg-green-500" />
           <span>Aktuální cena</span>
         </div>
       </div>

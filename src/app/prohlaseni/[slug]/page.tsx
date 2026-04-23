@@ -111,7 +111,10 @@ export default async function DeathDetailPage({ params }: PageProps) {
       <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
         <article>
           <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-            <time className="text-sm text-neutral-300">
+            <time
+              dateTime={parseDate(death.date).toISOString().split("T")[0]}
+              className="text-sm text-neutral-300"
+            >
               {formatCzechDate(death.date)}
             </time>
             <div className="flex items-center gap-3">
