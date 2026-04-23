@@ -81,11 +81,13 @@ function validateDeathsData(data: unknown): data is DeathEvent[] {
  * Načte data o Bitcoin obituaries
  * Primárně z bitcoindeaths.com, s fallbackem na statický JSON
  */
-const BINANCE_PRICE_API = "https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT";
+const KRAKEN_PRICE_API = "https://api.kraken.com/0/public/Ticker?pair=XBTUSD";
+const COINBASE_PRICE_API = "https://api.coinbase.com/v2/prices/BTC-USD/spot";
 const FRANKFURTER_API = "https://api.frankfurter.app/latest?base=USD&symbols=CZK";
+const CNB_API = "https://api.cnb.cz/cnbapi/exrates/daily?lang=EN";
 const COINGECKO_API = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=czk,usd&include_market_cap=true";
-const BLOCKCHAIN_SUPPLY_API = "https://blockchain.info/q/totalbc";
-const FALLBACK_USD_TO_CZK = 23.0;
+// Absolutní záchrana — použije se jen pokud selžou Frankfurter i ČNB
+const FALLBACK_USD_TO_CZK = 20.75;
 
 interface BtcCoinGeckoData {
   priceCzk: number | null;
@@ -94,96 +96,140 @@ interface BtcCoinGeckoData {
 }
 
 /**
- * Načte aktuální cenu BTC a kurz USD/CZK.
- * Primárně: Binance (cena BTC/USD) + Frankfurter (kurz USD/CZK).
- * Záloha: CoinGecko (pokud selžou primární zdroje).
- * Market cap: CoinGecko (volitelně, tiché selhání).
+ * Načte aktuální cenu BTC v CZK a kurz USD/CZK.
+ *
+ * Řetězec zdrojů pro cenu:
+ *   1. Kraken + Frankfurter (primární — bez geo-restrikcí, bez rate limitů)
+ *   2. Coinbase + Frankfurter (záloha 1 — spolehlivý US exchange, veřejné API)
+ *   3. CoinGecko             (záloha 2 — vrací BTC/CZK přímo, ale rate-limitovaný)
+ *   4. null + FALLBACK_USD_TO_CZK (totální výpadek)
+ *
+ * Market cap (volitelný, jen pro homepage):
+ *   CoinGecko — tiché selhání, nezablokuje zobrazení ceny.
  */
-export async function getBtcCoinGeckoData(revalidateSeconds = REVALIDATE_SECONDS): Promise<BtcCoinGeckoData> {
-  // Primární zdroje: Binance + Frankfurter (spolehlivé, bez rate limitů)
-  try {
-    const [binanceRes, fxRes] = await Promise.all([
-      fetch(BINANCE_PRICE_API, {
-        next: { revalidate: revalidateSeconds },
-        signal: AbortSignal.timeout(8_000),
-      }),
-      fetch(FRANKFURTER_API, {
-        next: { revalidate: revalidateSeconds },
-        signal: AbortSignal.timeout(8_000),
-      }),
-    ]);
+export async function getBtcCoinGeckoData(
+  revalidateSeconds = REVALIDATE_SECONDS,
+  includeMarketCap = true,
+): Promise<BtcCoinGeckoData> {
+  const opts = (timeout = 8_000) => ({
+    next: { revalidate: revalidateSeconds },
+    signal: AbortSignal.timeout(timeout),
+  });
 
-    if (!binanceRes.ok) throw new Error(`Binance HTTP ${binanceRes.status}`);
-    if (!fxRes.ok) throw new Error(`Frankfurter HTTP ${fxRes.status}`);
-
-    const binanceData = (await binanceRes.json()) as { price?: string };
-    const fxData = (await fxRes.json()) as { rates?: { CZK?: number } };
-
-    const priceUsd = binanceData?.price ? parseFloat(binanceData.price) : null;
-    if (!priceUsd || isNaN(priceUsd)) throw new Error("Invalid Binance price");
-
-    const usdToCzk = fxData?.rates?.CZK ?? FALLBACK_USD_TO_CZK;
-    const priceCzk = priceUsd * usdToCzk;
-
-    // Volitelně spočítá market cap z počtu BTC v oběhu (Blockchain.info)
-    let marketCapCzk: number | null = null;
+  // --- Pomocná funkce: načte kurz USD/CZK ---
+  // Řetězec: Frankfurter → ČNB → hardcoded fallback
+  async function fetchUsdToCzk(): Promise<number> {
+    // 1. Frankfurter
     try {
-      const supplyRes = await fetch(BLOCKCHAIN_SUPPLY_API, {
-        next: { revalidate: revalidateSeconds },
-        signal: AbortSignal.timeout(5_000),
-      });
-      if (supplyRes.ok) {
-        const satoshis = parseInt(await supplyRes.text(), 10);
-        if (!isNaN(satoshis) && satoshis > 0) {
-          const circulatingBtc = satoshis / 1e8;
-          marketCapCzk = circulatingBtc * priceUsd * usdToCzk;
+      const res = await fetch(FRANKFURTER_API, opts());
+      if (res.ok) {
+        const data = (await res.json()) as { rates?: { CZK?: number } };
+        if (data?.rates?.CZK) return data.rates.CZK;
+      }
+    } catch {}
+
+    // 2. ČNB
+    try {
+      const res = await fetch(CNB_API, opts());
+      if (res.ok) {
+        const data = (await res.json()) as { rates?: { currencyCode: string; rate: number }[] };
+        const usd = data?.rates?.find((r) => r.currencyCode === "USD");
+        if (usd?.rate) {
+          console.warn("[btc] Frankfurter selhal, použit kurz ČNB");
+          return usd.rate;
         }
       }
-    } catch {
-      // market cap je volitelný, tiché selhání
-    }
+    } catch {}
 
-    console.log(`[deaths-data] BTC: ${Math.round(priceCzk).toLocaleString("cs-CZ")} Kč (USD: ${priceUsd.toFixed(0)}, USD/CZK: ${usdToCzk.toFixed(3)}, marketCap: ${marketCapCzk ? "OK" : "N/A"})`);
+    console.warn("[btc] Frankfurter i ČNB selhaly, použit hardcoded fallback");
+    return FALLBACK_USD_TO_CZK;
+  }
+
+  // --- 1. Kraken + Frankfurter ---
+  try {
+    const [krakenRes, usdToCzk] = await Promise.all([
+      fetch(KRAKEN_PRICE_API, opts()).then(async (r) => {
+        if (!r.ok) throw new Error(`Kraken HTTP ${r.status}`);
+        return r.json() as Promise<{ result?: { XXBTZUSD?: { c?: string[] } } }>;
+      }),
+      fetchUsdToCzk(),
+    ]);
+
+    const priceUsd = krakenRes?.result?.XXBTZUSD?.c?.[0]
+      ? parseFloat(krakenRes.result.XXBTZUSD.c[0])
+      : null;
+    if (!priceUsd || isNaN(priceUsd)) throw new Error("Invalid Kraken price");
+
+    const priceCzk = priceUsd * usdToCzk;
+    const marketCapCzk = includeMarketCap ? await fetchMarketCap() : null;
+    console.log(`[btc] Kraken: ${fmt(priceCzk)} Kč | USD/CZK: ${usdToCzk.toFixed(3)} | marketCap: ${marketCapCzk ? "OK" : "N/A"}`);
     return { priceCzk, marketCapCzk, usdToCzk };
 
-  } catch (primaryError) {
-    console.warn(
-      "[deaths-data] Primární zdroje selhaly, zkouším CoinGecko:",
-      primaryError instanceof Error ? primaryError.message : String(primaryError)
-    );
+  } catch (e1) {
+    console.warn("[btc] Kraken selhal:", msg(e1));
+  }
 
-    // Záloha: CoinGecko
+  // --- 2. Coinbase + Frankfurter ---
+  try {
+    const [coinbaseRes, usdToCzk] = await Promise.all([
+      fetch(COINBASE_PRICE_API, opts()).then(async (r) => {
+        if (!r.ok) throw new Error(`Coinbase HTTP ${r.status}`);
+        return r.json() as Promise<{ data?: { amount?: string } }>;
+      }),
+      fetchUsdToCzk(),
+    ]);
+
+    const priceUsd = coinbaseRes?.data?.amount ? parseFloat(coinbaseRes.data.amount) : null;
+    if (!priceUsd || isNaN(priceUsd)) throw new Error("Invalid Coinbase price");
+
+    const priceCzk = priceUsd * usdToCzk;
+    const marketCapCzk = includeMarketCap ? await fetchMarketCap() : null;
+    console.log(`[btc] Coinbase: ${fmt(priceCzk)} Kč | USD/CZK: ${usdToCzk.toFixed(3)} | marketCap: ${marketCapCzk ? "OK" : "N/A"}`);
+    return { priceCzk, marketCapCzk, usdToCzk };
+
+  } catch (e2) {
+    console.warn("[btc] Coinbase selhal:", msg(e2));
+  }
+
+  // --- 3. CoinGecko (záloha pro vše) ---
+  try {
+    const res = await fetch(COINGECKO_API, opts(10_000));
+    if (!res.ok) throw new Error(`CoinGecko HTTP ${res.status}`);
+
+    const data = (await res.json()) as {
+      bitcoin?: { czk?: number; usd?: number; czk_market_cap?: number };
+    };
+    const priceCzk = data?.bitcoin?.czk ?? null;
+    const priceUsdCg = data?.bitcoin?.usd ?? null;
+    const marketCapCzk = includeMarketCap ? (data?.bitcoin?.czk_market_cap ?? null) : null;
+    const usdToCzk =
+      typeof priceCzk === "number" && typeof priceUsdCg === "number" && priceUsdCg > 0
+        ? priceCzk / priceUsdCg
+        : FALLBACK_USD_TO_CZK;
+
+    console.log(`[btc] CoinGecko záloha: ${priceCzk?.toLocaleString("cs-CZ")} Kč`);
+    return { priceCzk, marketCapCzk, usdToCzk };
+
+  } catch (e3) {
+    console.warn("[btc] Všechny zdroje selhaly:", msg(e3));
+    return { priceCzk: null, marketCapCzk: null, usdToCzk: FALLBACK_USD_TO_CZK };
+  }
+
+  // --- Pomocné funkce ---
+  async function fetchMarketCap(): Promise<number | null> {
     try {
-      const response = await fetch(COINGECKO_API, {
-        next: { revalidate: revalidateSeconds },
-        signal: AbortSignal.timeout(10_000),
-      });
-
-      if (!response.ok) throw new Error(`CoinGecko HTTP ${response.status}`);
-
-      const data = (await response.json()) as {
-        bitcoin?: { czk?: number; usd?: number; czk_market_cap?: number };
-      };
-      const priceCzk = data?.bitcoin?.czk ?? null;
-      const priceUsd = data?.bitcoin?.usd ?? null;
-      const marketCapCzk = data?.bitcoin?.czk_market_cap ?? null;
-      const usdToCzk =
-        typeof priceCzk === "number" && typeof priceUsd === "number" && priceUsd > 0
-          ? priceCzk / priceUsd
-          : FALLBACK_USD_TO_CZK;
-
-      console.log(`[deaths-data] BTC z CoinGecko zálohy: ${priceCzk?.toLocaleString("cs-CZ")} Kč`);
-      return { priceCzk, marketCapCzk, usdToCzk };
-
-    } catch (fallbackError) {
-      console.warn(
-        "[deaths-data] Všechny zdroje selhaly:",
-        fallbackError instanceof Error ? fallbackError.message : String(fallbackError)
-      );
-      return { priceCzk: null, marketCapCzk: null, usdToCzk: FALLBACK_USD_TO_CZK };
+      const res = await fetch(COINGECKO_API, opts(5_000));
+      if (!res.ok) return null;
+      const data = (await res.json()) as { bitcoin?: { czk_market_cap?: number } };
+      return data?.bitcoin?.czk_market_cap ?? null;
+    } catch {
+      return null;
     }
   }
 }
+
+function fmt(n: number) { return Math.round(n).toLocaleString("cs-CZ"); }
+function msg(e: unknown) { return e instanceof Error ? e.message : String(e); }
 
 export async function getDeathsData(revalidateSeconds = REVALIDATE_SECONDS): Promise<DeathsDataResult> {
   try {
