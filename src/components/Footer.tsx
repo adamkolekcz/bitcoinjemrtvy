@@ -1,8 +1,8 @@
 export function Footer() {
   return (
     <footer className="border-t border-[var(--card-border)] py-8 text-sm text-neutral-400">
-      <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 flex-wrap">
-        <p className="flex items-center gap-1 flex-wrap">
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 flex-wrap max-sm:flex-col max-sm:items-center max-sm:text-center">
+        <p className="flex items-center gap-1 flex-wrap justify-center sm:justify-start">
           Původní{" "}
           <a href="https://bitcoindeaths.com" target="_blank" rel="noopener noreferrer" aria-label="Bitcoinisdead (otevře se v novém okně)">
             Bitcoinisdead

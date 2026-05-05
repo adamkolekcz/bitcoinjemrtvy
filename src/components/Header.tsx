@@ -11,7 +11,7 @@ export function Header({ deathCount, btcPriceCzk }: HeaderProps) {
       <div className="mx-auto max-w-7xl px-4 py-4 sm:py-6 sm:px-6 lg:px-8">
         {/* Mobile: title + death count on same row */}
         <div className="flex items-center justify-between sm:hidden">
-          <Link href="/">
+          <Link href="/" tabIndex={-1}>
             <h1 className="text-2xl font-bold tracking-tight">
               <span className="text-[var(--bitcoin-orange)]">
                 Bitcoin
@@ -41,7 +41,7 @@ export function Header({ deathCount, btcPriceCzk }: HeaderProps) {
         {/* Desktop: full layout */}
         <div className="hidden sm:flex sm:items-center sm:justify-between">
           <div>
-            <Link href="/">
+            <Link href="/" tabIndex={-1}>
               <h1 className="text-3xl font-bold tracking-tight">
                 <span className="text-[var(--bitcoin-orange)]">
                   Bitcoin

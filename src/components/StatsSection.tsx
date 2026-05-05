@@ -3,6 +3,7 @@ import { formatCurrency, type InvestmentResult } from "@/lib/calculations";
 import { BitcoinAgeCounter } from "@/components/BitcoinAgeCounter";
 
 function formatMarketCapWords(value: number): string {
+  value = Math.round(value);
   const bilion = 1_000_000_000_000;
   const miliarda = 1_000_000_000;
   const milion = 1_000_000;
