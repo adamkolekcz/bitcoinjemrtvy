@@ -3,11 +3,11 @@ export function Footer() {
     <footer className="border-t border-[var(--card-border)] py-8 text-sm text-neutral-400">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 flex-wrap">
         <p className="flex items-center gap-1 flex-wrap">
-          Původní verzi{" "}
+          Původní{" "}
           <a href="https://bitcoindeaths.com" target="_blank" rel="noopener noreferrer" aria-label="Bitcoinisdead (otevře se v novém okně)">
             Bitcoinisdead
           </a>{" "}
-          přeložil a upravil{" "}
+          přeložil{" "}
           <a href="https://x.com/adkolek" target="_blank" rel="noopener noreferrer" aria-label="Adam Kolek na X (otevře se v novém okně)">
             Adam Kolek
           </a>
@@ -19,8 +19,8 @@ export function Footer() {
           className="flex items-center gap-1.5 hover:opacity-75 transition-opacity"
           aria-label="Vytvořil PeakSite"
         >
-          <span className="text-xs text-neutral-400">Vytvořil</span>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" fill="none" width="80" height="20" aria-hidden="true">
+          <span>Vytvořil</span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" fill="none" width="92" height="23" aria-hidden="true">
             <g transform="translate(4, 4) scale(1)">
               <polygon points="16,4 27,24 5,24" fill="none" stroke="#6C63FF" strokeWidth="1.5" strokeLinejoin="round"/>
               <polygon points="16,4 22,15 10,15" fill="#6C63FF" opacity="0.4"/>

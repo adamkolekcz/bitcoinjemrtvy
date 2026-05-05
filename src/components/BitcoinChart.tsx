@@ -83,34 +83,36 @@ function CustomTooltip({ active, payload, currentPriceCzk, usdToCzk }: CustomToo
         {death.jobTitle ? ` — ${death.jobTitle}` : ""}
       </p>
       <p className="text-xs text-neutral-400 truncate">{death.publicationName}</p>
-      <p className="mt-2 text-xs font-medium text-[var(--bitcoin-orange)]">Klikni pro otevření →</p>
     </div>
   );
 }
 
-const YEAR_TICKS = [
-  new Date(2012, 0, 1).getTime(),
-  new Date(2014, 0, 1).getTime(),
-  new Date(2016, 0, 1).getTime(),
-  new Date(2018, 0, 1).getTime(),
-  new Date(2020, 0, 1).getTime(),
-  new Date(2022, 0, 1).getTime(),
-  new Date(2024, 0, 1).getTime(),
-  new Date(2026, 0, 1).getTime(),
-];
-
-const MONTH_NAMES = ["Led", "Úno", "Bře", "Dub", "Kvě", "Čvn", "Čvc", "Srp", "Zář", "Říj", "Lis", "Pro"];
-
-function formatXTick(timestamp: number): string {
-  const date = new Date(timestamp);
-  const month = date.getMonth();
-  const year = date.getFullYear();
-
-  // If it's January, show only year; otherwise show month abbreviation + year
-  if (month === 0) {
-    return year.toString();
+// Dynamic even-year ticks — auto-extends as time passes
+function buildYearTicks(): number[] {
+  const ticks: number[] = [];
+  const endYear = new Date().getFullYear() + 6;
+  for (let y = 2012; y <= endYear; y += 2) {
+    ticks.push(new Date(y, 0, 1).getTime());
   }
-  return `${MONTH_NAMES[month]} ${year.toString().slice(-2)}`;
+  return ticks;
+}
+const YEAR_TICKS = buildYearTicks();
+
+// Čer = Červen (June), Čec = Červenec (July) — distinct enough to avoid confusion
+const MONTH_NAMES = ["Led", "Úno", "Bře", "Dub", "Kvě", "Čer", "Čec", "Srp", "Zář", "Říj", "Lis", "Pro"];
+
+function makeFormatXTick(period: Period) {
+  return function(timestamp: number): string {
+    const date = new Date(timestamp);
+    const month = date.getMonth();
+    const year = date.getFullYear();
+    const yy = year.toString().slice(-2);
+    // 1y: numeric M/YY — e.g. "5/25", "10/25", "1/26"
+    if (period === "1y") return `${month + 1}/${yy}`;
+    // Other periods: January gets full year, others get M/YY
+    if (month === 0) return year.toString();
+    return `${month + 1}/${yy}`;
+  };
 }
 
 function makeFormatYTick(usdToCzk: number) {
@@ -169,6 +171,7 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
   const [scale, setScale] = useState<"log" | "linear">("linear");
   const [period, setPeriod] = useState<Period>("all");
   const formatYTick = useMemo(() => makeFormatYTick(usdToCzk), [usdToCzk]);
+  const formatXTick = useMemo(() => makeFormatXTick(period), [period]);
   const router = useRouter();
 
   const handleDeathClick = useCallback((death: DeathEvent) => {
@@ -209,32 +212,43 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
     const timestamps = filteredChartData.map((d) => d.timestamp);
     const minTime = Math.min(...timestamps);
     const maxTime = Math.max(...timestamps);
-    return [minTime - 86400000 * 30, maxTime + 86400000 * 30] as [number, number];
+    return [minTime, maxTime + 86400000 * 7] as [number, number];
   }, [filteredChartData]);
 
-  // Calculate nice Y-axis ticks for linear scale
-  const yTicksLinear = useMemo(() => {
-    if (filteredChartData.length === 0) return [];
+  // Calculate nice Y-axis ticks and domain min for linear scale
+  const { yTicksLinear, yDomainMinLinear } = useMemo(() => {
+    if (filteredChartData.length === 0) return { yTicksLinear: [], yDomainMinLinear: 0 };
 
+    const minPrice = Math.min(...filteredChartData.map(d => d.price));
     const maxPrice = Math.max(...filteredChartData.map(d => d.price));
+    const minCzk = minPrice * usdToCzk;
     const maxCzk = maxPrice * usdToCzk;
 
-    // Nice intervals in CZK - aim for 5-6 ticks on the Y axis
-    const niceIntervals = [100_000, 250_000, 500_000, 1_000_000, 2_500_000, 5_000_000, 10_000_000];
+    // Domain min: 3 % pod minimem dat
+    const domainMinCzk = Math.max(0, minCzk * 0.97);
+    const domainMaxCzk = maxCzk * 1.05;
+    const visibleRange = domainMaxCzk - domainMinCzk;
 
-    // Find suitable interval that gives us 4-7 ticks
+    // Intervals covering future prices up to 50M+ Kč
+    const niceIntervals = [
+      50_000, 100_000, 250_000, 500_000,
+      1_000_000, 2_500_000, 5_000_000,
+      10_000_000, 25_000_000, 50_000_000,
+    ];
+
+    // Pick interval so visible range contains 4–6 ticks
     const interval = niceIntervals.find(i => {
-      const tickCount = Math.ceil(maxCzk / i);
-      return tickCount >= 4 && tickCount <= 7;
-    }) || 5_000_000;
+      const count = Math.floor(visibleRange / i);
+      return count >= 3 && count <= 6;
+    }) ?? niceIntervals[niceIntervals.length - 1];
 
-    // Generate ticks from 0 up to max value
+    const firstTickCzk = Math.ceil(domainMinCzk / interval) * interval;
     const ticks: number[] = [];
-    for (let czk = 0; czk <= maxCzk * 1.05; czk += interval) {
-      ticks.push(czk / usdToCzk); // Convert back to USD for YAxis
+    for (let czk = firstTickCzk; czk <= domainMaxCzk; czk += interval) {
+      ticks.push(czk / usdToCzk);
     }
 
-    return ticks;
+    return { yTicksLinear: ticks, yDomainMinLinear: domainMinCzk / usdToCzk };
   }, [filteredChartData, usdToCzk]);
 
   // Calculate nice Y-axis ticks for logarithmic scale
@@ -244,14 +258,13 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
     const minPrice = Math.min(...filteredChartData.filter(d => d.price > 0).map(d => d.price));
     const maxPrice = Math.max(...filteredChartData.map(d => d.price));
 
-    // Extended logarithmic values in CZK with finer steps for narrow ranges
     const niceLogValues = [
       100, 200, 500,
       1_000, 2_000, 5_000,
       10_000, 20_000, 50_000,
-      100_000, 200_000, 300_000, 500_000, 750_000,
-      1_000_000, 1_500_000, 2_000_000, 2_500_000, 3_000_000, 4_000_000, 5_000_000,
-      10_000_000,
+      100_000, 200_000, 500_000, 750_000,
+      1_000_000, 1_500_000, 2_000_000, 2_500_000, 5_000_000,
+      10_000_000, 15_000_000, 20_000_000, 25_000_000, 50_000_000,
     ];
 
     const minCzk = minPrice * usdToCzk;
@@ -283,41 +296,32 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
       return YEAR_TICKS.filter(t => t >= minTime && t <= maxTime);
     }
 
-    // For 1 year period, show monthly ticks (every 4 months)
+    // For 1 year period: standard quarterly ticks (Jan, Apr, Jul, Oct)
     if (period === "1y") {
       const ticks: number[] = [];
       const startDate = new Date(minTime);
-
-      // Start from the first month in range, aligned to quarter
       let year = startDate.getFullYear();
-      let month = Math.floor(startDate.getMonth() / 4) * 4; // Align to 0, 4, 8
+      let month = Math.floor(startDate.getMonth() / 3) * 3; // align to quarter
 
       while (true) {
         const tick = new Date(year, month, 1).getTime();
-        if (tick > maxTime + 86400000 * 30) break;
-        if (tick >= minTime - 86400000 * 30) {
-          ticks.push(tick);
-        }
-        month += 4;
-        if (month >= 12) {
-          month = 0;
-          year++;
-        }
+        if (tick > maxTime) break;
+        if (tick >= minTime) ticks.push(tick);
+        month += 3;
+        if (month >= 12) { month = 0; year++; }
       }
 
       return ticks;
     }
 
-    // For other periods (3y, 5y), generate yearly ticks
+    // For 3y / 5y: one tick per year (Jan 1), only if the tick falls within the data
     const ticks: number[] = [];
     const startYear = new Date(minTime).getFullYear();
     const endYear = new Date(maxTime).getFullYear();
 
-    for (let year = startYear; year <= endYear + 1; year++) {
+    for (let year = startYear; year <= endYear; year++) {
       const tick = new Date(year, 0, 1).getTime();
-      if (tick >= minTime - 86400000 * 30 && tick <= maxTime + 86400000 * 30) {
-        ticks.push(tick);
-      }
+      if (tick >= minTime) ticks.push(tick);
     }
 
     return ticks;
@@ -404,7 +408,7 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
           <YAxis
             dataKey="price"
             scale={scale}
-            domain={scale === "log" ? ["auto", "auto"] : [0, "auto"]}
+            domain={scale === "log" ? ["auto", "auto"] : [yDomainMinLinear, "auto"]}
             ticks={scale === "linear" ? yTicksLinear : yTicksLog}
             tickFormatter={formatYTick}
             stroke="#404040"
@@ -426,6 +430,7 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
             fill="url(#priceGradient)"
             dot={false}
             activeDot={false}
+            baseValue={scale === "linear" ? yDomainMinLinear : 0}
           />
 
           <Scatter
@@ -439,11 +444,11 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
       <div className="mt-4 hidden sm:flex flex-wrap items-center justify-center gap-6 px-4 text-xs text-neutral-300 sm:px-0">
         <div className="flex items-center gap-2">
           <div className="h-0.5 w-6 bg-[var(--bitcoin-orange)]" />
-          <span>Cena BTC (CZK)</span>
+          <span>Vývoj ceny</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-[var(--death-red)]" />
-          <span>Bitcoin je mrtvý</span>
+          <span>Bitcoin umřel</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-green-500" />
