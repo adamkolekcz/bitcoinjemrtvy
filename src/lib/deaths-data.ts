@@ -250,7 +250,8 @@ export async function getDeathsData(revalidateSeconds = REVALIDATE_SECONDS): Pro
     }
 
     console.log(`[deaths-data] Loaded ${deaths.length} obituaries from bitcoindeaths.com`);
-    return { deaths: applySourceUrls(applyTranslations(deaths)), source: "live" };
+    const translated = applyTranslations(deaths).filter((d) => d.articleTitle_cs);
+    return { deaths: applySourceUrls(translated), source: "live" };
   } catch (error) {
     console.warn(
       "[deaths-data] Failed to fetch from bitcoindeaths.com, using static fallback:",
@@ -258,6 +259,7 @@ export async function getDeathsData(revalidateSeconds = REVALIDATE_SECONDS): Pro
     );
 
     const staticDeaths = staticDeathsData as DeathEvent[];
-    return { deaths: applySourceUrls(applyTranslations(staticDeaths)), source: "static" };
+    const translatedStatic = applyTranslations(staticDeaths).filter((d) => d.articleTitle_cs);
+    return { deaths: applySourceUrls(translatedStatic), source: "static" };
   }
 }
