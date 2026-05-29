@@ -1,0 +1,57 @@
+name: Auto-překlad obituárií
+
+on:
+  schedule:
+    - cron: "0 6 * * *" # denně 06:00 UTC
+  workflow_dispatch:
+    inputs:
+      override:
+        description: "Obejít threshold guard (velká legitimní dávka)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: translate
+  cancel-in-progress: false
+
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Sync dat z bitcoindeaths.com
+        run: |
+          node scripts/sync-deaths.mjs
+          node scripts/fetch-source-urls.mjs
+
+      - name: Překlad nových článků
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TRANSLATE_OVERRIDE: ${{ inputs.override }}
+        run: node scripts/translate-deaths.mjs
+
+      - name: Commit změn
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- src/data/; then
+            echo "Žádné změny dat, nic k commitu."
+            exit 0
+          fi
+          git add src/data/deaths.json src/data/source-urls.json src/data/translations-cs.json
+          git commit -m "data: auto-překlad nových obituárií"
+          git pull --rebase origin main
+          git push
