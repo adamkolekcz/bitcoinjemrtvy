@@ -4,7 +4,6 @@
   "private": true,
   "packageManager": "pnpm@11.4.0",
   "scripts": {
-    "prebuild": "node scripts/sync-deaths.mjs && node scripts/fetch-source-urls.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
