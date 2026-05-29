@@ -249,7 +249,9 @@ export async function getDeathsData(revalidateSeconds = REVALIDATE_SECONDS): Pro
       throw new Error("Invalid data structure");
     }
 
-    console.log(`[deaths-data] Loaded ${deaths.length} obituaries from bitcoindeaths.com`);
+    if (process.env.NODE_ENV !== "development") {
+      console.log(`[deaths-data] Loaded ${deaths.length} obituaries from bitcoindeaths.com`);
+    }
     const translated = applyTranslations(deaths).filter((d) => d.articleTitle_cs);
     return { deaths: applySourceUrls(translated), source: "live" };
   } catch (error) {
