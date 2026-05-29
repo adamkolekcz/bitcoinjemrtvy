@@ -27,3 +27,19 @@ export function translationKey(death) {
   const year = date.getFullYear();
   return `${day}-${month}-${year}-${slugifyTitle(death.articleTitle)}`;
 }
+
+export function isFieldSane(source, translated) {
+  if (typeof translated !== "string") return false;
+  const t = translated.trim();
+  if (t.length === 0) return false;
+  const ratio = t.length / source.length;
+  if (ratio < 0.3 || ratio > 4) return false;
+  return true;
+}
+
+// Atomická validace: titulek vždy, citát jen pokud v originále existuje.
+export function isTranslationSane(death, result) {
+  if (!isFieldSane(death.articleTitle, result.articleTitle)) return false;
+  if (death.quote && !isFieldSane(death.quote, result.quote)) return false;
+  return true;
+}
