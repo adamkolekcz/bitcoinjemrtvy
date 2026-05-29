@@ -213,8 +213,8 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
   }, [filteredChartData]);
 
   // Calculate nice Y-axis ticks and domain min for linear scale
-  const { yTicksLinear, yDomainMinLinear } = useMemo(() => {
-    if (filteredChartData.length === 0) return { yTicksLinear: [], yDomainMinLinear: 0 };
+  const { yTicksLinear, yDomainMinLinear, yDomainMaxLinear } = useMemo(() => {
+    if (filteredChartData.length === 0) return { yTicksLinear: [], yDomainMinLinear: 0, yDomainMaxLinear: 0 };
 
     const minPrice = Math.min(...filteredChartData.map(d => d.price));
     const maxPrice = Math.max(...filteredChartData.map(d => d.price));
@@ -245,7 +245,7 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
       ticks.push(czk / usdToCzk);
     }
 
-    return { yTicksLinear: ticks, yDomainMinLinear: domainMinCzk / usdToCzk };
+    return { yTicksLinear: ticks, yDomainMinLinear: domainMinCzk / usdToCzk, yDomainMaxLinear: domainMaxCzk / usdToCzk };
   }, [filteredChartData, usdToCzk]);
 
   // Calculate nice Y-axis ticks for logarithmic scale
@@ -391,7 +391,7 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
           <defs>
             <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="var(--bitcoin-orange)" stopOpacity={0.3} />
-              <stop offset="100%" stopColor="var(--bitcoin-orange)" stopOpacity={0.02} />
+              <stop offset="100%" stopColor="var(--bitcoin-orange)" stopOpacity={0.1} />
             </linearGradient>
           </defs>
 
@@ -409,7 +409,7 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
           <YAxis
             dataKey="price"
             scale={scale}
-            domain={scale === "log" ? [yDomainMinLog, "auto"] : [yDomainMinLinear, "auto"]}
+            domain={scale === "log" ? [yDomainMinLog, "auto"] : [yDomainMinLinear, yDomainMaxLinear]}
             ticks={scale === "linear" ? yTicksLinear : yTicksLog}
             tickFormatter={formatYTick}
             stroke="#404040"
