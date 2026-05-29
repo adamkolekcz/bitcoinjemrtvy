@@ -18,7 +18,7 @@ Data (`deaths.json`, `source-urls.json`, `translations-cs.json`) udržuje **denn
 
 Build skripty (`sharp`, `unrs-resolver`) jsou whitelistnuté v `pnpm-workspace.yaml` (`allowBuilds`). Tamtéž je `overrides` na `postcss` (bezpečnostní patch).
 
-Žádná testovací sada neexistuje.
+Testy: `pnpm test` (`node:test`) pokrývají čisté funkce v `scripts/lib/translate-core.mjs`. Jiná testovací sada není.
 
 ## Architektura
 

@@ -98,8 +98,12 @@ const TOOL = {
   },
 };
 
-async function translateBatch(client, missing) {
-  const payload = missing.map((d) => ({
+// Po dávkách (kvůli override s velkým importem — jedno volání by mohlo
+// narazit na max_tokens a vrátit oříznutý/neúplný výstup).
+const CHUNK_SIZE = 12;
+
+async function translateChunk(client, chunk) {
+  const payload = chunk.map((d) => ({
     key: translationKey(d),
     articleTitle: d.articleTitle,
     ...(d.quote ? { quote: d.quote } : {}),
@@ -121,9 +125,24 @@ async function translateBatch(client, missing) {
     ],
   });
 
+  if (res.stop_reason === "max_tokens") {
+    console.warn(
+      "[translate] VAROVÁNÍ: odpověď oříznuta na max_tokens — některé překlady v této dávce mohou chybět (zkusí se příště)."
+    );
+  }
+
   const toolUse = res.content.find((b) => b.type === "tool_use");
   if (!toolUse) throw new Error("[translate] Model nevrátil tool_use blok.");
-  return toolUse.input.translations ?? [];
+  return toolUse.input?.translations ?? [];
+}
+
+async function translateBatch(client, missing) {
+  const all = [];
+  for (let i = 0; i < missing.length; i += CHUNK_SIZE) {
+    const chunk = missing.slice(i, i + CHUNK_SIZE);
+    all.push(...(await translateChunk(client, chunk)));
+  }
+  return all;
 }
 
 async function main() {
