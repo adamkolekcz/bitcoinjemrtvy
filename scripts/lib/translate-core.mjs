@@ -43,3 +43,15 @@ export function isTranslationSane(death, result) {
   if (death.quote && !isFieldSane(death.quote, result.quote)) return false;
   return true;
 }
+
+export function findMissing(deaths, translations) {
+  return deaths.filter((d) => !translations[translationKey(d)]);
+}
+
+export function mergeTranslations(existing, additions) {
+  const merged = { ...existing };
+  for (const [key, value] of Object.entries(additions)) {
+    if (!(key in merged)) merged[key] = value; // nikdy nepřepisuje
+  }
+  return merged;
+}

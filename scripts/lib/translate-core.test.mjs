@@ -56,3 +56,24 @@ test("isTranslationSane: článek s citátem vyžaduje oba (atomicky)", () => {
     false // citát selhal → celý článek nevalidní
   );
 });
+
+import { findMissing, mergeTranslations } from "./translate-core.mjs";
+
+test("findMissing vrátí death objekty, jejichž klíč není v překladech", () => {
+  const deaths = [
+    { date: "2/24/2026", articleTitle: "$BTC is done. Cooked. Toast. El Finito." },
+    { date: "1/1/2020", articleTitle: "Brand new article" },
+  ];
+  const translations = { "24-02-2026-btc-is-done-cooked-toast-el-finito": { articleTitle: "..." } };
+  const missing = findMissing(deaths, translations);
+  assert.equal(missing.length, 1);
+  assert.equal(missing[0].articleTitle, "Brand new article");
+});
+
+test("mergeTranslations nikdy nepřepíše existující klíč", () => {
+  const existing = { a: { articleTitle: "PŮVODNÍ" } };
+  const additions = { a: { articleTitle: "NOVÝ" }, b: { articleTitle: "B" } };
+  const merged = mergeTranslations(existing, additions);
+  assert.equal(merged.a.articleTitle, "PŮVODNÍ"); // ruční překlad chráněn
+  assert.equal(merged.b.articleTitle, "B");
+});
