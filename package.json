@@ -8,7 +8,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node --test"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
@@ -18,6 +19,7 @@
     "recharts": "^3.8.1"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "^0.99.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
