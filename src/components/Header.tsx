@@ -34,7 +34,7 @@ export function Header({ deathCount }: HeaderProps) {
           )}
         </div>
         <p className="mt-1.5 text-xs text-neutral-300 sm:hidden">
-          Sledujeme každé prohlášení o&nbsp;úmrtí Bitcoinu již od&nbsp;roku 2010
+          Sledujeme, jak Bitcoin umírá, už od&nbsp;roku 2010
         </p>
 
         {/* Desktop: full layout */}
@@ -49,7 +49,7 @@ export function Header({ deathCount }: HeaderProps) {
               </h1>
             </Link>
             <p className="mt-1 text-sm text-neutral-300 whitespace-nowrap">
-              Sledujeme každé prohlášení o&nbsp;úmrtí Bitcoinu již od&nbsp;roku 2010
+              Sledujeme, jak Bitcoin umírá, už od&nbsp;roku 2010
             </p>
           </div>
 
