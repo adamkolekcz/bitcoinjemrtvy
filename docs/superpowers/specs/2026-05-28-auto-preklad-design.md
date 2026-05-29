@@ -100,7 +100,8 @@ Vstup: `src/data/deaths.json`, `src/data/translations-cs.json`.
   `override` (předá se do translate-deaths jako obejití threshold guardu — viz komponenta 1).
 - **Ne** `on: push` (jinak by commit z Action zacyklil běh).
 - `permissions: contents: write`; `concurrency` group (zamezí překryvu běhů).
-- Kroky: `actions/checkout`, `setup-node` (Node 22 LTS), `npm ci`,
+- Kroky: `actions/checkout`, `pnpm/action-setup` (verze z `packageManager` field),
+  `actions/setup-node` (Node 22, `cache: pnpm`), `pnpm install --frozen-lockfile`,
   `node scripts/sync-deaths.mjs`, `node scripts/fetch-source-urls.mjs`,
   `node scripts/translate-deaths.mjs` (s `ANTHROPIC_API_KEY` ze secrets),
   pak commit změněných JSON jen pokud `git diff` není prázdný.
