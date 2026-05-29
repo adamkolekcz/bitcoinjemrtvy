@@ -1,7 +1,5 @@
 import { renderOgImage } from "@/lib/og-image";
 
-export const runtime = "edge";
-
 export const alt = "Bitcoin je mrtvý";
 export const size = {
   width: 1200,
