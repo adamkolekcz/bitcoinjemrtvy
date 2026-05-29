@@ -379,6 +379,10 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
         </div>
       </div>
 
+      <div
+        role="img"
+        aria-label="Graf vývoje ceny Bitcoinu v čase s vyznačenými prohlášeními o jeho smrti. Body grafu jsou interaktivní myší; kompletní textový přehled všech prohlášení najdeš na stránce Prohlášení."
+      >
       <ResponsiveContainer width="100%" height={500}>
         <ComposedChart
           data={filteredChartData}
@@ -437,6 +441,7 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
 
         </ComposedChart>
       </ResponsiveContainer>
+      </div>
 
       <div className="mt-4 hidden sm:flex flex-wrap items-center justify-center gap-6 px-4 text-xs text-neutral-300 sm:px-0">
         <div className="flex items-center gap-2">
