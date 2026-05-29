@@ -249,8 +249,8 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
   }, [filteredChartData, usdToCzk]);
 
   // Calculate nice Y-axis ticks for logarithmic scale
-  const yTicksLog = useMemo(() => {
-    if (filteredChartData.length === 0) return [];
+  const { yTicksLog, yDomainMinLog } = useMemo(() => {
+    if (filteredChartData.length === 0) return { yTicksLog: [], yDomainMinLog: 1 };
 
     const minPrice = Math.min(...filteredChartData.filter(d => d.price > 0).map(d => d.price));
     const maxPrice = Math.max(...filteredChartData.map(d => d.price));
@@ -277,7 +277,7 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
       ticks = ticks.filter((_, i) => i % 2 === 0);
     }
 
-    return ticks;
+    return { yTicksLog: ticks, yDomainMinLog: minPrice * 0.9 };
   }, [filteredChartData, usdToCzk]);
 
   // Calculate X-axis ticks based on selected period
@@ -409,7 +409,7 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
           <YAxis
             dataKey="price"
             scale={scale}
-            domain={scale === "log" ? ["auto", "auto"] : [yDomainMinLinear, "auto"]}
+            domain={scale === "log" ? [yDomainMinLog, "auto"] : [yDomainMinLinear, "auto"]}
             ticks={scale === "linear" ? yTicksLinear : yTicksLog}
             tickFormatter={formatYTick}
             stroke="#404040"
@@ -431,7 +431,7 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
             fill="url(#priceGradient)"
             dot={false}
             activeDot={false}
-            baseValue={scale === "linear" ? yDomainMinLinear : 0}
+            baseValue={scale === "linear" ? yDomainMinLinear : yDomainMinLog}
           />
 
           <Scatter
