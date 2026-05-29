@@ -31,6 +31,14 @@ body {
   outline-offset: 2px;
 }
 
+/* Tailwind 4 Preflight už nedává pointer na <button> — vrátíme ho. */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

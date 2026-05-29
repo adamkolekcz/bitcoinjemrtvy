@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
 import redirectsData from "./src/data/redirects.json";
 
+const isDev = process.env.NODE_ENV === "development";
+// React v dev módu potřebuje eval() pro HMR/debugging — v produkci nikdy.
+const scriptSrc = `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://va.vercel-scripts.com`;
+const contentSecurityPolicy = `default-src 'self'; ${scriptSrc}; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://va.vercel-scripts.com; frame-ancestors 'none'; form-action 'self'; base-uri 'self'; object-src 'none';`;
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
@@ -25,7 +30,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Content-Security-Policy",
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://va.vercel-scripts.com; frame-ancestors 'none'; form-action 'self'; base-uri 'self'; object-src 'none';",
+            value: contentSecurityPolicy,
           },
         ],
       },
