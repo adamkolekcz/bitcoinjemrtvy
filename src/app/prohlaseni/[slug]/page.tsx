@@ -102,7 +102,7 @@ export default async function DeathDetailPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-[var(--background)]">
-      <Header deathCount={deaths.length} btcPriceCzk={btcPriceCzk ?? undefined} />
+      <Header deathCount={deaths.length} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}

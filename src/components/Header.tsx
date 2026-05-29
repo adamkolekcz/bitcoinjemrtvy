@@ -2,10 +2,9 @@ import Link from "next/link";
 
 interface HeaderProps {
   deathCount?: number;
-  btcPriceCzk?: number;
 }
 
-export function Header({ deathCount, btcPriceCzk }: HeaderProps) {
+export function Header({ deathCount }: HeaderProps) {
   return (
     <header className="border-b border-[var(--card-border)] bg-[var(--card-bg)]">
       <div className="mx-auto max-w-7xl px-4 py-4 sm:py-6 sm:px-6 lg:px-8">

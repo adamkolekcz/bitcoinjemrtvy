@@ -49,6 +49,9 @@ export function BitcoinAgeCounter() {
   const [diff, setDiff] = useState<TimeDiff | null>(null);
 
   useEffect(() => {
+    // Čas se počítá jen na klientu (jinak hydration mismatch). Jednorázová inicializace
+    // při mountu, ne cascading render — proto je synchronní setState tady v pořádku.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDiff(calculateDiff());
     const id = setInterval(() => setDiff(calculateDiff()), 1000);
     return () => clearInterval(id);

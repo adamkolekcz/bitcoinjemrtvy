@@ -66,6 +66,7 @@ export default function GlobalError({ reset }: { error: Error; reset: () => void
             >
               Zkusit znovu
             </button>
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- global-error nahrazuje root layout, next/link tu nefunguje; potřebujeme plný reload */}
             <a
               href="/"
               style={{

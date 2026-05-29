@@ -98,9 +98,6 @@ function buildYearTicks(): number[] {
 }
 const YEAR_TICKS = buildYearTicks();
 
-// Čer = Červen (June), Čec = Červenec (July) — distinct enough to avoid confusion
-const MONTH_NAMES = ["Led", "Úno", "Bře", "Dub", "Kvě", "Čer", "Čec", "Srp", "Zář", "Říj", "Lis", "Pro"];
-
 function makeFormatXTick(period: Period) {
   return function(timestamp: number): string {
     const date = new Date(timestamp);

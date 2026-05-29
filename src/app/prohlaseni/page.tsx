@@ -25,11 +25,10 @@ export default async function PostsPage() {
     getDeathsData(),
     getBtcCoinGeckoData(3600, false),
   ]);
-  const btcPriceCzk = coinGeckoData.priceCzk;
 
   return (
     <div className="min-h-screen bg-[var(--background)]">
-      <Header deathCount={deaths.length} btcPriceCzk={btcPriceCzk ?? undefined} />
+      <Header deathCount={deaths.length} />
 
       <main>
         <Timeline deaths={deaths} usdToCzk={coinGeckoData.usdToCzk} />

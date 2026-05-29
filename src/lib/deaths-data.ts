@@ -162,7 +162,7 @@ export async function getBtcCoinGeckoData(
 
     const priceCzk = priceUsd * usdToCzk;
     const marketCapCzk = includeMarketCap ? await fetchMarketCap() : null;
-    console.log(`[btc] Kraken: ${fmt(priceCzk)} Kč | USD/CZK: ${usdToCzk.toFixed(3)} | marketCap: ${marketCapCzk ? "OK" : "N/A"}`);
+    logInfo(`[btc] Kraken: ${fmt(priceCzk)} Kč | USD/CZK: ${usdToCzk.toFixed(3)} | marketCap: ${marketCapCzk ? "OK" : "N/A"}`);
     return { priceCzk, marketCapCzk, usdToCzk };
 
   } catch (e1) {
@@ -184,7 +184,7 @@ export async function getBtcCoinGeckoData(
 
     const priceCzk = priceUsd * usdToCzk;
     const marketCapCzk = includeMarketCap ? await fetchMarketCap() : null;
-    console.log(`[btc] Coinbase: ${fmt(priceCzk)} Kč | USD/CZK: ${usdToCzk.toFixed(3)} | marketCap: ${marketCapCzk ? "OK" : "N/A"}`);
+    logInfo(`[btc] Coinbase: ${fmt(priceCzk)} Kč | USD/CZK: ${usdToCzk.toFixed(3)} | marketCap: ${marketCapCzk ? "OK" : "N/A"}`);
     return { priceCzk, marketCapCzk, usdToCzk };
 
   } catch (e2) {
@@ -207,7 +207,7 @@ export async function getBtcCoinGeckoData(
         ? priceCzk / priceUsdCg
         : FALLBACK_USD_TO_CZK;
 
-    console.log(`[btc] CoinGecko záloha: ${priceCzk?.toLocaleString("cs-CZ")} Kč`);
+    logInfo(`[btc] CoinGecko záloha: ${priceCzk?.toLocaleString("cs-CZ")} Kč`);
     return { priceCzk, marketCapCzk, usdToCzk };
 
   } catch (e3) {
@@ -230,6 +230,8 @@ export async function getBtcCoinGeckoData(
 
 function fmt(n: number) { return Math.round(n).toLocaleString("cs-CZ"); }
 function msg(e: unknown) { return e instanceof Error ? e.message : String(e); }
+// Info logy potlačíme v dev (šum při každém načtení), v produkci se logují (monitoring zdrojů dat/cen).
+function logInfo(message: string) { if (process.env.NODE_ENV !== "development") console.log(message); }
 
 export async function getDeathsData(revalidateSeconds = REVALIDATE_SECONDS): Promise<DeathsDataResult> {
   try {
@@ -249,9 +251,7 @@ export async function getDeathsData(revalidateSeconds = REVALIDATE_SECONDS): Pro
       throw new Error("Invalid data structure");
     }
 
-    if (process.env.NODE_ENV !== "development") {
-      console.log(`[deaths-data] Loaded ${deaths.length} obituaries from bitcoindeaths.com`);
-    }
+    logInfo(`[deaths-data] Loaded ${deaths.length} obituaries from bitcoindeaths.com`);
     const translated = applyTranslations(deaths).filter((d) => d.articleTitle_cs);
     return { deaths: applySourceUrls(translated), source: "live" };
   } catch (error) {
