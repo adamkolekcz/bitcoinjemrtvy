@@ -34,7 +34,21 @@ bitcoindeaths.com (__NEXT_DATA__ scraping)
 
 Živá data se načítají za runtime přes ISR (`revalidate = 3600` na homepage, `86400` na slug stránkách). Při selhání se použije statický `deaths.json`.
 
-`getDeathsData` odfiltruje záznamy bez českého překladu (`articleTitle_cs`), takže nepřeložené články se na webu (graf, výpis, sitemap i detail) vůbec neobjeví — nevzniká anglický slug. Překlad nových článků obstarává automaticky **denní GitHub Action** (`scripts/translate-deaths.mjs`, Claude API), která doplní `translations-cs.json` a commitne na main.
+`getDeathsData` odfiltruje záznamy bez českého překladu (`articleTitle_cs`), takže nepřeložené články se na webu (graf, výpis, sitemap i detail) vůbec neobjeví — nevzniká anglický slug.
+
+### Automatický překlad nových článků
+
+`scripts/translate-deaths.mjs` (volá ho denní GitHub Action `.github/workflows/translate.yml`) najde záznamy, jejichž `translationKey` chybí v `translations-cs.json`, přeloží titulek + citát přes Claude API (model `claude-sonnet-4-6`, structured tool output) ve stylu stávajících překladů a zapíše je. Čisté funkce jsou v `scripts/lib/translate-core.mjs` (testy `pnpm test`). Klíčové vlastnosti:
+
+- **Nikdy nepřepisuje** existující překlad → ruční úpravy v `translations-cs.json` jsou trvalé.
+- **Atomicky po článku**: když neprojde sanity-check kterékoli pole (titulek/citát), zahodí se celý záznam — žádný polostav „CZ titulek + EN citát".
+- **Threshold guard**: při > 15 chybějících abortuje (ochrana proti driftu klíče a runaway nákladům); legitimní velkou dávku pustíš `workflow_dispatch` vstupem `override`.
+- **Self-test** na startu ověří paritu `translationKey` se zdrojem (zamrzlé páry) — viz „Slugy a překlady".
+- API klíč `ANTHROPIC_API_KEY` je **GitHub secret**, ne ve Vercelu. Spec + plán: `docs/superpowers/`.
+
+### Deploy (Vercel)
+
+Auto-deploy na Vercel proběhne **při každém pushi do `main`** (i workflow-only změny — Vercel nefiltruje cesty), takže každý push = 1 build. Denní Action navíc commitne (→ deploy) **jen když se změní `src/data/`** (gate `git diff --quiet -- src/data/`) — bez nového obsahu nic necommitne ani nedeployuje. Install command na Vercelu je `pnpm install`; build staví z commitnutých dat (prebuild nefetchuje).
 
 ### Ceny BTC a kurz USD/CZK
 
@@ -58,6 +72,7 @@ Tento pattern je nutný kdykoli chceš `next/dynamic` s `ssr: false` — nikdy n
 
 - Slug se generuje z **českého titulu** (`articleTitle_cs ?? articleTitle`), zkráceno na 80 znaků
 - Klíč pro lookup v `translations-cs.json` se generuje z **anglického titulu bez zkrácení** — obě funkce (`generateDeathSlug` a `translationKey`) jsou záměrně oddělené
+- **Pozor na duplikaci:** `scripts/lib/translate-core.mjs` má vlastní kopii `translationKey`, `parseDate` a normalizace slugu (skript je `.mjs`, nemůže importovat TS). Musí zůstat bajt-identická s `translations.ts` / `calculations.ts`. Když měníš logiku klíče/slugu, **uprav obě místa** — drift hlídá self-test v `translate-deaths.mjs` + unit testy, ale aktivně se o synchronizaci postarej.
 
 ### Statická data (`src/data/`)
 
