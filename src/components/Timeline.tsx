@@ -126,7 +126,7 @@ function TimelineCard({ death, usdToCzk }: TimelineCardProps) {
 
   return (
     <Link href={`/prohlaseni/${slug}`} className="block">
-      <article className="group rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-5 transition-all hover:border-[var(--death-red)]/40 hover:shadow-lg hover:shadow-[var(--death-red)]/5 cursor-pointer">
+      <article className="group rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-5 transition-all hover:border-[var(--bitcoin-orange)]/40 hover:shadow-lg hover:shadow-[var(--bitcoin-orange)]/5 cursor-pointer">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <time className="text-sm text-neutral-300">
             {formatCzechDate(death.date)}
@@ -138,7 +138,7 @@ function TimelineCard({ death, usdToCzk }: TimelineCardProps) {
           </div>
         </div>
 
-        <h3 className="mb-1 text-base font-semibold leading-snug text-white group-hover:text-[var(--death-red)] transition-colors">
+        <h3 className="mb-1 text-base font-semibold leading-snug text-white group-hover:text-[var(--bitcoin-orange)] transition-colors">
           {death.articleTitle_cs ?? death.articleTitle}
         </h3>
         {death.articleTitle_cs && (
