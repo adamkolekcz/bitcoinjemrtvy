@@ -382,11 +382,13 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
       <div
         role="img"
         aria-label="Graf vývoje ceny Bitcoinu v čase s vyznačenými prohlášeními o jeho smrti. Body grafu jsou interaktivní myší; kompletní textový přehled všech prohlášení najdeš na stránce Prohlášení."
+        className="select-none"
       >
       <ResponsiveContainer width="100%" height={500}>
         <ComposedChart
           data={filteredChartData}
           margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+          accessibilityLayer={false}
         >
           <defs>
             <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">

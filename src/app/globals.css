@@ -57,8 +57,18 @@ body {
   background: #555;
 }
 
-/* Recharts tooltip override */
+/* Recharts overrides */
 .recharts-tooltip-wrapper {
+  outline: none !important;
+}
+
+/* Suppress focus ring on chart SVG — Recharts adds tabIndex=0 + role="application"
+   on the surface, which triggers :focus-visible on click in Chromium. Chart already
+   has its own role="img" wrapper for a11y. */
+.recharts-surface:focus,
+.recharts-surface:focus-visible,
+.recharts-wrapper:focus,
+.recharts-wrapper:focus-visible {
   outline: none !important;
 }
 
