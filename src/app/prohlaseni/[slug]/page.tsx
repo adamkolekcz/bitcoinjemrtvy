@@ -201,26 +201,26 @@ export default async function DeathDetailPage({ params }: PageProps) {
         </article>
 
         <nav aria-label="Navigace mezi prohlášeními" className="mt-12 flex items-center justify-between gap-4">
-          {prev ? (
-            <Link
-              href={`/prohlaseni/${generateDeathSlug(prev)}`}
-              className="flex items-center gap-2 rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)] px-4 py-3 transition-all hover:border-[var(--bitcoin-orange)]/40 hover:bg-[var(--card-bg)]/80"
-            >
-              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300">
-                <path d="M10 12L6 8L10 4" />
-              </svg>
-              <span className="text-sm font-medium text-white">Novější</span>
-            </Link>
-          ) : (
-            <div />
-          )}
-
           {next ? (
             <Link
               href={`/prohlaseni/${generateDeathSlug(next)}`}
               className="flex items-center gap-2 rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)] px-4 py-3 transition-all hover:border-[var(--bitcoin-orange)]/40 hover:bg-[var(--card-bg)]/80"
             >
+              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300">
+                <path d="M10 12L6 8L10 4" />
+              </svg>
               <span className="text-sm font-medium text-white">Starší</span>
+            </Link>
+          ) : (
+            <div />
+          )}
+
+          {prev ? (
+            <Link
+              href={`/prohlaseni/${generateDeathSlug(prev)}`}
+              className="flex items-center gap-2 rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)] px-4 py-3 transition-all hover:border-[var(--bitcoin-orange)]/40 hover:bg-[var(--card-bg)]/80"
+            >
+              <span className="text-sm font-medium text-white">Novější</span>
               <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300">
                 <path d="M6 12L10 8L6 4" />
               </svg>
