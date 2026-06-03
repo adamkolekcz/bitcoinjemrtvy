@@ -1,10 +1,12 @@
 import Link from "next/link";
+import { getYearsTracking } from "@/lib/calculations";
 
 interface HeaderProps {
   deathCount?: number;
 }
 
 export function Header({ deathCount }: HeaderProps) {
+  const years = getYearsTracking();
   return (
     <header className="border-b border-[var(--card-border)] bg-[var(--card-bg)]">
       <div className="mx-auto max-w-7xl px-4 py-4 sm:py-6 sm:px-6 lg:px-8">
@@ -33,8 +35,8 @@ export function Header({ deathCount }: HeaderProps) {
             </Link>
           )}
         </div>
-        <p className="mt-1.5 text-xs text-neutral-300 sm:hidden">
-          Sledujeme, jak Bitcoin umírá, už od&nbsp;roku 2010
+        <p className="mt-1.5 text-sm text-neutral-300 sm:hidden">
+          Již {years}&nbsp;let sledujeme, jak Bitcoin umírá
         </p>
 
         {/* Desktop: full layout */}
@@ -48,8 +50,8 @@ export function Header({ deathCount }: HeaderProps) {
                 je mrtvý
               </h1>
             </Link>
-            <p className="mt-1 text-sm text-neutral-300 whitespace-nowrap">
-              Sledujeme, jak Bitcoin umírá, už od&nbsp;roku 2010
+            <p className="mt-1 text-base text-neutral-300 whitespace-nowrap">
+              Již {years}&nbsp;let sledujeme, jak Bitcoin umírá
             </p>
           </div>
 

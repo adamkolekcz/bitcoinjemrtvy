@@ -29,6 +29,30 @@ export interface InvestmentResult {
   numberOfDeaths: number;
 }
 
+const FABIA_PRICE_CZK = 419_900;
+
+export function formatFabias(czkValue: number): string {
+  const millions = czkValue / FABIA_PRICE_CZK / 1_000_000;
+  const formatted = millions.toLocaleString("cs-CZ", {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  });
+  return `${formatted} milionu`;
+}
+
+const TRACKING_START = { year: 2010, month: 10, day: 15 };
+
+export function getYearsTracking(now: Date = new Date()): number {
+  let years = now.getFullYear() - TRACKING_START.year;
+  const anniversaryThisYear = new Date(
+    now.getFullYear(),
+    TRACKING_START.month - 1,
+    TRACKING_START.day,
+  );
+  if (now < anniversaryThisYear) years--;
+  return years;
+}
+
 export function parseDate(dateStr: string): Date {
   const [month, day, year] = dateStr.split("/").map(Number);
   return new Date(year, month - 1, day);

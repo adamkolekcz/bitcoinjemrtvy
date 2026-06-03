@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { formatCurrency, type InvestmentResult } from "@/lib/calculations";
+import { formatCurrency, formatFabias, type InvestmentResult } from "@/lib/calculations";
 import { BitcoinAgeCounter } from "@/components/BitcoinAgeCounter";
 
 function formatMarketCapWords(value: number): string {
@@ -149,6 +149,9 @@ export function StatsSection({
             ? `${Math.round(btcMarketCapCzk).toLocaleString("cs-CZ")} Kč`
             : "—"}
           sublabel={btcMarketCapCzk !== null ? formatMarketCapWords(btcMarketCapCzk) : ""}
+          tooltip={btcMarketCapCzk !== null
+            ? `Za to byste si pořídili ${formatFabias(btcMarketCapCzk)} nových Fabií`
+            : undefined}
           green
         />
       </div>
@@ -207,9 +210,10 @@ interface StatCardProps {
   sublabel: string;
   highlight?: boolean;
   green?: boolean;
+  tooltip?: string;
 }
 
-function StatCard({ label, value, sublabel, highlight, green }: StatCardProps) {
+function StatCard({ label, value, sublabel, highlight, green, tooltip }: StatCardProps) {
   const getBorderBg = () => {
     if (green) return "border-green-500/30 bg-green-500/5";
     if (highlight) return "border-[var(--bitcoin-orange)]/30 bg-[var(--bitcoin-orange)]/5";
@@ -223,7 +227,7 @@ function StatCard({ label, value, sublabel, highlight, green }: StatCardProps) {
   };
 
   return (
-    <div className={`rounded-xl border p-5 ${getBorderBg()}`}>
+    <div className={`group relative rounded-xl border p-5 ${getBorderBg()}`}>
       <p className="text-xs font-medium uppercase tracking-wider text-neutral-300">
         {label}
       </p>
@@ -231,6 +235,14 @@ function StatCard({ label, value, sublabel, highlight, green }: StatCardProps) {
         {value}
       </p>
       <p className="mt-1 text-xs text-neutral-400">{sublabel}</p>
+      {tooltip && (
+        <div
+          role="tooltip"
+          className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-3 w-max max-w-[90vw] -translate-x-1/2 rounded-lg border border-[var(--bitcoin-orange)]/30 bg-[var(--card-bg)] px-4 py-2 text-sm text-[var(--bitcoin-orange)] opacity-0 shadow-lg transition-opacity duration-200 group-hover:opacity-100"
+        >
+          {tooltip}
+        </div>
+      )}
     </div>
   );
 }
