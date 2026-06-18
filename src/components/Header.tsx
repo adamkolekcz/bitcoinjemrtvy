@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getYearsTracking } from "@/lib/calculations";
+import { getBitcoinAgeYears } from "@/lib/calculations";
 
 interface HeaderProps {
   deathCount?: number;
@@ -8,7 +8,7 @@ interface HeaderProps {
 }
 
 export function Header({ deathCount, asPageHeading = false }: HeaderProps) {
-  const years = getYearsTracking();
+  const years = getBitcoinAgeYears();
   const Brand = asPageHeading ? "h1" : "span";
   return (
     <header className="border-b border-[var(--card-border)] bg-[var(--card-bg)]">

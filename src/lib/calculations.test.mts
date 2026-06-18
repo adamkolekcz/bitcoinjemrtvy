@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { formatFabias, getYearsTracking } from "./calculations.ts";
+import { formatFabias, getYearsTracking, getBitcoinAgeYears } from "./calculations.ts";
 
 test("den před výročím 2026 = 15 let", () => {
   assert.equal(getYearsTracking(new Date(2026, 9, 14)), 15);
@@ -28,6 +28,30 @@ test("těsně po startu (16.10.2010) = 0 let", () => {
 
 test("první výročí (15.10.2011) = 1 rok", () => {
   assert.equal(getYearsTracking(new Date(2011, 9, 15)), 1);
+});
+
+test("věk BTC: dnes (2026-06-18) = 17 let", () => {
+  assert.equal(getBitcoinAgeYears(new Date(2026, 5, 18)), 17);
+});
+
+test("věk BTC: den před výročím (2026-01-02) = 16 let", () => {
+  assert.equal(getBitcoinAgeYears(new Date(2026, 0, 2)), 16);
+});
+
+test("věk BTC: v den výročí (2026-01-03) = 17 let", () => {
+  assert.equal(getBitcoinAgeYears(new Date(2026, 0, 3)), 17);
+});
+
+test("věk BTC: přechod na 18 (2027-01-03) = 18 let", () => {
+  assert.equal(getBitcoinAgeYears(new Date(2027, 0, 3)), 18);
+});
+
+test("věk BTC: genesis (2009-01-03) = 0 let", () => {
+  assert.equal(getBitcoinAgeYears(new Date(2009, 0, 3)), 0);
+});
+
+test("věk BTC: první výročí (2010-01-03) = 1 rok", () => {
+  assert.equal(getBitcoinAgeYears(new Date(2010, 0, 3)), 1);
 });
 
 test("formatFabias: 27 bilionů CZK → ~64,3 milionu", () => {

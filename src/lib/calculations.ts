@@ -53,6 +53,21 @@ export function getYearsTracking(now: Date = new Date()): number {
   return years;
 }
 
+// Genesis block (block 0): 2009-01-03. Stejný počátek jako counter
+// "Jak dlouho žije Bitcoin?" (BitcoinAgeCounter) → čísla zůstávají konzistentní.
+const BITCOIN_GENESIS = { year: 2009, month: 1, day: 3 };
+
+export function getBitcoinAgeYears(now: Date = new Date()): number {
+  let years = now.getFullYear() - BITCOIN_GENESIS.year;
+  const anniversaryThisYear = new Date(
+    now.getFullYear(),
+    BITCOIN_GENESIS.month - 1,
+    BITCOIN_GENESIS.day,
+  );
+  if (now < anniversaryThisYear) years--;
+  return years;
+}
+
 export function parseDate(dateStr: string): Date {
   const [month, day, year] = dateStr.split("/").map(Number);
   return new Date(year, month - 1, day);
