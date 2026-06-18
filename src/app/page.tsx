@@ -37,7 +37,7 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-[var(--background)]">
-      <Header deathCount={deaths.length} />
+      <Header deathCount={deaths.length} asPageHeading />
 
       <main>
         <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">

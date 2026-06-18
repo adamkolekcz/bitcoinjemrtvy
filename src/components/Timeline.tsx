@@ -68,6 +68,16 @@ export function Timeline({ deaths, usdToCzk }: TimelineProps) {
 
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
+          Prohlášení o&nbsp;smrti Bitcoinu
+        </h1>
+        <p className="mt-2 text-sm text-neutral-300">
+          Chronologický přehled všech {deaths.length}&nbsp;prohlášení o&nbsp;smrti
+          Bitcoinu od&nbsp;roku&nbsp;2010 do&nbsp;současnosti.
+        </p>
+      </div>
+
       <div className="mb-6 flex items-center justify-end gap-2">
         <span className="text-sm text-neutral-300">Řazení:</span>
         <div className="flex items-center gap-1 rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)] p-1">

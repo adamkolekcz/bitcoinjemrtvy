@@ -11,9 +11,9 @@ export default function NotFound() {
           <span className="text-8xl font-bold text-[var(--bitcoin-orange)]">404</span>
         </div>
 
-        <h2 className="mb-4 text-2xl font-bold text-white sm:text-3xl">
+        <h1 className="mb-4 text-2xl font-bold text-white sm:text-3xl">
           Tato stránka je mrtvá
-        </h2>
+        </h1>
 
         <p className="mb-8 text-neutral-300">
           Na rozdíl od&nbsp;Bitcoinu, tato stránka skutečně neexistuje.

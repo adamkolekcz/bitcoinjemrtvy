@@ -3,22 +3,25 @@ import { getYearsTracking } from "@/lib/calculations";
 
 interface HeaderProps {
   deathCount?: number;
+  /** Když je logo primárním nadpisem stránky (homepage), vykreslí se jako <h1>; jinak je to jen branding (<span>). */
+  asPageHeading?: boolean;
 }
 
-export function Header({ deathCount }: HeaderProps) {
+export function Header({ deathCount, asPageHeading = false }: HeaderProps) {
   const years = getYearsTracking();
+  const Brand = asPageHeading ? "h1" : "span";
   return (
     <header className="border-b border-[var(--card-border)] bg-[var(--card-bg)]">
       <div className="mx-auto max-w-7xl px-4 py-4 sm:py-6 sm:px-6 lg:px-8">
         {/* Mobile: title + death count on same row */}
         <div className="flex items-center justify-between sm:hidden">
           <Link href="/" tabIndex={-1}>
-            <h1 className="text-2xl font-bold tracking-tight">
+            <Brand className="block text-2xl font-bold tracking-tight">
               <span className="text-[var(--bitcoin-orange)]">
                 Bitcoin
               </span>{" "}
               je mrtvý
-            </h1>
+            </Brand>
           </Link>
 
           {deathCount !== undefined && (
@@ -43,12 +46,12 @@ export function Header({ deathCount }: HeaderProps) {
         <div className="hidden sm:flex sm:items-center sm:justify-between">
           <div>
             <Link href="/" tabIndex={-1}>
-              <h1 className="text-3xl font-bold tracking-tight">
+              <Brand className="block text-3xl font-bold tracking-tight">
                 <span className="text-[var(--bitcoin-orange)]">
                   Bitcoin
                 </span>{" "}
                 je mrtvý
-              </h1>
+              </Brand>
             </Link>
             <p className="mt-1 text-base text-neutral-300 whitespace-nowrap">
               Již {years}&nbsp;let sledujeme, jak Bitcoin umírá

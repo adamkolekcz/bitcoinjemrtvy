@@ -13,9 +13,9 @@ export default function Error({ reset }: { error: Error; reset: () => void }) {
           <span className="text-8xl font-bold text-[var(--bitcoin-orange)]">500</span>
         </div>
 
-        <h2 className="mb-4 text-2xl font-bold text-white sm:text-3xl">
+        <h1 className="mb-4 text-2xl font-bold text-white sm:text-3xl">
           Něco se pokazilo
-        </h2>
+        </h1>
 
         <p className="mb-8 text-neutral-300">
           Bitcoin je v pořádku, ale tato stránka má problém.
