@@ -150,7 +150,7 @@ export function StatsSection({
             : "—"}
           sublabel={btcMarketCapCzk !== null ? formatMarketCapWords(btcMarketCapCzk) : ""}
           footnote={btcMarketCapCzk !== null
-            ? `Za to byste si pořídili ${formatFabias(btcMarketCapCzk)} nových Fabií`
+            ? `Za to byste si pořídili ${formatFabias(btcMarketCapCzk)} nových Fabií.`
             : undefined}
           green
         />
