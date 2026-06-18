@@ -29,17 +29,6 @@ export interface InvestmentResult {
   numberOfDeaths: number;
 }
 
-const FABIA_PRICE_CZK = 419_900;
-
-export function formatFabias(czkValue: number): string {
-  const millions = czkValue / FABIA_PRICE_CZK / 1_000_000;
-  const formatted = millions.toLocaleString("cs-CZ", {
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-  });
-  return `${formatted} milionu`;
-}
-
 const TRACKING_START = { year: 2010, month: 10, day: 15 };
 
 export function getYearsTracking(now: Date = new Date()): number {
