@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   ComposedChart,
@@ -167,7 +167,21 @@ type Period = "all" | "5y" | "3y" | "1y";
 export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk }: BitcoinChartProps) {
   const [scale, setScale] = useState<"log" | "linear">("linear");
   const [period, setPeriod] = useState<Period>("all");
-  const formatYTick = useMemo(() => makeFormatYTick(usdToCzk), [usdToCzk]);
+
+  // Na mobilu zúžíme osu Y a zkrátíme popisky (bez " Kč"), aby graf dostal víc šířky.
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 640px)");
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  const formatYTick = useMemo(() => {
+    const base = makeFormatYTick(usdToCzk);
+    return isMobile ? (value: number) => base(value).replace(" Kč", "") : base;
+  }, [usdToCzk, isMobile]);
   const formatXTick = useMemo(() => makeFormatXTick(period), [period]);
   const router = useRouter();
 
@@ -417,7 +431,7 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
             stroke="#404040"
             tick={{ fill: "#a3a3a3", fontSize: 12 }}
             axisLine={{ stroke: "#262626" }}
-            width={80}
+            width={isMobile ? 44 : 80}
           />
 
           <Tooltip
