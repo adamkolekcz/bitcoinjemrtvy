@@ -13,11 +13,22 @@ export interface DeathEvent {
   sourceUrl?: string;
 }
 
+// Minimální podmnožina DeathEvent, kterou graf reálně vykresluje (tooltip + klik).
+// Posílá se klientovi místo celého DeathEvent → výrazně menší dokument + hydratace.
+export interface ChartDeath {
+  title: string;
+  quote?: string;
+  person: string;
+  jobTitle: string;
+  publicationName: string;
+  slug: string;
+}
+
 export interface ChartDataPoint {
   timestamp: number;
   date: string;
   price: number;
-  death?: DeathEvent;
+  death?: ChartDeath;
   isCurrentPrice?: boolean;
 }
 
@@ -138,11 +149,19 @@ export function prepareChartData(deaths: DeathEvent[]): ChartDataPoint[] {
     .filter((d) => d.bitcoinPrice > 0)
     .map((death) => {
       const date = parseDate(death.date);
+      const fullQuote = death.quote_cs ?? death.quote;
       return {
         timestamp: date.getTime(),
         date: death.date,
         price: death.bitcoinPrice,
-        death,
+        death: {
+          title: death.articleTitle_cs ?? death.articleTitle,
+          quote: fullQuote && fullQuote.length > 120 ? `${fullQuote.slice(0, 120)}...` : fullQuote,
+          person: death.person,
+          jobTitle: death.jobTitle,
+          publicationName: death.publicationName,
+          slug: generateDeathSlug(death),
+        },
       };
     })
     .sort((a, b) => a.timestamp - b.timestamp);

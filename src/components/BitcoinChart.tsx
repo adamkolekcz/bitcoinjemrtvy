@@ -11,8 +11,8 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import type { ChartDataPoint, DeathEvent } from "@/lib/calculations";
-import { formatCzechDate, generateDeathSlug } from "@/lib/calculations";
+import type { ChartDataPoint, ChartDeath } from "@/lib/calculations";
+import { formatCzechDate } from "@/lib/calculations";
 
 interface BitcoinChartProps {
   data: ChartDataPoint[];
@@ -54,28 +54,22 @@ function CustomTooltip({ active, payload, currentPriceCzk, usdToCzk }: CustomToo
     );
   }
 
-  // Truncate quote for mobile display (preferuje český překlad)
-  const displayQuote = death.quote_cs ?? death.quote;
-  const truncatedQuote = displayQuote && displayQuote.length > 120
-    ? displayQuote.slice(0, 120) + "..."
-    : displayQuote;
-
   return (
     <div className="max-w-[260px] sm:max-w-xs rounded-lg border border-[var(--card-border)] bg-[#1a1a1a] p-2 sm:p-3 shadow-xl">
       <div className="mb-2 flex items-center justify-between gap-2 sm:gap-4">
         <span className="text-xs text-neutral-300 whitespace-nowrap">
-          {formatCzechDate(death.date)}
+          {formatCzechDate(point.date)}
         </span>
         <span className="text-xs sm:text-sm font-bold text-[var(--bitcoin-orange)] whitespace-nowrap">
-          {(death.bitcoinPrice * usdToCzk).toLocaleString("cs-CZ", { maximumFractionDigits: 0 })} Kč
+          {(point.price * usdToCzk).toLocaleString("cs-CZ", { maximumFractionDigits: 0 })} Kč
         </span>
       </div>
       <p className="mb-2 text-xs sm:text-sm font-semibold text-white leading-snug line-clamp-2">
-        {death.articleTitle_cs ?? death.articleTitle}
+        {death.title}
       </p>
-      {truncatedQuote && (
+      {death.quote && (
         <p className="mb-2 border-l-2 border-[var(--death-red)] pl-2 text-xs italic text-neutral-300 line-clamp-3">
-          &ldquo;{truncatedQuote}&rdquo;
+          &ldquo;{death.quote}&rdquo;
         </p>
       )}
       <p className="text-xs text-neutral-300 truncate">
@@ -131,8 +125,8 @@ function makeFormatYTick(usdToCzk: number) {
 interface ChartMarkerProps {
   cx: number;
   cy: number;
-  payload?: { isCurrentPrice?: boolean; death?: DeathEvent };
-  onDeathClick?: (death: DeathEvent) => void;
+  payload?: { isCurrentPrice?: boolean; death?: ChartDeath };
+  onDeathClick?: (slug: string) => void;
 }
 
 // Combined scatter shape - red for death events, green for current price
@@ -153,7 +147,7 @@ function ChartMarker({ cx, cy, payload, onDeathClick }: ChartMarkerProps) {
         r={5}
         fill="var(--death-red)"
         style={{ cursor: "pointer" }}
-        onClick={() => onDeathClick?.(payload.death!)}
+        onClick={() => onDeathClick?.(payload.death!.slug)}
       />
     );
   }
@@ -185,8 +179,8 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
   const formatXTick = useMemo(() => makeFormatXTick(period), [period]);
   const router = useRouter();
 
-  const handleDeathClick = useCallback((death: DeathEvent) => {
-    router.push(`/prohlaseni/${generateDeathSlug(death)}`);
+  const handleDeathClick = useCallback((slug: string) => {
+    router.push(`/prohlaseni/${slug}`);
   }, [router]);
 
   // Merge data with current price point
@@ -447,11 +441,13 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
             fill="url(#priceGradient)"
             dot={false}
             activeDot={false}
+            isAnimationActive={false}
             baseValue={scale === "linear" ? yDomainMinLinear : yDomainMinLog}
           />
 
           <Scatter
             dataKey="price"
+            isAnimationActive={false}
             shape={(props) => <ChartMarker {...(props as unknown as ChartMarkerProps)} onDeathClick={handleDeathClick} />}
           />
 
