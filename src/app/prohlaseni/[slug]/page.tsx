@@ -128,7 +128,7 @@ export default async function DeathDetailPage({ params }: PageProps) {
             {death.articleTitle_cs ?? death.articleTitle}
           </h1>
           {death.articleTitle_cs && (
-            <p className="mb-6 text-sm text-neutral-500 italic">{death.articleTitle}</p>
+            <p className="mb-6 text-sm text-neutral-400 italic">{death.articleTitle}</p>
           )}
           {!death.articleTitle_cs && <div className="mb-6" />}
 
@@ -138,7 +138,7 @@ export default async function DeathDetailPage({ params }: PageProps) {
                 &ldquo;{death.quote_cs ?? death.quote}&rdquo;
               </p>
               {death.quote_cs && (
-                <p className="mt-3 text-sm italic text-neutral-500">
+                <p className="mt-3 text-sm italic text-neutral-400">
                   &ldquo;{death.quote}&rdquo;
                 </p>
               )}
@@ -186,13 +186,13 @@ export default async function DeathDetailPage({ params }: PageProps) {
               </div>
               <div>
                 <p className="text-xs text-neutral-400">Aktuální cena</p>
-                <p className={`mt-1 text-lg font-bold ${priceChange >= 0 ? "text-green-500" : "text-red-500"}`}>
+                <p className={`mt-1 text-lg font-bold ${priceChange >= 0 ? "text-green-500" : "text-[var(--death-red)]"}`}>
                   {currentPriceCzk.toLocaleString("cs-CZ", { maximumFractionDigits: 0 })} Kč
                 </p>
               </div>
               <div>
                 <p className="text-xs text-neutral-400">Změna</p>
-                <p className={`mt-1 text-lg font-bold ${priceChange >= 0 ? "text-green-500" : "text-red-500"}`}>
+                <p className={`mt-1 text-lg font-bold ${priceChange >= 0 ? "text-green-500" : "text-[var(--death-red)]"}`}>
                   {priceChange >= 0 ? "+" : ""}{priceChange.toLocaleString("cs-CZ", { maximumFractionDigits: 0 })} %
                 </p>
               </div>

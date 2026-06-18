@@ -152,7 +152,7 @@ function TimelineCard({ death, usdToCzk }: TimelineCardProps) {
           {death.articleTitle_cs ?? death.articleTitle}
         </h3>
         {death.articleTitle_cs && (
-          <p className="mb-2 text-xs text-neutral-500 italic leading-snug">{death.articleTitle}</p>
+          <p className="mb-2 text-xs text-neutral-400 italic leading-snug">{death.articleTitle}</p>
         )}
 
         {death.quote && (
@@ -165,11 +165,11 @@ function TimelineCard({ death, usdToCzk }: TimelineCardProps) {
           <span className="font-medium text-neutral-300">{death.person}</span>
           {death.jobTitle && (
             <>
-              <span className="text-neutral-500">•</span>
+              <span className="text-neutral-400">•</span>
               <span>{death.jobTitle}</span>
             </>
           )}
-          <span className="text-neutral-500">•</span>
+          <span className="text-neutral-400">•</span>
           <span className="text-neutral-300">{death.publicationName}</span>
         </div>
       </article>

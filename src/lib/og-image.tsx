@@ -45,8 +45,8 @@ export async function renderOgImage() {
         >
           <defs>
             <linearGradient id="redGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#EF4444" stopOpacity="0.6" />
-              <stop offset="100%" stopColor="#EF4444" stopOpacity="0" />
+              <stop offset="0%" stopColor="#FF4D4D" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="#FF4D4D" stopOpacity="0" />
             </linearGradient>
           </defs>
           <path
@@ -56,7 +56,7 @@ export async function renderOgImage() {
           <path
             d="M0,50 L50,60 L100,55 L150,80 L200,120 L250,100 L300,150 L350,180 L400,160 L450,200 L500,250 L550,220 L600,280 L650,300 L700,290 L750,340 L800,380 L850,360 L900,400 L950,420 L1000,440 L1050,450 L1100,470 L1150,480 L1200,500"
             fill="none"
-            stroke="#EF4444"
+            stroke="#FF4D4D"
             strokeWidth="3"
           />
         </svg>
