@@ -66,6 +66,10 @@ export function BitcoinAgeCounter() {
         {diff ? formatAge(diff) : "—"}
       </p>
       <p className="mt-1 text-xs text-neutral-400">Od 3. ledna 2009</p>
+      <p className="mt-3 border-t border-[var(--card-border)] pt-3 text-sm font-medium text-[var(--bitcoin-orange)]">
+        V den jeho narození řešily noviny sanaci bank — Satoshi ten titulek
+        vepsal do úplně prvního bloku.
+      </p>
     </div>
   );
 }
