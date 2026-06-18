@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { formatCurrency, formatFabias, type InvestmentResult } from "@/lib/calculations";
+import { formatCurrency, type InvestmentResult } from "@/lib/calculations";
 import { BitcoinAgeCounter } from "@/components/BitcoinAgeCounter";
 
 function formatMarketCapWords(value: number): string {
@@ -149,9 +149,6 @@ export function StatsSection({
             ? `${Math.round(btcMarketCapCzk).toLocaleString("cs-CZ")} Kč`
             : "—"}
           sublabel={btcMarketCapCzk !== null ? formatMarketCapWords(btcMarketCapCzk) : ""}
-          footnote={btcMarketCapCzk !== null
-            ? `Za to byste si pořídili ${formatFabias(btcMarketCapCzk)} nových Fabií.`
-            : undefined}
           green
         />
       </div>
@@ -210,10 +207,9 @@ interface StatCardProps {
   sublabel: string;
   highlight?: boolean;
   green?: boolean;
-  footnote?: React.ReactNode;
 }
 
-function StatCard({ label, value, sublabel, highlight, green, footnote }: StatCardProps) {
+function StatCard({ label, value, sublabel, highlight, green }: StatCardProps) {
   const getBorderBg = () => {
     if (green) return "border-green-500/30 bg-green-500/5";
     if (highlight) return "border-[var(--bitcoin-orange)]/30 bg-[var(--bitcoin-orange)]/5";
@@ -235,11 +231,6 @@ function StatCard({ label, value, sublabel, highlight, green, footnote }: StatCa
         {value}
       </p>
       <p className="mt-1 text-xs text-neutral-400">{sublabel}</p>
-      {footnote && (
-        <p className="mt-3 border-t border-[var(--card-border)] pt-3 text-sm font-medium text-[var(--bitcoin-orange)]">
-          {footnote}
-        </p>
-      )}
     </div>
   );
 }
