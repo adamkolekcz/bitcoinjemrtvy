@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseDate, slugifyTitle, translationKey } from "./translate-core.mjs";
+import { parseDate, slugifyTitle, translationKey, deathSlug } from "./translate-core.mjs";
 import { isFieldSane, isTranslationSane } from "./translate-core.mjs";
 
 test("parseDate čte M/D/YYYY", () => {
@@ -30,6 +30,35 @@ test("translationKey odpovídá reálným klíčům (drift guard)", () => {
     translationKey({ date: "2/24/2026", articleTitle: "$BTC is done. Cooked. Toast. El Finito." }),
     "24-02-2026-btc-is-done-cooked-toast-el-finito"
   );
+});
+
+test("deathSlug: z českého titulku, bez diakritiky (drift guard vs calculations.ts)", () => {
+  assert.equal(
+    deathSlug({ date: "2/24/2026", articleTitle_cs: "Bitcoin je mrtvý" }),
+    "24-02-2026-bitcoin-je-mrtvy"
+  );
+});
+
+test("deathSlug: fallback na articleTitle bez _cs", () => {
+  assert.equal(
+    deathSlug({ date: "2/24/2026", articleTitle: "$BTC is done. Cooked. Toast. El Finito." }),
+    "24-02-2026-btc-is-done-cooked-toast-el-finito"
+  );
+});
+
+test("deathSlug: ořezává titulkovou část na max 80 znaků, bez koncové pomlčky", () => {
+  const slug = deathSlug({
+    date: "6/16/2026",
+    articleTitle_cs:
+      "Peter Schiff vysvětluje, proč Bitcoin nesměřuje k nule — ale pro většinu investorů to bude jako nula vypadat",
+  });
+  assert.equal(
+    slug,
+    "16-06-2026-peter-schiff-vysvetluje-proc-bitcoin-nesmeruje-k-nule-ale-pro-vetsinu-investoru"
+  );
+  const titlePart = slug.replace(/^\d{2}-\d{2}-\d{4}-/, "");
+  assert.ok(titlePart.length <= 80);
+  assert.ok(!titlePart.endsWith("-"));
 });
 
 test("isFieldSane: prázdné/krátké/dlouhé odmítne, rozumné přijme", () => {

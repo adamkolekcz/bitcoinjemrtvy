@@ -55,3 +55,7 @@ jobs:
           git commit -m "data: auto-překlad nových obituárií"
           git pull --rebase origin main
           git push
+
+      - name: IndexNow ping
+        if: hashFiles('.indexnow-urls.txt') != ''
+        run: node scripts/ping-indexnow.mjs

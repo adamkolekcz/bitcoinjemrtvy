@@ -28,6 +28,18 @@ export function translationKey(death) {
   return `${day}-${month}-${year}-${slugifyTitle(death.articleTitle)}`;
 }
 
+// URL slug detailní stránky — MUSÍ zůstat bajt-identický s generateDeathSlug
+// v src/lib/calculations.ts (z ČESKÉHO titulku, zkráceno na 80 znaků).
+export function deathSlug(death) {
+  const date = parseDate(death.date);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  const title = death.articleTitle_cs ?? death.articleTitle;
+  const titleSlug = slugifyTitle(title).slice(0, 80).replace(/-+$/g, "");
+  return `${day}-${month}-${year}-${titleSlug}`;
+}
+
 export function isFieldSane(source, translated) {
   if (typeof translated !== "string") return false;
   const t = translated.trim();

@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# IndexNow handoff (transient — zapisuje translate-deaths.mjs pro ping krok)
+.indexnow-urls.txt

@@ -18,6 +18,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import {
   MISSING_THRESHOLD,
   translationKey,
+  deathSlug,
   findMissing,
   isTranslationSane,
   mergeTranslations,
@@ -26,6 +27,9 @@ import {
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DEATHS_PATH = resolve(__dirname, "../src/data/deaths.json");
 const TRANSLATIONS_PATH = resolve(__dirname, "../src/data/translations-cs.json");
+// Handoff pro IndexNow: URL nově přeložených stránek (čte scripts/ping-indexnow.mjs).
+const INDEXNOW_URLS_FILE = resolve(__dirname, "../.indexnow-urls.txt");
+const BASE_URL = "https://www.bitcoinjemrtvy.cz";
 const MODEL = "claude-sonnet-4-6"; // ověř přesný ID přes claude-api skill / Context7
 const OVERRIDE = process.env.TRANSLATE_OVERRIDE === "true";
 
@@ -51,6 +55,24 @@ function selfTest() {
       throw new Error(
         `[translate] SELF-TEST SELHAL: "${got}" !== "${expected}". ` +
           `translationKey odběhl od src/lib/translations.ts — oprav scripts/lib/translate-core.mjs.`
+      );
+    }
+  }
+
+  // deathSlug musí zůstat bajt-identický s generateDeathSlug v calculations.ts
+  const slugCases = [
+    [{ date: "2/24/2026", articleTitle_cs: "Bitcoin je mrtvý" }, "24-02-2026-bitcoin-je-mrtvy"],
+    [
+      { date: "2/24/2026", articleTitle: "$BTC is done. Cooked. Toast. El Finito." },
+      "24-02-2026-btc-is-done-cooked-toast-el-finito",
+    ],
+  ];
+  for (const [input, expected] of slugCases) {
+    const got = deathSlug(input);
+    if (got !== expected) {
+      throw new Error(
+        `[translate] SELF-TEST SELHAL (deathSlug): "${got}" !== "${expected}". ` +
+          `deathSlug odběhl od src/lib/calculations.ts — oprav scripts/lib/translate-core.mjs.`
       );
     }
   }
@@ -150,6 +172,7 @@ async function main() {
   const client = new Anthropic();
 
   const additions = {};
+  const newUrls = [];
   let skipped = 0;
   for (const death of missing) {
     const key = translationKey(death);
@@ -163,6 +186,9 @@ async function main() {
       articleTitle: result.articleTitle,
       ...(death.quote ? { quote: result.quote } : {}),
     };
+    // URL detailní stránky (slug z českého titulku, který právě vznikl)
+    const slug = deathSlug({ ...death, articleTitle_cs: result.articleTitle });
+    newUrls.push(`${BASE_URL}/prohlaseni/${slug}`);
   }
 
   if (Object.keys(additions).length === 0) {
@@ -175,6 +201,11 @@ async function main() {
   console.log(
     `[translate] Zapsáno ${Object.keys(additions).length} překladů (${skipped} přeskočeno).`
   );
+
+  // Handoff pro IndexNow: nové detailní stránky + homepage a výpis (mění se počtem).
+  const indexNowUrls = [BASE_URL, `${BASE_URL}/prohlaseni`, ...newUrls];
+  writeFileSync(INDEXNOW_URLS_FILE, indexNowUrls.join("\n") + "\n");
+  console.log(`[translate] Zapsáno ${indexNowUrls.length} URL pro IndexNow ping.`);
 }
 
 main().catch((e) => {
