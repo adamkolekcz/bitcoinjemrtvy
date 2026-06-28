@@ -25,7 +25,7 @@ Testy: `pnpm test` (`node:test`) pokrývají čisté funkce v `scripts/lib/trans
 ### Datový tok
 
 ```
-bitcoindeaths.com (__NEXT_DATA__ scraping)
+bitcoindeaths.com/posts (__NEXT_DATA__ → pageProps.posts; homepage `chartData` přišla o quote+jobTitle, proto čteme /posts)
   → src/data/deaths.json (statický fallback)
   → src/lib/deaths-data.ts (getDeathsData) — odfiltruje nepřeložené (bez articleTitle_cs)
   → src/lib/translations.ts (applyTranslations z translations-cs.json)
@@ -78,8 +78,7 @@ Tento pattern je nutný kdykoli chceš `next/dynamic` s `ssr: false` — nikdy n
 
 | Soubor | Obsah | Aktualizace |
 |--------|-------|-------------|
-| `deaths.json` | Bitcoin obituaries (z bitcoindeaths.com) | `sync-deaths.mjs` (denní GitHub Action) |
-| `article-details.json` | `quote` + `jobTitle` indexované slugem (bitcoindeaths.com je ~2026-06 odstranil ze zdroje). Doplňuje se do live dat v `getDeathsData` (`applyArticleDetails`); historie ze snapshotu 23. 4., novější záznamy ručně z původních článků (jejich CZ citát pak i v `translations-cs.json`). | ruční |
+| `deaths.json` | Bitcoin obituaries (z `bitcoindeaths.com/posts`) | `sync-deaths.mjs` (denní GitHub Action) |
 | `translations-cs.json` | České překlady titulků a citátů | auto: `translate-deaths.mjs` (denní Action, Claude API); ruční úpravy chráněné (skript nepřepisuje) |
 | `source-urls.json` | URL zdrojových článků indexované slugem | `fetch-source-urls.mjs` (denní Action) |
 | `redirects.json` | 301 přesměrování (české → anglické slugy) | ruční |

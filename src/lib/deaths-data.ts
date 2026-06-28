@@ -1,7 +1,6 @@
 import type { DeathEvent } from "./calculations";
 import staticDeathsData from "@/data/deaths.json";
 import sourceUrlsData from "@/data/source-urls.json";
-import articleDetailsData from "@/data/article-details.json";
 import { applyTranslations } from "./translations";
 
 const sourceUrls = sourceUrlsData as Record<string, string>;
@@ -14,27 +13,8 @@ function applySourceUrls(deaths: DeathEvent[]): DeathEvent[] {
   });
 }
 
-// bitcoindeaths.com odstranil ze svých dat pole `quote` a `jobTitle` (~červen 2026).
-// Doplníme je z trvalého snapshotu (src/data/article-details.json, klíč = slug)
-// pro historické záznamy. Jen když v živých datech chybí — kdyby je zdroj vrátil,
-// má přednost živá hodnota.
-const articleDetails = articleDetailsData as Record<
-  string,
-  { quote?: string; jobTitle?: string }
->;
-
-function applyArticleDetails(deaths: DeathEvent[]): DeathEvent[] {
-  return deaths.map((death) => {
-    const d = articleDetails[death.slug];
-    if (!d) return death;
-    const patch: Partial<DeathEvent> = {};
-    if (!death.quote && d.quote) patch.quote = d.quote;
-    if (!death.jobTitle && d.jobTitle) patch.jobTitle = d.jobTitle;
-    return Object.keys(patch).length ? { ...death, ...patch } : death;
-  });
-}
-
-const BITCOINDEATHS_URL = "https://bitcoindeaths.com";
+// /posts má kompletní data (quote + jobTitle); homepage `chartData` o ně přišla.
+const BITCOINDEATHS_URL = "https://bitcoindeaths.com/posts";
 const REVALIDATE_SECONDS = 3600; // 1 hodina
 
 interface DeathsDataResult {
@@ -43,10 +23,12 @@ interface DeathsDataResult {
 }
 
 /**
- * Extrahuje chartData JSON z HTML stránky bitcoindeaths.com
- * Data jsou uložena v Next.js __NEXT_DATA__ scriptu jako JSON
+ * Extrahuje posts JSON z HTML stránky bitcoindeaths.com/posts
+ * Data jsou uložena v Next.js __NEXT_DATA__ scriptu jako JSON.
+ * Pozn.: /posts má kompletní záznamy (quote + jobTitle), na rozdíl od
+ * homepage `chartData`, ze které bitcoindeaths.com tato pole odstranil.
  */
-function parseChartDataFromHtml(html: string): DeathEvent[] | null {
+function parsePostsFromHtml(html: string): DeathEvent[] | null {
   // Hledáme __NEXT_DATA__ script tag
   const nextDataMatch = html.match(
     /<script\s+id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/
@@ -60,19 +42,19 @@ function parseChartDataFromHtml(html: string): DeathEvent[] | null {
     const nextData = JSON.parse(nextDataMatch[1]) as {
       props?: {
         pageProps?: {
-          chartData?: DeathEvent[];
+          posts?: DeathEvent[];
         };
       };
     };
 
-    const chartData = nextData?.props?.pageProps?.chartData;
+    const posts = nextData?.props?.pageProps?.posts;
 
-    if (!chartData || !Array.isArray(chartData)) {
+    if (!posts || !Array.isArray(posts)) {
       return null;
     }
 
     // Data jsou již ve správném formátu (camelCase)
-    return chartData;
+    return posts;
   } catch {
     return null;
   }
@@ -266,14 +248,14 @@ export async function getDeathsData(revalidateSeconds = REVALIDATE_SECONDS): Pro
     }
 
     const html = await response.text();
-    const deaths = parseChartDataFromHtml(html);
+    const deaths = parsePostsFromHtml(html);
 
     if (!deaths || !validateDeathsData(deaths)) {
       throw new Error("Invalid data structure");
     }
 
     logInfo(`[deaths-data] Loaded ${deaths.length} obituaries from bitcoindeaths.com`);
-    const translated = applyTranslations(applyArticleDetails(deaths)).filter((d) => d.articleTitle_cs);
+    const translated = applyTranslations(deaths).filter((d) => d.articleTitle_cs);
     return { deaths: applySourceUrls(translated), source: "live" };
   } catch (error) {
     console.warn(
@@ -282,7 +264,7 @@ export async function getDeathsData(revalidateSeconds = REVALIDATE_SECONDS): Pro
     );
 
     const staticDeaths = staticDeathsData as DeathEvent[];
-    const translatedStatic = applyTranslations(applyArticleDetails(staticDeaths)).filter((d) => d.articleTitle_cs);
+    const translatedStatic = applyTranslations(staticDeaths).filter((d) => d.articleTitle_cs);
     return { deaths: applySourceUrls(translatedStatic), source: "static" };
   }
 }

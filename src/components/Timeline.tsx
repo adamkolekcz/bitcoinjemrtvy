@@ -157,7 +157,11 @@ function TimelineCard({ death, usdToCzk }: TimelineCardProps) {
 
         {death.quote && (
           <blockquote className="mb-3 border-l-2 border-[var(--death-red)]/50 pl-3 text-sm italic text-neutral-300">
-            &ldquo;{death.quote_cs ?? death.quote}&rdquo;
+            {death.quote_cs ? (
+              <>&bdquo;{death.quote_cs}&ldquo;</>
+            ) : (
+              <>&ldquo;{death.quote}&rdquo;</>
+            )}
           </blockquote>
         )}
 

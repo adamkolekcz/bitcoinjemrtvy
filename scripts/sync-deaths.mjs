@@ -16,11 +16,12 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DEATHS_JSON_PATH = resolve(__dirname, "../src/data/deaths.json");
-const BITCOINDEATHS_URL = "https://bitcoindeaths.com";
+// /posts má kompletní data (quote + jobTitle); homepage `chartData` o ně přišla.
+const BITCOINDEATHS_URL = "https://bitcoindeaths.com/posts";
 const FETCH_TIMEOUT_MS = 30_000;
 
-/** Extrahuje chartData z HTML stránky (stejná logika jako deaths-data.ts) */
-function parseChartDataFromHtml(html) {
+/** Extrahuje posts z HTML stránky /posts (stejná logika jako deaths-data.ts) */
+function parsePostsFromHtml(html) {
   const nextDataMatch = html.match(
     /<script\s+id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/
   );
@@ -31,13 +32,13 @@ function parseChartDataFromHtml(html) {
 
   try {
     const nextData = JSON.parse(nextDataMatch[1]);
-    const chartData = nextData?.props?.pageProps?.chartData;
+    const posts = nextData?.props?.pageProps?.posts;
 
-    if (!chartData || !Array.isArray(chartData)) {
+    if (!posts || !Array.isArray(posts)) {
       return null;
     }
 
-    return chartData;
+    return posts;
   } catch {
     return null;
   }
@@ -82,7 +83,7 @@ async function main() {
     return;
   }
 
-  const deaths = parseChartDataFromHtml(html);
+  const deaths = parsePostsFromHtml(html);
 
   if (!deaths || !validateDeathsData(deaths)) {
     console.warn("[sync-deaths] Failed to parse valid data from HTML.");
