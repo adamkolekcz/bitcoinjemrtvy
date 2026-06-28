@@ -1,9 +1,10 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { getDeathsData, getBtcCoinGeckoData } from "@/lib/deaths-data";
-import { formatCzechDate, generateDeathSlug, parseDate } from "@/lib/calculations";
+import { formatCzechDate, generateDeathSlug, parseDate, buildDeathMetaDescription } from "@/lib/calculations";
 import type { DeathEvent } from "@/lib/calculations";
 
 export const revalidate = 86400; // ISR - revalidace jednou za 24 hodin (historická data se mění zřídka)
@@ -43,7 +44,7 @@ function getAdjacentDeaths(
   };
 }
 
-export async function generateMetadata({ params }: PageProps) {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const { deaths } = await getDeathsData(86400);
   const death = findDeathBySlug(deaths, slug);
@@ -53,16 +54,17 @@ export async function generateMetadata({ params }: PageProps) {
   }
 
   const url = `https://www.bitcoinjemrtvy.cz/prohlaseni/${slug}`;
+  const description = buildDeathMetaDescription(death);
 
   return {
     title: `${death.articleTitle_cs ?? death.articleTitle} — Bitcoin je mrtvý`,
-    description: death.quote_cs ?? death.quote ?? `${death.person} prohlásil Bitcoin za mrtvý`,
+    description,
     alternates: {
       canonical: url,
     },
     openGraph: {
       title: `${death.articleTitle_cs ?? death.articleTitle} — Bitcoin je mrtvý`,
-      description: death.quote_cs ?? death.quote ?? `${death.person} prohlásil Bitcoin za mrtvý`,
+      description,
       url,
       siteName: "Bitcoin je mrtvý",
       type: "article",
