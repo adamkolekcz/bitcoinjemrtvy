@@ -37,7 +37,7 @@ export default function NotFound() {
             Bitcoinisdead
           </a>{" "}
           přeložil{" "}
-          <a href="https://x.com/adkolek" target="_blank" rel="noopener noreferrer" aria-label="Adam Kolek na X (otevře se v novém okně)">
+          <a href="https://www.linkedin.com/in/adamkolek/" target="_blank" rel="noopener noreferrer" aria-label="Adam Kolek na LinkedIn (otevře se v novém okně)">
             Adam Kolek
           </a>
         </p>
