@@ -9,19 +9,22 @@ interface HeaderProps {
 
 export function Header({ deathCount, asPageHeading = false }: HeaderProps) {
   const years = getBitcoinAgeYears();
-  const Brand = asPageHeading ? "h1" : "span";
   return (
     <header className="border-b border-[var(--card-border)] bg-[var(--card-bg)]">
+      {/* Jediný <h1> stránky (sr-only): logo se responzivně vykresluje dvakrát
+          (mobil + desktop), takže jako <h1> by vzniklo dvakrát → Bing hlásí
+          „more than one h1". Nadpis je proto tady, viditelná loga jsou <span>. */}
+      {asPageHeading && <h1 className="sr-only">Bitcoin je mrtvý</h1>}
       <div className="mx-auto max-w-7xl px-4 py-4 sm:py-6 sm:px-6 lg:px-8">
         {/* Mobile: title + death count on same row */}
         <div className="flex items-center justify-between sm:hidden">
           <Link href="/" tabIndex={-1}>
-            <Brand className="block text-2xl font-bold tracking-tight">
+            <span className="block text-2xl font-bold tracking-tight">
               <span className="text-[var(--bitcoin-orange)]">
                 Bitcoin
               </span>{" "}
               je mrtvý
-            </Brand>
+            </span>
           </Link>
 
           {deathCount !== undefined && (
@@ -46,12 +49,12 @@ export function Header({ deathCount, asPageHeading = false }: HeaderProps) {
         <div className="hidden sm:flex sm:items-center sm:justify-between">
           <div>
             <Link href="/" tabIndex={-1}>
-              <Brand className="block text-3xl font-bold tracking-tight">
+              <span className="block text-3xl font-bold tracking-tight">
                 <span className="text-[var(--bitcoin-orange)]">
                   Bitcoin
                 </span>{" "}
                 je mrtvý
-              </Brand>
+              </span>
             </Link>
             <p className="mt-1 text-base text-neutral-300 whitespace-nowrap">
               Již {years}&nbsp;let sledujeme, jak Bitcoin umírá
