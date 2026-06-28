@@ -148,12 +148,10 @@ function TimelineCard({ death, usdToCzk }: TimelineCardProps) {
           </div>
         </div>
 
-        <h3 className="mb-1 text-base font-semibold leading-snug text-white group-hover:text-[var(--bitcoin-orange)] transition-colors">
+        {/* Ve výpisu jen český nadpis; anglický originál zobrazujeme jen na detailu článku */}
+        <h3 className="mb-2 text-base font-semibold leading-snug text-white group-hover:text-[var(--bitcoin-orange)] transition-colors">
           {death.articleTitle_cs ?? death.articleTitle}
         </h3>
-        {death.articleTitle_cs && (
-          <p className="mb-2 text-xs text-neutral-400 italic leading-snug">{death.articleTitle}</p>
-        )}
 
         {death.quote && (
           <blockquote className="mb-3 border-l-2 border-[var(--death-red)]/50 pl-3 text-sm italic text-neutral-300">
