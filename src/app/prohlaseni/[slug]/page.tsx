@@ -136,7 +136,7 @@ export default async function DeathDetailPage({ params }: PageProps) {
 
           {death.quote && (
             <blockquote className="mb-8 border-l-4 border-[var(--death-red)] bg-[var(--card-bg)] p-6 rounded-r-xl">
-              <p className="text-lg italic text-neutral-300 leading-relaxed">
+              <p className="text-lg italic text-white leading-relaxed">
                 {death.quote_cs ? (
                   <>&bdquo;{death.quote_cs}&ldquo;</>
                 ) : (
