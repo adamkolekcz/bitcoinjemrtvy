@@ -70,79 +70,54 @@ const SYSTEM_PROMPT = [
       "- \"$BTC is done. Cooked. Toast. El Finito.\" → \"$BTC je hotový. Upečený. Toast. El Finito.\"\n" +
       "- \"Crypto is a victim of its own success\" → \"Krypto je obětí vlastního úspěchu\"\n" +
       "- \"Bitcoin is in its final stages\" → \"Bitcoin je ve svých posledních stádiích\"\n\n" +
-      "Vrať překlady VÝHRADNĚ přes nástroj submit_translations.",
+      "Vrať překlad VÝHRADNĚ přes nástroj submit_translation.",
     cache_control: { type: "ephemeral" },
   },
 ];
 
+// Jeden článek = jedno volání s plochým schématem (žádné vnořené pole).
+// Model nedeterministicky serializoval pole `translations` jako JSON string
+// a u titulků s uvozovkami rozbil escapování → nevalidní JSON → vše zahozeno.
+// Ploché schéma (jen string pole) tuhle třídu chyb eliminuje — není co
+// serializovat ani korelovat. Pár volání denně, u override dávky sériově.
 const TOOL = {
-  name: "submit_translations",
-  description: "Odešle české překlady článků.",
+  name: "submit_translation",
+  description: "Odešle český překlad jednoho článku.",
   input_schema: {
     type: "object",
     properties: {
-      translations: {
-        type: "array",
-        items: {
-          type: "object",
-          properties: {
-            key: { type: "string", description: "Nezměněný klíč z vstupu" },
-            articleTitle: { type: "string", description: "Český překlad titulku" },
-            quote: { type: "string", description: "Český překlad citátu (vynech, pokud vstup citát nemá)" },
-          },
-          required: ["key", "articleTitle"],
-        },
-      },
+      articleTitle: { type: "string", description: "Český překlad titulku" },
+      quote: { type: "string", description: "Český překlad citátu (vynech, pokud vstup citát nemá)" },
     },
-    required: ["translations"],
+    required: ["articleTitle"],
   },
 };
 
-// Po dávkách (kvůli override s velkým importem — jedno volání by mohlo
-// narazit na max_tokens a vrátit oříznutý/neúplný výstup).
-const CHUNK_SIZE = 12;
-
-async function translateChunk(client, chunk) {
-  const payload = chunk.map((d) => ({
-    key: translationKey(d),
-    articleTitle: d.articleTitle,
-    ...(d.quote ? { quote: d.quote } : {}),
-  }));
+async function translateOne(client, death) {
+  const payload = {
+    articleTitle: death.articleTitle,
+    ...(death.quote ? { quote: death.quote } : {}),
+  };
 
   const res = await client.messages.create({
     model: MODEL,
-    max_tokens: 8192,
+    max_tokens: 2048,
     system: SYSTEM_PROMPT,
     tools: [TOOL],
-    tool_choice: { type: "tool", name: "submit_translations" },
+    tool_choice: { type: "tool", name: "submit_translation" },
     messages: [
       {
         role: "user",
         content:
-          "Přelož tyto články do češtiny. Vrať pro každý jeho `key`:\n\n" +
+          `Přelož do češtiny titulek${death.quote ? " a citát" : ""} tohoto článku:\n\n` +
           JSON.stringify(payload, null, 2),
       },
     ],
   });
 
-  if (res.stop_reason === "max_tokens") {
-    console.warn(
-      "[translate] VAROVÁNÍ: odpověď oříznuta na max_tokens — některé překlady v této dávce mohou chybět (zkusí se příště)."
-    );
-  }
-
   const toolUse = res.content.find((b) => b.type === "tool_use");
   if (!toolUse) throw new Error("[translate] Model nevrátil tool_use blok.");
-  return toolUse.input?.translations ?? [];
-}
-
-async function translateBatch(client, missing) {
-  const all = [];
-  for (let i = 0; i < missing.length; i += CHUNK_SIZE) {
-    const chunk = missing.slice(i, i + CHUNK_SIZE);
-    all.push(...(await translateChunk(client, chunk)));
-  }
-  return all;
+  return toolUse.input ?? null; // { articleTitle, quote? }
 }
 
 async function main() {
@@ -173,14 +148,12 @@ async function main() {
 
   console.log(`[translate] Překládám ${missing.length} článků modelem ${MODEL}...`);
   const client = new Anthropic();
-  const results = await translateBatch(client, missing);
-  const byKey = new Map(results.map((r) => [r.key, r]));
 
   const additions = {};
   let skipped = 0;
   for (const death of missing) {
     const key = translationKey(death);
-    const result = byKey.get(key);
+    const result = await translateOne(client, death);
     if (!result || !isTranslationSane(death, result)) {
       skipped++;
       console.warn(`[translate] PŘESKOČENO (sanity): ${key}`);
