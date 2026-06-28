@@ -79,6 +79,7 @@ Tento pattern je nutný kdykoli chceš `next/dynamic` s `ssr: false` — nikdy n
 | Soubor | Obsah | Aktualizace |
 |--------|-------|-------------|
 | `deaths.json` | Bitcoin obituaries (z bitcoindeaths.com) | `sync-deaths.mjs` (denní GitHub Action) |
+| `article-details.json` | `quote` + `jobTitle` indexované slugem (bitcoindeaths.com je ~2026-06 odstranil ze zdroje). Doplňuje se do live dat v `getDeathsData` (`applyArticleDetails`); historie ze snapshotu 23. 4., novější záznamy ručně z původních článků (jejich CZ citát pak i v `translations-cs.json`). | ruční |
 | `translations-cs.json` | České překlady titulků a citátů | auto: `translate-deaths.mjs` (denní Action, Claude API); ruční úpravy chráněné (skript nepřepisuje) |
 | `source-urls.json` | URL zdrojových článků indexované slugem | `fetch-source-urls.mjs` (denní Action) |
 | `redirects.json` | 301 přesměrování (české → anglické slugy) | ruční |
