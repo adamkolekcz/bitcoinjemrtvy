@@ -106,3 +106,43 @@ test("mergeTranslations nikdy nepřepíše existující klíč", () => {
   assert.equal(merged.a.articleTitle, "PŮVODNÍ"); // ruční překlad chráněn
   assert.equal(merged.b.articleTitle, "B");
 });
+
+import {
+  czechifyQuotes,
+  normalizeTitleQuotes,
+  normalizeQuoteQuotes,
+} from "./translate-core.mjs";
+
+test("normalizeTitleQuotes: rovné/single/americké/mix → primární „ “", () => {
+  assert.equal(normalizeTitleQuotes("Bitcoin už není 'digitální zlato'"), "Bitcoin už není „digitální zlato“");
+  assert.equal(normalizeTitleQuotes('Je to "konec" Bitcoinu'), "Je to „konec“ Bitcoinu");
+  assert.equal(normalizeTitleQuotes("‚Bitcoin je zpět‘"), "„Bitcoin je zpět“");
+  assert.equal(normalizeTitleQuotes("„už české“"), "„už české“"); // idempotence
+});
+
+test("normalizeQuoteQuotes: odstraní obalení (rendering ho přidá)", () => {
+  assert.equal(normalizeQuoteQuotes('"Celý citát je obalený."'), "Celý citát je obalený.");
+  assert.equal(normalizeQuoteQuotes("„Celý citát je obalený.“"), "Celý citát je obalený.");
+});
+
+test("normalizeQuoteQuotes: vnitřní citace → vnořené ‚ ‘", () => {
+  assert.equal(
+    normalizeQuoteQuotes("Tradiční 'fundamentální' argument je mýtus."),
+    "Tradiční ‚fundamentální‘ argument je mýtus."
+  );
+  assert.equal(
+    normalizeQuoteQuotes('Říká, že „digitální zlato“ je podvod.'),
+    "Říká, že ‚digitální zlato‘ je podvod."
+  );
+  assert.equal(normalizeQuoteQuotes("Říká ‚trhy‘ jsou podvod"), "Říká ‚trhy‘ jsou podvod"); // idempotence
+});
+
+test("normalize: apostrofy (písmeno-'-písmeno) zachované", () => {
+  assert.equal(normalizeQuoteQuotes("Jusqu'ici tout va bien"), "Jusqu'ici tout va bien");
+  assert.equal(normalizeTitleQuotes("O'Leary o bitcoinu"), "O'Leary o bitcoinu");
+});
+
+test("czechifyQuotes: non-string vrátí beze změny", () => {
+  assert.equal(czechifyQuotes(null), null);
+  assert.equal(czechifyQuotes(undefined), undefined);
+});

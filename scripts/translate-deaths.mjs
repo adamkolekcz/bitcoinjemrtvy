@@ -22,6 +22,8 @@ import {
   findMissing,
   isTranslationSane,
   mergeTranslations,
+  normalizeTitleQuotes,
+  normalizeQuoteQuotes,
 } from "./lib/translate-core.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -184,12 +186,15 @@ async function main() {
       console.warn(`[translate] PŘESKOČENO (sanity): ${key}`);
       continue;
     }
+    // Deterministická normalizace uvozovek na české — garantuje stejnou
+    // typografii jako stávající záznamy, bez ohledu na to, co Claude vrátí.
+    const articleTitle_cs = normalizeTitleQuotes(result.articleTitle);
     additions[key] = {
-      articleTitle: result.articleTitle,
-      ...(death.quote ? { quote: result.quote } : {}),
+      articleTitle: articleTitle_cs,
+      ...(death.quote ? { quote: normalizeQuoteQuotes(result.quote) } : {}),
     };
     // URL detailní stránky (slug z českého titulku, který právě vznikl)
-    const slug = deathSlug({ ...death, articleTitle_cs: result.articleTitle });
+    const slug = deathSlug({ ...death, articleTitle_cs });
     newUrls.push(`${BASE_URL}/prohlaseni/${slug}`);
   }
 

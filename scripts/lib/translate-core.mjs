@@ -56,6 +56,44 @@ export function isTranslationSane(death, result) {
   return true;
 }
 
+// --- Normalizace uvozovek na české (deterministická, idempotentní) ---
+// Garantuje, že AUTOMATICKY přeložené nové články mají stejnou typografii
+// jako stávající ručně normalizované — bez ohledu na to, co Claude vrátí.
+const QUOTE_CHARS = /[„“”"‚‘’'‛]/u;
+function isApostropheAt(s, i) {
+  return /[’']/.test(s[i]) && /\p{L}/u.test(s[i - 1] ?? "") && /\p{L}/u.test(s[i + 1] ?? "");
+}
+
+// Sjednotí všechny uvozovky na alternující „ … “ (primární české). Apostrofy
+// (písmeno-'-písmeno, např. Jusqu'ici) zůstávají nedotčené.
+export function czechifyQuotes(s) {
+  if (typeof s !== "string") return s;
+  let out = "", open = true;
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (QUOTE_CHARS.test(c) && !isApostropheAt(s, i)) {
+      out += open ? "„" : "“";
+      open = !open;
+    } else out += c;
+  }
+  return out;
+}
+
+// Titulek se nerenderuje obalený, takže primární citace = „ … “.
+export function normalizeTitleQuotes(s) {
+  return czechifyQuotes(s);
+}
+
+// Citát rendering obaluje do „ … “, takže obalení odstraníme a vnitřní citace
+// převedeme na vnořené ‚ … ‘.
+export function normalizeQuoteQuotes(s) {
+  if (typeof s !== "string") return s;
+  let out = czechifyQuotes(s);
+  const whole = out.match(/^„([^„“]*)“$/u); // celé obalené → jen text
+  if (whole) out = whole[1];
+  return out.replace(/„/g, "‚").replace(/“/g, "‘");
+}
+
 export function findMissing(deaths, translations) {
   return deaths.filter((d) => !translations[translationKey(d)]);
 }
