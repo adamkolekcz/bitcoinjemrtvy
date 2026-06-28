@@ -69,7 +69,11 @@ function CustomTooltip({ active, payload, currentPriceCzk, usdToCzk }: CustomToo
       </p>
       {death.quote && (
         <p className="mb-2 border-l-2 border-[var(--death-red)] pl-2 text-xs italic text-neutral-300 line-clamp-3">
-          &ldquo;{death.quote}&rdquo;
+          {death.quoteIsCs ? (
+            <>&bdquo;{death.quote}&ldquo;</>
+          ) : (
+            <>&ldquo;{death.quote}&rdquo;</>
+          )}
         </p>
       )}
       <p className="text-xs text-neutral-300 truncate">

@@ -18,6 +18,7 @@ export interface DeathEvent {
 export interface ChartDeath {
   title: string;
   quote?: string;
+  quoteIsCs?: boolean;
   person: string;
   jobTitle: string;
   publicationName: string;
@@ -172,6 +173,7 @@ export function prepareChartData(deaths: DeathEvent[]): ChartDataPoint[] {
         death: {
           title: death.articleTitle_cs ?? death.articleTitle,
           quote: fullQuote && fullQuote.length > 120 ? `${fullQuote.slice(0, 120)}...` : fullQuote,
+          quoteIsCs: !!death.quote_cs,
           person: death.person,
           jobTitle: death.jobTitle,
           publicationName: death.publicationName,
