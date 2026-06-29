@@ -160,6 +160,72 @@ export function calculateInvestment(
   };
 }
 
+// ── „Je koruna mrtvá?" — cash counterfactual ────────────────────────────────
+// Protějšek k BTC ROI: stejné vklady, ale držené v hotovosti a užírané inflací.
+// Metoda převzata z forku nktrjsk/bitcoinjemrtvy (MIT).
+
+export interface CashCounterfactualResult {
+  /** Nominální součet vkladů (počet × vklad) — pod polštářem se nemění. */
+  nominal: number;
+  /** Reálná kupní síla těch vkladů v dnešních korunách. */
+  realValue: number;
+  /** Procentní ztráta kupní síly (záporné). */
+  lossPct: number;
+  /** Poslední uzavřený rok v CPI tabulce (referenční „dnešek"). */
+  latestYear: number;
+}
+
+/**
+ * Z ročních měr inflace (%) sestaví kumulativní cenový index (báze = první rok = 100).
+ * Index_rok = Index_předchozí × (1 + míra/100). Slouží jen jako poměr, báze je libovolná.
+ */
+export function buildCpiIndex(rates: Record<string, number>): Record<number, number> {
+  const years = Object.keys(rates)
+    .map(Number)
+    .sort((a, b) => a - b);
+  const index: Record<number, number> = {};
+  let acc = 100;
+  years.forEach((yr, i) => {
+    if (i === 0) {
+      acc = 100;
+    } else {
+      acc *= 1 + rates[String(yr)] / 100;
+    }
+    index[yr] = acc;
+  });
+  return index;
+}
+
+/**
+ * Spočítá, co by ze stejných vkladů zbylo, kdyby ležely v hotovosti.
+ * Pro každou událost vklad `perDepositCzk` v roce události; jeho reálná hodnota dnes
+ * = vklad × (CPI_rokUdálosti / CPI_poslední). Roky mimo tabulku se clampnou do rozsahu
+ * (vklad z letošního neuzavřeného roku ztratil ~0 %).
+ */
+export function calculateCashCounterfactual(
+  deaths: DeathEvent[],
+  perDepositCzk: number,
+  rates: Record<string, number>,
+): CashCounterfactualResult {
+  const cpi = buildCpiIndex(rates);
+  const tableYears = Object.keys(cpi).map(Number);
+  const minYear = Math.min(...tableYears);
+  const latestYear = Math.max(...tableYears);
+  const cpiLatest = cpi[latestYear];
+
+  let realValue = 0;
+  for (const death of deaths) {
+    const eventYear = parseDate(death.date).getFullYear();
+    const clampedYear = Math.min(Math.max(eventYear, minYear), latestYear);
+    realValue += perDepositCzk * (cpi[clampedYear] / cpiLatest);
+  }
+
+  const nominal = deaths.length * perDepositCzk;
+  const lossPct = nominal > 0 ? ((realValue - nominal) / nominal) * 100 : 0;
+
+  return { nominal, realValue, lossPct, latestYear };
+}
+
 export function prepareChartData(deaths: DeathEvent[]): ChartDataPoint[] {
   return deaths
     .filter((d) => d.bitcoinPrice > 0)
