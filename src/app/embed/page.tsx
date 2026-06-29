@@ -5,7 +5,7 @@ import { CopyEmbedCode } from "@/components/embed/CopyEmbedCode";
 import { EMBED_ORIGIN, EMBED_WIDGETS, buildEmbedSnippet, type EmbedWidgetKey } from "@/lib/embed-config";
 
 export const metadata: Metadata = {
-  title: "Embed widgety — Bitcoin je mrtvý",
+  title: "Vložte widget na svůj web — Bitcoin je mrtvý",
   description:
     "Vložte si na web živé počítadlo a statistiku, kolikrát byl Bitcoin prohlášen za mrtvý. Stačí zkopírovat HTML kód.",
   alternates: { canonical: `${EMBED_ORIGIN}/embed` },
@@ -33,7 +33,7 @@ export default function EmbedPage() {
 
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
         <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
-          Embed widgety
+          Vložte widget na svůj web
         </h1>
         <p className="mt-2 text-base leading-relaxed text-neutral-300 sm:text-lg">
           Kolikrát už Bitcoin umřel? Ukažte to i&nbsp;na svém webu nebo blogu. Vyberte si
