@@ -14,12 +14,11 @@ export function TwoPathsCard({ investment, cash }: TwoPathsCardProps) {
   return (
     <div className="mt-8 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-6">
       <h3 className="mb-2 text-xl font-bold text-white sm:text-2xl">
-        Stejné peníze, dvě cesty
+        A co kdybyste místo Bitcoinu těch {formatCurrency(cash.nominal)} schovávali pod
+        polštář?
       </h3>
       <p className="mb-6 text-sm leading-relaxed text-neutral-400 sm:text-base">
-        A co kdybyste místo Bitcoinu těch{" "}
-        <strong className="text-white">{formatCurrency(cash.nominal)}</strong>{" "}
-        jen schovávali pod polštář? Ležely by tam dál — jenže inflace je každý rok ukrojí.
+        Ležely by tam dál — jenže inflace je každý rok ukrojí.
       </p>
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-xl border border-[var(--bitcoin-orange)]/30 bg-[var(--bitcoin-orange)]/5 p-5">
