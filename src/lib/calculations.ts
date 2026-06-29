@@ -131,20 +131,6 @@ export function formatCurrency(value: number, currency: string = "CZK"): string 
   }).format(value);
 }
 
-/** Kompaktní český zápis částky pro úzké widgety: „626 mil. Kč", „1,2 mld. Kč". */
-export function formatCzkCompact(value: number): string {
-  const abs = Math.abs(value);
-  if (abs >= 1_000_000_000) {
-    const n = (value / 1_000_000_000).toLocaleString("cs-CZ", { maximumFractionDigits: 1 });
-    return `${n} mld. Kč`;
-  }
-  if (abs >= 1_000_000) {
-    const n = Math.round(value / 1_000_000).toLocaleString("cs-CZ");
-    return `${n} mil. Kč`;
-  }
-  return formatCurrency(value);
-}
-
 export function calculateInvestment(
   deaths: DeathEvent[],
   investmentPerDeath: number,

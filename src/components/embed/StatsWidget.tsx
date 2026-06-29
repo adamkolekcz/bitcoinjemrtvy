@@ -38,7 +38,7 @@ export function StatsWidget({ count, currentValue, roi, perDeposit, updated }: S
         </span>
       </p>
 
-      <p className="text-sm text-neutral-500">Aktualizováno {updated}</p>
+      <p className="text-sm text-neutral-400">Aktualizováno {updated}</p>
     </a>
   );
 }
