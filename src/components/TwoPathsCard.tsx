@@ -17,9 +17,12 @@ export function TwoPathsCard({ investment, cash }: TwoPathsCardProps) {
         <h3 className="mb-2 text-xl font-bold text-white sm:text-2xl">
           A co kdybyste těch {formatCurrency(cash.nominal)} místo Bitcoinu uložili na účet?
         </h3>
-        <p className="text-sm leading-relaxed text-neutral-400 sm:text-base">
-          Naspořená koruna v hotovosti od roku&nbsp;2010 ztratila{" "}
-          {describeLossFraction(Math.abs(cash.lossPct))} kupní síly. Ne Bitcoin, ale{" "}
+        <p className="text-base leading-relaxed text-neutral-300 sm:text-lg">
+          Naspořená koruna v hotovosti od roku&nbsp;2010{" "}
+          <strong className="text-[var(--death-red)]">
+            ztratila {describeLossFraction(Math.abs(cash.lossPct))} kupní síly
+          </strong>
+          . Ne Bitcoin, ale{" "}
           <strong className="text-neutral-300">koruna pod polštářem pomalu umírá</strong>{" "}
           &mdash; užírá ji inflace.
         </p>
