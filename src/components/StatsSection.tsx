@@ -233,13 +233,13 @@ function StatCard({ label, value, sublabel, highlight, green }: StatCardProps) {
 
   return (
     <div className={`rounded-xl border p-5 ${getBorderBg()}`}>
-      <p className="text-xs font-medium uppercase tracking-wider text-neutral-300">
+      <p className="text-sm font-medium uppercase tracking-wider text-neutral-300">
         {label}
       </p>
       <p className={`mt-2 text-2xl font-bold ${getTextColor()}`}>
         {value}
       </p>
-      <p className="mt-1 text-xs text-neutral-400">{sublabel}</p>
+      <p className="mt-1 text-sm text-neutral-400">{sublabel}</p>
     </div>
   );
 }

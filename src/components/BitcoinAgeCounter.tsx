@@ -59,13 +59,13 @@ export function BitcoinAgeCounter() {
 
   return (
     <div className="rounded-xl border border-green-500/30 bg-green-500/5 p-5">
-      <p className="text-xs font-medium uppercase tracking-wider text-neutral-300">
+      <p className="text-sm font-medium uppercase tracking-wider text-neutral-300">
         Jak dlouho žije Bitcoin?
       </p>
       <p className="mt-2 text-2xl font-bold tabular-nums text-green-500">
         {diff ? formatAge(diff) : "—"}
       </p>
-      <p className="mt-1 text-xs text-neutral-400">Od 3. ledna 2009</p>
+      <p className="mt-1 text-sm text-neutral-400">Od 3. ledna 2009</p>
     </div>
   );
 }

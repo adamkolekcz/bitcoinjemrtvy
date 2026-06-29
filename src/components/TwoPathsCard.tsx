@@ -30,7 +30,7 @@ export function TwoPathsCard({ investment, cash }: TwoPathsCardProps) {
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         <div className="rounded-xl border border-green-500/30 bg-green-500/5 p-5">
-          <p className="text-xs font-medium uppercase tracking-wider text-neutral-300">
+          <p className="text-sm font-medium uppercase tracking-wider text-neutral-300">
             V Bitcoinu
           </p>
           <p className="mt-2 text-2xl font-bold text-green-500 sm:text-3xl">
@@ -41,7 +41,7 @@ export function TwoPathsCard({ investment, cash }: TwoPathsCardProps) {
           </p>
         </div>
         <div className="rounded-xl border border-[var(--death-red)]/30 bg-[var(--death-red)]/5 p-5">
-          <p className="text-xs font-medium uppercase tracking-wider text-neutral-300">
+          <p className="text-sm font-medium uppercase tracking-wider text-neutral-300">
             Na účtu
           </p>
           <p className="mt-2 text-2xl font-bold text-[var(--death-red)] sm:text-3xl">
