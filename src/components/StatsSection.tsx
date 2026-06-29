@@ -87,7 +87,7 @@ export function StatsSection({
           label="Aktuální hodnota"
           value={formatCurrency(investment.currentValue)}
           sublabel={`${investment.totalBtc.toFixed(4)} BTC`}
-          highlight
+          green
         />
         <StatCard
           label="Výnos (ROI)"
