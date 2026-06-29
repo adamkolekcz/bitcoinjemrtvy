@@ -15,15 +15,13 @@ export function TwoPathsCard({ investment, cash }: TwoPathsCardProps) {
     <>
       <div className="mt-8 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-6">
         <h3 className="mb-2 text-xl font-bold text-white sm:text-2xl">
-          A co kdybyste těch {formatCurrency(cash.nominal)} místo Bitcoinu ukládali na účet
-          nebo pod matraci?
+          A co kdybyste těch {formatCurrency(cash.nominal)} místo Bitcoinu uložili na účet?
         </h3>
         <p className="text-sm leading-relaxed text-neutral-400 sm:text-base">
           Naspořená koruna v hotovosti od roku&nbsp;2010 ztratila{" "}
           {describeLossFraction(Math.abs(cash.lossPct))} kupní síly. Ne Bitcoin, ale{" "}
           <strong className="text-neutral-300">koruna pod polštářem pomalu umírá</strong>{" "}
-          &mdash; užírá ji inflace. Přepočteno přes průměrnou roční inflaci ČSÚ (kupní síla
-          v&nbsp;korunách roku&nbsp;{cash.latestYear}).
+          &mdash; užírá ji inflace.
         </p>
       </div>
 
@@ -41,7 +39,7 @@ export function TwoPathsCard({ investment, cash }: TwoPathsCardProps) {
         </div>
         <div className="rounded-xl border border-[var(--death-red)]/30 bg-[var(--death-red)]/5 p-5">
           <p className="text-xs font-medium uppercase tracking-wider text-neutral-300">
-            Pod polštářem
+            Na účtu
           </p>
           <p className="mt-2 text-2xl font-bold text-[var(--death-red)] sm:text-3xl">
             &minus;{Math.round(Math.abs(cash.lossPct)).toLocaleString("cs-CZ")}&nbsp;%
