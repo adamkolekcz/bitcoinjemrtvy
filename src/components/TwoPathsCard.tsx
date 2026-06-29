@@ -18,7 +18,11 @@ export function TwoPathsCard({ investment, cash }: TwoPathsCardProps) {
         polštář?
       </h3>
       <p className="mb-6 text-sm leading-relaxed text-neutral-400 sm:text-base">
-        Ležely by tam dál — jenže inflace je každý rok ukrojí.
+        Naspořená koruna v hotovosti od roku&nbsp;2010 ztratila{" "}
+        {describeLossFraction(Math.abs(cash.lossPct))} kupní síly. Ne Bitcoin, ale{" "}
+        <strong className="text-neutral-300">koruna pod polštářem pomalu umírá</strong>{" "}
+        &mdash; užírá ji inflace. Přepočteno přes průměrnou roční inflaci ČSÚ (kupní síla
+        v&nbsp;korunách roku&nbsp;{cash.latestYear}).
       </p>
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-xl border border-[var(--bitcoin-orange)]/30 bg-[var(--bitcoin-orange)]/5 p-5">
@@ -44,13 +48,6 @@ export function TwoPathsCard({ investment, cash }: TwoPathsCardProps) {
           </p>
         </div>
       </div>
-      <p className="mt-4 text-xs leading-relaxed text-neutral-500">
-        Koruna v hotovosti od roku&nbsp;2010 ztratila{" "}
-        {describeLossFraction(Math.abs(cash.lossPct))} kupní síly. Ne Bitcoin, ale{" "}
-        <strong className="text-neutral-300">koruna pod polštářem pomalu umírá</strong>{" "}
-        &mdash; užírá ji inflace. Přepočteno přes průměrnou roční inflaci ČSÚ (kupní síla
-        v&nbsp;korunách roku&nbsp;{cash.latestYear}).
-      </p>
     </div>
   );
 }
