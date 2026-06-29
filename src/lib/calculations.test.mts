@@ -6,6 +6,8 @@ import {
   buildCpiIndex,
   calculateCashCounterfactual,
   describeLossFraction,
+  formatCurrency,
+  formatCzkCompact,
   type DeathEvent,
 } from "./calculations.ts";
 
@@ -175,4 +177,18 @@ test("zlomek: 30 % = téměř třetinu", () => {
 test("zlomek: 20 % = pětinu, 50 % = polovinu", () => {
   assert.equal(describeLossFraction(20), "pětinu");
   assert.equal(describeLossFraction(50), "polovinu");
+});
+
+// ── kompaktní částka ─────────────────────────────────────────────────────────
+
+test("formatCzkCompact: miliony", () => {
+  assert.equal(formatCzkCompact(626192431), "626 mil. Kč");
+});
+
+test("formatCzkCompact: miliardy s desetinou", () => {
+  assert.equal(formatCzkCompact(1234567890), "1,2 mld. Kč");
+});
+
+test("formatCzkCompact: pod milion deleguje na formatCurrency", () => {
+  assert.equal(formatCzkCompact(50000), formatCurrency(50000));
 });
