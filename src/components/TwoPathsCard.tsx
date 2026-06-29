@@ -15,7 +15,7 @@ export function TwoPathsCard({ investment, cash }: TwoPathsCardProps) {
     <>
       <div className="mt-8 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-6">
         <h3 className="mb-2 text-xl font-bold text-white sm:text-2xl">
-          A co kdybyste těch {formatCurrency(cash.nominal)} místo Bitcoinu ukládali pod
+          A co kdybyste těch {formatCurrency(cash.nominal)} místo Bitcoinu uložili pod
           matraci?
         </h3>
         <p className="text-base leading-relaxed text-neutral-300 sm:text-lg">
