@@ -15,7 +15,8 @@ export function TwoPathsCard({ investment, cash }: TwoPathsCardProps) {
     <>
       <div className="mt-8 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-6">
         <h3 className="mb-2 text-xl font-bold text-white sm:text-2xl">
-          A co kdybyste těch {formatCurrency(cash.nominal)} místo Bitcoinu uložili na účet?
+          A co kdybyste těch {formatCurrency(cash.nominal)} místo Bitcoinu ukládali pod
+          matraci?
         </h3>
         <p className="text-base leading-relaxed text-neutral-300 sm:text-lg">
           Naspořená koruna v hotovosti od roku&nbsp;2010{" "}
@@ -42,7 +43,7 @@ export function TwoPathsCard({ investment, cash }: TwoPathsCardProps) {
         </div>
         <div className="rounded-xl border border-[var(--death-red)]/30 bg-[var(--death-red)]/5 p-5">
           <p className="text-sm font-medium uppercase tracking-wider text-neutral-300">
-            Na účtu
+            Pod matrací
           </p>
           <p className="mt-2 text-2xl font-bold text-[var(--death-red)] sm:text-3xl">
             &minus;{Math.round(Math.abs(cash.lossPct)).toLocaleString("cs-CZ")}&nbsp;%
