@@ -10,7 +10,7 @@ interface HeaderProps {
 export function Header({ deathCount, asPageHeading = false }: HeaderProps) {
   const years = getBitcoinAgeYears();
   return (
-    <header className="border-b border-[var(--card-border)] bg-[var(--card-bg)]">
+    <header className="bg-[var(--background)]">
       {/* Jediný <h1> stránky (sr-only): logo se responzivně vykresluje dvakrát
           (mobil + desktop), takže jako <h1> by vzniklo dvakrát → Bing hlásí
           „more than one h1". Nadpis je proto tady, viditelná loga jsou <span>. */}
