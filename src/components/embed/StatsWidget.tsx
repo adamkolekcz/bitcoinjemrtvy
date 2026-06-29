@@ -17,7 +17,7 @@ export function StatsWidget({ count, currentValue, roi, perDeposit, updated }: S
       rel="noopener noreferrer"
       className="flex min-h-screen w-full flex-col justify-between gap-2 overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-5 no-underline"
     >
-      <span className="text-lg font-bold tracking-tight">
+      <span className="text-xl font-bold tracking-tight">
         <span className="text-[var(--bitcoin-orange)]">Bitcoin</span>{" "}
         <span className="text-white">je mrtvý</span>
       </span>
