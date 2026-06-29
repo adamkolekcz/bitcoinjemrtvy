@@ -14,6 +14,7 @@ const embedCsp = `${baseCsp} frame-ancestors *;`;
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
+  devIndicators: false,
   experimental: {
     optimizePackageImports: ["recharts"],
   },
