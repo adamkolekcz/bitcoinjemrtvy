@@ -19,9 +19,9 @@ export function TwoPathsCard({ investment, cash }: TwoPathsCardProps) {
           matraci?
         </h3>
         <p className="text-base leading-relaxed text-neutral-300 sm:text-lg">
-          Naspořená koruna od roku&nbsp;2010{" "}
+          Naspořené peníze od roku&nbsp;2010{" "}
           <strong className="text-[var(--death-red)]">
-            ztratila {describeLossFraction(Math.abs(cash.lossPct))} kupní síly
+            ztratily {describeLossFraction(Math.abs(cash.lossPct))} kupní síly
           </strong>
           . Ne Bitcoin, ale{" "}
           <strong className="text-neutral-300">koruna pod polštářem pomalu umírá</strong>{" "}
