@@ -23,7 +23,7 @@ export function StatsWidget({ count, currentValue, roi, perDeposit, updated }: S
       </span>
 
       <p className="text-xl font-bold leading-snug text-white">
-        Bitcoin byl{" "}
+        Bitcoin byl už{" "}
         <span className="text-[var(--death-red)]">{count.toLocaleString("cs-CZ")}&times;</span>{" "}
         prohlášen za&nbsp;mrtvý
       </p>
