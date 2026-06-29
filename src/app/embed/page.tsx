@@ -16,13 +16,13 @@ const SECTIONS: { key: EmbedWidgetKey; title: string; description: string }[] = 
     key: "counter",
     title: "Počítadlo úmrtí",
     description:
-      "Kompaktní odznak s počtem úmrtí Bitcoinu. Hodí se do postranního panelu, patičky nebo článku.",
+      "Drobný odznak s aktuálním počtem, kolikrát byl Bitcoin prohlášen za mrtvý. Vejde se do patičky, postranního panelu i přímo do textu článku.",
   },
   {
     key: "stats",
     title: "Statistická karta",
     description:
-      "Větší karta s počtem úmrtí, živým investičním přepočtem a datem poslední aktualizace. Ideální do článků a na blog.",
+      "Větší karta — kromě počtu „úmrtí“ ukáže i to, kolik by dnes vynesla investice do Bitcoinu při každém z nich. Ideální do článků a delších příspěvků.",
   },
 ];
 
@@ -36,9 +36,9 @@ export default function EmbedPage() {
           Embed widgety
         </h1>
         <p className="mt-2 text-base leading-relaxed text-neutral-300 sm:text-lg">
-          Přidejte na svůj web, blog nebo newsletter živá data z&nbsp;Bitcoin je mrtvý.
-          Zkopírujte kód níže a&nbsp;vložte ho do svého HTML. Widgety se automaticky
-          aktualizují a&nbsp;odkazují zpět na databázi.
+          Kolikrát už byl Bitcoin pohřben? Ukažte to i&nbsp;u&nbsp;sebe — na webu, blogu
+          nebo v&nbsp;newsletteru. Vyberte si widget, zkopírujte jeho kód a&nbsp;vložte ho
+          do stránky. Hodnoty se aktualizují samy a&nbsp;widget vždy odkazuje zpět sem.
         </p>
 
         {SECTIONS.map((s) => {
