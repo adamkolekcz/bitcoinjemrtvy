@@ -32,8 +32,10 @@ export function StatsWidget({ count, currentValue, roi, perDeposit, updated }: S
         Kdybyste investovali {formatCurrency(perDeposit)} při každém úmrtí, dnes by vaše
         portfolio mělo hodnotu{" "}
         <span className="font-bold text-green-500">{formatCurrency(currentValue)}</span>{" "}
-        s&nbsp;výnosem{" "}
-        <span className="font-bold text-green-500">+{Math.round(roi).toLocaleString("cs-CZ")}&nbsp;%</span>.
+        <span className="whitespace-nowrap">
+          s&nbsp;výnosem{" "}
+          <span className="font-bold text-green-500">+{Math.round(roi).toLocaleString("cs-CZ")}&nbsp;%</span>.
+        </span>
       </p>
 
       <p className="text-sm text-neutral-500">Aktualizováno {updated}</p>
