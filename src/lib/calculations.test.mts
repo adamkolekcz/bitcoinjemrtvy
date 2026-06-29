@@ -88,7 +88,7 @@ test("koruna: vklad v posledním roce neztratí nic (0 %)", () => {
     "2020": 5,
     "2021": 10,
     "2022": 2,
-  });
+  }, { now: new Date(2022, 5, 1) });
   assert.equal(r.nominal, 1000);
   assert.equal(r.latestYear, 2022);
   assert.ok(Math.abs(r.realValue - 1000) < 1e-9);
@@ -100,17 +100,18 @@ test("koruna: starší vklad ztratil kupní sílu (záporné %)", () => {
     "2020": 5,
     "2021": 10,
     "2022": 2,
-  });
+  }, { now: new Date(2022, 5, 1) });
   assert.ok(Math.abs(r.realValue - (1000 * 100) / 112.2) < 1e-6);
   assert.ok(r.lossPct < 0);
   assert.ok(Math.abs(r.lossPct - ((100 / 112.2 - 1) * 100)) < 1e-6);
 });
 
-test("koruna: rok mimo tabulku se clampne (neúplný letošek ~0 %)", () => {
+test("koruna: rok mimo tabulku se clampne (today = poslední rok tabulky)", () => {
   const rates = { "2020": 5, "2021": 10, "2022": 2 };
-  const future = calculateCashCounterfactual([makeDeath("6/1/2026")], 1000, rates);
+  const opts = { now: new Date(2022, 5, 1) };
+  const future = calculateCashCounterfactual([makeDeath("6/1/2026")], 1000, rates, opts);
   assert.ok(Math.abs(future.realValue - 1000) < 1e-9);
-  const past = calculateCashCounterfactual([makeDeath("6/1/2015")], 1000, rates);
+  const past = calculateCashCounterfactual([makeDeath("6/1/2015")], 1000, rates, opts);
   assert.ok(Math.abs(past.realValue - (1000 * 100) / 112.2) < 1e-6);
 });
 
@@ -119,8 +120,38 @@ test("koruna: nominál = počet × vklad", () => {
     [makeDeath("6/1/2020"), makeDeath("6/1/2021"), makeDeath("6/1/2022")],
     1000,
     { "2020": 5, "2021": 10, "2022": 2 },
+    { now: new Date(2022, 5, 1) },
   );
   assert.equal(r.nominal, 3000);
+});
+
+test("koruna: nevyplněné roky po tabulce se dopočítají odhadem", () => {
+  // tabulka končí 2022; „dnešek" 2024 → dopočítá 2023 a 2024 po 2,5 %
+  const r = calculateCashCounterfactual([makeDeath("6/1/2022")], 1000, { "2022": 0 }, {
+    estimateRate: 2.5,
+    now: new Date(2024, 5, 1),
+  });
+  assert.equal(r.latestYear, 2024);
+  const expected = 1000 / 1.025 ** 2; // CPI(2022)/CPI(2024) = 1 / 1.025^2
+  assert.ok(Math.abs(r.realValue - expected) < 1e-6, `realValue ${r.realValue} vs ${expected}`);
+  assert.ok(r.lossPct < 0);
+});
+
+test("koruna: vklad v běžícím (dopočítaném) roce neztratí nic", () => {
+  const r = calculateCashCounterfactual([makeDeath("6/1/2024")], 1000, { "2022": 0 }, {
+    estimateRate: 2.5,
+    now: new Date(2024, 5, 1),
+  });
+  assert.equal(r.latestYear, 2024);
+  assert.ok(Math.abs(r.realValue - 1000) < 1e-9);
+});
+
+test("koruna: výchozí odhad je 2,5 %", () => {
+  const r = calculateCashCounterfactual([makeDeath("6/1/2022")], 1000, { "2022": 0 }, {
+    now: new Date(2023, 5, 1),
+  });
+  // bez explicitního estimateRate → 2,5 %; dnešek 2023 → CPI(2023) = 100 × 1.025
+  assert.ok(Math.abs(r.realValue - 1000 / 1.025) < 1e-6);
 });
 
 // ── slovní zlomek ────────────────────────────────────────────────────────────

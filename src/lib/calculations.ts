@@ -199,18 +199,33 @@ export function buildCpiIndex(rates: Record<string, number>): Record<number, num
 /**
  * Spočítá, co by ze stejných vkladů zbylo, kdyby ležely v hotovosti.
  * Pro každou událost vklad `perDepositCzk` v roce události; jeho reálná hodnota dnes
- * = vklad × (CPI_rokUdálosti / CPI_poslední). Roky mimo tabulku se clampnou do rozsahu
- * (vklad z letošního neuzavřeného roku ztratil ~0 %).
+ * = vklad × (CPI_rokUdálosti / CPI_poslední).
+ *
+ * „Dnešek" = běžící kalendářní rok (`options.now`). Roky po poslední vyplněné hodnotě
+ * v tabulce se dopočítají provizorním odhadem `options.estimateRate` (% za rok, výchozí
+ * 2,5 %), takže výpočet nezamrzne, když se tabulka roky nedoplní. Jakmile přidáš skutečné
+ * číslo ČSÚ, odhad se sám posune na následující rok. Roky událostí mimo rozsah
+ * [první rok tabulky, dnešek] se clampnou (vklad z dnešního roku ztratil 0 %).
  */
 export function calculateCashCounterfactual(
   deaths: DeathEvent[],
   perDepositCzk: number,
   rates: Record<string, number>,
+  options: { estimateRate?: number; now?: Date } = {},
 ): CashCounterfactualResult {
+  const estimateRate = options.estimateRate ?? 2.5;
+  const now = options.now ?? new Date();
+
   const cpi = buildCpiIndex(rates);
   const tableYears = Object.keys(cpi).map(Number);
   const minYear = Math.min(...tableYears);
-  const latestYear = Math.max(...tableYears);
+  const lastTableYear = Math.max(...tableYears);
+
+  // Dopočet nevyplněných roků odhadem až po běžící rok; „dnešek" = pozdější z obou.
+  const latestYear = Math.max(lastTableYear, now.getFullYear());
+  for (let y = lastTableYear + 1; y <= latestYear; y++) {
+    cpi[y] = cpi[y - 1] * (1 + estimateRate / 100);
+  }
   const cpiLatest = cpi[latestYear];
 
   let realValue = 0;

@@ -2,7 +2,7 @@
   "source": "Český statistický úřad — průměrná roční míra inflace (%)",
   "sourceUrl": "https://csu.gov.cz/prumerna-rocni-mira-inflace",
   "lastUpdated": "2026-06-29",
-  "note": "Roční průměrná míra inflace v ČR v %. Index kupní síly dopočítává buildCpiIndex/calculateCashCounterfactual v src/lib/calculations.ts. Neúplný letošní rok → vklady z něj se clampnou na poslední uzavřený rok (ztratily ~0 %). Aktualizovat jednou ročně.",
+  "note": "Roční průměrná míra inflace v ČR v %. Index kupní síly dopočítává buildCpiIndex/calculateCashCounterfactual v src/lib/calculations.ts. Roky po posledním vyplněném se dopočítají provizorním odhadem 2,5 %/rok (výpočet tak nezamrzne, i když se tabulka roky nedoplní). Doplň skutečné číslo ČSÚ jednou ročně — odhad se pak sám posune na další rok.",
   "rates": {
     "2009": 1.0,
     "2010": 1.5,
