@@ -36,9 +36,9 @@ export default function EmbedPage() {
           Embed widgety
         </h1>
         <p className="mt-2 text-base leading-relaxed text-neutral-300 sm:text-lg">
-          Kolikrát už byl Bitcoin pohřben? Ukažte to i&nbsp;u&nbsp;sebe — na webu, blogu
-          nebo v&nbsp;newsletteru. Vyberte si widget, zkopírujte jeho kód a&nbsp;vložte ho
-          do stránky. Hodnoty se aktualizují samy a&nbsp;widget vždy odkazuje zpět sem.
+          Kolikrát už Bitcoin umřel? Ukažte to i&nbsp;na svém webu nebo blogu. Vyberte si
+          widget, zkopírujte jeho kód a&nbsp;vložte ho do stránky. Hodnoty se aktualizují
+          samy.
         </p>
 
         {SECTIONS.map((s) => {
