@@ -10,8 +10,8 @@ export interface EmbedWidget {
 }
 
 export const EMBED_WIDGETS: Record<EmbedWidgetKey, EmbedWidget> = {
-  counter: { key: "counter", width: 300, height: 72, title: "Bitcoin je mrtvý — počítadlo úmrtí" },
-  stats: { key: "stats", width: 460, height: 220, title: "Bitcoin je mrtvý — statistická karta" },
+  counter: { key: "counter", width: 320, height: 90, title: "Bitcoin je mrtvý — počítadlo úmrtí" },
+  stats: { key: "stats", width: 480, height: 260, title: "Bitcoin je mrtvý — statistická karta" },
 };
 
 /** Copy-paste iframe snippet pro daný widget. */

@@ -17,18 +17,18 @@ export function StatsWidget({ count, currentValue, roi, perDeposit, updated }: S
       rel="noopener noreferrer"
       className="flex min-h-screen w-full flex-col justify-between gap-2 overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-5 no-underline"
     >
-      <span className="text-base font-bold tracking-tight">
+      <span className="text-lg font-bold tracking-tight">
         <span className="text-[var(--bitcoin-orange)]">Bitcoin</span>{" "}
         <span className="text-white">je mrtvý</span>
       </span>
 
-      <p className="text-lg font-bold leading-snug text-white">
+      <p className="text-xl font-bold leading-snug text-white">
         Bitcoin byl{" "}
         <span className="text-[var(--death-red)]">{count.toLocaleString("cs-CZ")}&times;</span>{" "}
         prohlášen za&nbsp;mrtvý
       </p>
 
-      <p className="text-sm leading-snug text-neutral-300">
+      <p className="text-base leading-snug text-neutral-300">
         Kdybyste investovali {formatCurrency(perDeposit)} při každém úmrtí, dnes by vaše
         portfolio mělo hodnotu{" "}
         <span className="font-bold text-[var(--death-red)]">{formatCurrency(currentValue)}</span>{" "}
@@ -36,7 +36,7 @@ export function StatsWidget({ count, currentValue, roi, perDeposit, updated }: S
         <span className="font-bold text-green-500">+{Math.round(roi).toLocaleString("cs-CZ")}&nbsp;%</span>.
       </p>
 
-      <p className="text-xs text-neutral-500">Aktualizováno {updated}</p>
+      <p className="text-sm text-neutral-500">Aktualizováno {updated}</p>
     </a>
   );
 }
