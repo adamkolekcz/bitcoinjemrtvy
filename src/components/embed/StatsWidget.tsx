@@ -15,10 +15,10 @@ export function StatsWidget({ count, currentValue, roi, perDeposit, updated }: S
       href={EMBED_ORIGIN}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex min-h-screen w-full flex-col justify-between gap-2 border border-[var(--card-border)] bg-[var(--card-bg)] p-5 no-underline"
+      className="flex min-h-screen w-full flex-col justify-between gap-2 overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-5 no-underline"
     >
       <span className="text-base font-bold tracking-tight">
-        <span className="text-[var(--death-red)]">Bitcoin</span>{" "}
+        <span className="text-[var(--bitcoin-orange)]">Bitcoin</span>{" "}
         <span className="text-white">je mrtvý</span>
       </span>
 
