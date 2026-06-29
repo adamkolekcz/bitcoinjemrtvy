@@ -2,8 +2,9 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { BitcoinChartLazy } from "@/components/BitcoinChartLazy";
 import { StatsSection } from "@/components/StatsSection";
-import { prepareChartData, calculateInvestment, parseDate } from "@/lib/calculations";
+import { prepareChartData, calculateInvestment, calculateCashCounterfactual, parseDate } from "@/lib/calculations";
 import { getDeathsData, getBtcCoinGeckoData } from "@/lib/deaths-data";
+import inflationCz from "@/data/inflation-cz.json";
 
 export const revalidate = 3600; // ISR - revalidace každou hodinu
 
@@ -35,6 +36,12 @@ export default async function Home() {
     czkToUsd
   );
 
+  const cash = calculateCashCounterfactual(
+    deaths,
+    INVESTMENT_PER_DEATH_CZK,
+    inflationCz.rates
+  );
+
   return (
     <div className="min-h-screen bg-[var(--background)]">
       <Header deathCount={deaths.length} asPageHeading />
@@ -46,6 +53,7 @@ export default async function Home() {
 
         <StatsSection
           investment={investment}
+          cash={cash}
           currentBtcPriceCzk={currentBtcPriceCzk}
           investmentPerDeath={INVESTMENT_PER_DEATH_CZK}
           btcMarketCapCzk={btcMarketCapCzk}

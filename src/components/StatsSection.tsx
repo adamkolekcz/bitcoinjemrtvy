@@ -1,6 +1,11 @@
 import Link from "next/link";
-import { formatCurrency, type InvestmentResult } from "@/lib/calculations";
+import {
+  formatCurrency,
+  type InvestmentResult,
+  type CashCounterfactualResult,
+} from "@/lib/calculations";
 import { BitcoinAgeCounter } from "@/components/BitcoinAgeCounter";
+import { TwoPathsCard } from "@/components/TwoPathsCard";
 
 function formatMarketCapWords(value: number): string {
   value = Math.round(value);
@@ -29,6 +34,7 @@ function formatMarketCapWords(value: number): string {
 
 interface StatsSectionProps {
   investment: InvestmentResult;
+  cash: CashCounterfactualResult;
   currentBtcPriceCzk: number;
   investmentPerDeath: number;
   btcMarketCapCzk: number | null;
@@ -36,6 +42,7 @@ interface StatsSectionProps {
 
 export function StatsSection({
   investment,
+  cash,
   currentBtcPriceCzk,
   investmentPerDeath,
   btcMarketCapCzk,
@@ -89,6 +96,8 @@ export function StatsSection({
           green
         />
       </div>
+
+      <TwoPathsCard investment={investment} cash={cash} />
 
       <div className="mt-8 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-8">
         <h3 className="mb-4 text-xl font-bold text-white sm:text-2xl">
