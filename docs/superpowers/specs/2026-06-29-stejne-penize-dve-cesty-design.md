@@ -123,10 +123,10 @@ Návrh chování (pure, testovatelné):
 - Tabulka zlomků: `desetinu` (10), `pětinu` (20), `čtvrtinu` (25), `třetinu` (33.3),
   `polovinu` (50).
 - Vyber nejbližší podle |absLossPct − pct|.
-- Kvalifikátor: do ±1,5 p.b. holé slovo; jinak `téměř <slovo>` (když je ztráta menší)
+- Kvalifikátor: do ±2 p.b. holé slovo; jinak `téměř <slovo>` (když je ztráta menší)
   nebo `více než <slovo>` (když větší).
-- Příklady: 26 % → `čtvrtinu`; 23,5 % → `téměř čtvrtinu`; 28 % → `více než čtvrtinu`;
-  32 % → `téměř třetinu`.
+- Příklady: 25 % → `čtvrtinu`; 26 % → `čtvrtinu`; 29 % → `více než čtvrtinu`;
+  30 % → `téměř třetinu`.
 
 ### UI — `TwoPathsCard.tsx`
 
@@ -178,5 +178,8 @@ přepočítají se s novými prohlášeními i s rozšířením inflační tabul
 ## Atribuce
 
 Fork `nktrjsk/bitcoinjemrtvy` je MIT-licencovaný; převzetí kódu zpět do originálu je čisté.
-Atribuci (řádek v commit message / CLAUDE.md) volitelně doplnit dle preference.
+Atribuci doplnit konkrétně:
+- **Komentář v `calculations.ts`** u sekce cash counterfactual: odkud metoda pochází
+  (`Převzato z forku nktrjsk/bitcoinjemrtvy, MIT`).
+- **Zmínka v implementačním commitu.**
 ```
