@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
 export default function Error({ reset }: { error: Error; reset: () => void }) {
   return (
-    <div className="min-h-screen bg-[var(--background)]">
+    <div className="flex min-h-screen flex-col bg-[var(--background)]">
       <Header />
 
-      <main className="mx-auto max-w-3xl px-4 py-16 sm:px-6 text-center">
+      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-4 py-16 text-center sm:px-6">
         <div className="mb-8">
           <span className="text-8xl font-bold text-[var(--bitcoin-orange)]">500</span>
         </div>
@@ -40,6 +41,8 @@ export default function Error({ reset }: { error: Error; reset: () => void }) {
           </Link>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 }

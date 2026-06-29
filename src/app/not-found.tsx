@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-[var(--background)]">
+    <div className="flex min-h-screen flex-col bg-[var(--background)]">
       <Header />
 
-      <main className="mx-auto max-w-3xl px-4 py-16 sm:px-6 text-center">
+      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-4 py-16 text-center sm:px-6">
         <div className="mb-8">
           <span className="text-8xl font-bold text-[var(--bitcoin-orange)]">404</span>
         </div>
@@ -30,18 +31,7 @@ export default function NotFound() {
         </Link>
       </main>
 
-      <footer className="border-t border-[var(--card-border)] py-8 text-center text-sm text-neutral-400">
-        <p className="flex items-center justify-center gap-1 flex-wrap">
-          Původní{" "}
-          <a href="https://bitcoindeaths.com" target="_blank" rel="noopener noreferrer" aria-label="Bitcoinisdead (otevře se v novém okně)">
-            Bitcoinisdead
-          </a>{" "}
-          přeložil{" "}
-          <a href="https://www.linkedin.com/in/adamkolek/" target="_blank" rel="noopener noreferrer" aria-label="Adam Kolek na LinkedIn (otevře se v novém okně)">
-            Adam Kolek
-          </a>
-        </p>
-      </footer>
+      <Footer />
     </div>
   );
 }

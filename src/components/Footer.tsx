@@ -1,6 +1,6 @@
 export function Footer() {
   return (
-    <footer className="border-t border-[var(--card-border)] py-8 text-sm text-neutral-400">
+    <footer className="py-8 text-sm text-neutral-400">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <p className="flex items-center gap-1 flex-wrap justify-center text-center">
           Původní{" "}
