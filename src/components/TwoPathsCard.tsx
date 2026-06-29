@@ -49,7 +49,7 @@ export function TwoPathsCard({ investment, cash }: TwoPathsCardProps) {
             &minus;{Math.round(Math.abs(cash.lossPct)).toLocaleString("cs-CZ")}&nbsp;%
           </p>
           <p className="mt-1 text-sm text-neutral-400">
-            kupní síla dnes jen {formatCurrency(cash.realValue)}
+            {formatCurrency(cash.realValue)}
           </p>
         </div>
       </div>
