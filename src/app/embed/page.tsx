@@ -53,7 +53,7 @@ export default function EmbedPage() {
                   src={`/embed/${w.key}`}
                   width={w.width}
                   height={w.height}
-                  style={{ border: "none" }}
+                  style={{ border: "none", borderRadius: "12px", overflow: "hidden" }}
                   title={w.title}
                 />
               </div>

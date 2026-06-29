@@ -29,7 +29,7 @@ export function CopyEmbedCode({ code }: { code: string }) {
           {copied ? "Zkopírováno ✓" : "Kopírovat kód"}
         </button>
       </div>
-      <pre className="overflow-x-auto px-4 py-3 text-xs leading-relaxed text-neutral-300">
+      <pre className="whitespace-pre-wrap break-all px-4 py-3 text-xs leading-relaxed text-neutral-300">
         <code>{code}</code>
       </pre>
     </div>

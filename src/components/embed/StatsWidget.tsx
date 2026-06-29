@@ -17,22 +17,20 @@ export function StatsWidget({ count, currentValue, roi, perDeposit, updated }: S
       rel="noopener noreferrer"
       className="flex min-h-screen w-full flex-col justify-between gap-2 border border-[var(--card-border)] bg-[var(--card-bg)] p-5 no-underline"
     >
-      <div className="flex items-center gap-2">
-        <span className="text-lg font-bold leading-none text-[var(--bitcoin-orange)]">&#8383;</span>
-        <span className="text-sm font-medium uppercase tracking-wider text-neutral-300">
-          Bitcoin je mrtvý
-        </span>
-      </div>
+      <span className="text-base font-bold tracking-tight">
+        <span className="text-[var(--death-red)]">Bitcoin</span>{" "}
+        <span className="text-white">je mrtvý</span>
+      </span>
 
       <p className="text-lg font-bold leading-snug text-white">
         Bitcoin byl{" "}
-        <span className="text-[var(--bitcoin-orange)]">{count.toLocaleString("cs-CZ")}&times;</span>{" "}
+        <span className="text-[var(--death-red)]">{count.toLocaleString("cs-CZ")}&times;</span>{" "}
         prohlášen za&nbsp;mrtvý
       </p>
 
       <p className="text-sm leading-snug text-neutral-300">
         {formatCurrency(perDeposit)} při každém prohlášení by dnes mělo hodnotu{" "}
-        <span className="font-bold text-[var(--bitcoin-orange)]">{formatCzkCompact(currentValue)}</span>{" "}
+        <span className="font-bold text-[var(--death-red)]">{formatCzkCompact(currentValue)}</span>{" "}
         <span className="font-bold text-green-500">(+{Math.round(roi).toLocaleString("cs-CZ")}&nbsp;%)</span>
       </p>
 
