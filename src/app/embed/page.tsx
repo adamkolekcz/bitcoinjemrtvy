@@ -48,7 +48,7 @@ export default function EmbedPage() {
               <h2 className="text-xl font-bold text-white sm:text-2xl">{s.title}</h2>
               <p className="mt-1 text-sm text-neutral-400 sm:text-base">{s.description}</p>
 
-              <div className="mt-4 flex justify-center rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)]/40 p-6">
+              <div className="mt-4 flex justify-center rounded-xl border border-[var(--card-border)] bg-[var(--background)] p-6">
                 <iframe
                   src={`/embed/${w.key}`}
                   width={w.width}
