@@ -14,7 +14,7 @@ export function CounterWidget({ count }: { count: number }) {
       </span>
       <span className="mt-0.5 text-sm text-neutral-300">
         <span className="font-bold text-[var(--death-red)]">{count.toLocaleString("cs-CZ")}&times;</span>{" "}
-        a&nbsp;počítáme
+        prohlášen za&nbsp;mrtvý
       </span>
     </a>
   );

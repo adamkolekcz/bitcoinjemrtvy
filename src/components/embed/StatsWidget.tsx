@@ -1,5 +1,5 @@
 import { EMBED_ORIGIN } from "@/lib/embed-config";
-import { formatCurrency, formatCzkCompact } from "@/lib/calculations";
+import { formatCurrency } from "@/lib/calculations";
 
 interface StatsWidgetProps {
   count: number;
@@ -29,9 +29,11 @@ export function StatsWidget({ count, currentValue, roi, perDeposit, updated }: S
       </p>
 
       <p className="text-sm leading-snug text-neutral-300">
-        {formatCurrency(perDeposit)} při každém prohlášení by dnes mělo hodnotu{" "}
-        <span className="font-bold text-[var(--death-red)]">{formatCzkCompact(currentValue)}</span>{" "}
-        <span className="font-bold text-green-500">(+{Math.round(roi).toLocaleString("cs-CZ")}&nbsp;%)</span>
+        Kdybyste investovali {formatCurrency(perDeposit)} při každém úmrtí, dnes by vaše
+        portfolio mělo hodnotu{" "}
+        <span className="font-bold text-[var(--death-red)]">{formatCurrency(currentValue)}</span>{" "}
+        s&nbsp;výnosem{" "}
+        <span className="font-bold text-green-500">+{Math.round(roi).toLocaleString("cs-CZ")}&nbsp;%</span>.
       </p>
 
       <p className="text-xs text-neutral-500">Aktualizováno {updated}</p>
