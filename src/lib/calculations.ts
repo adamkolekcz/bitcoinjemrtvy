@@ -226,6 +226,29 @@ export function calculateCashCounterfactual(
   return { nominal, realValue, lossPct, latestYear };
 }
 
+/**
+ * Slovní popis ztráty kupní síly v akuzativu pro footnote: „ztratila <X> kupní síly".
+ * Vybere nejbližší „hezký" zlomek; do ±2 p.b. holé slovo, jinak kvalifikátor.
+ */
+export function describeLossFraction(absLossPct: number): string {
+  const fractions = [
+    { pct: 10, word: "desetinu" },
+    { pct: 20, word: "pětinu" },
+    { pct: 25, word: "čtvrtinu" },
+    { pct: 100 / 3, word: "třetinu" },
+    { pct: 50, word: "polovinu" },
+  ];
+  let nearest = fractions[0];
+  for (const f of fractions) {
+    if (Math.abs(absLossPct - f.pct) < Math.abs(absLossPct - nearest.pct)) {
+      nearest = f;
+    }
+  }
+  const diff = absLossPct - nearest.pct;
+  if (Math.abs(diff) <= 2) return nearest.word;
+  return diff > 0 ? `více než ${nearest.word}` : `téměř ${nearest.word}`;
+}
+
 export function prepareChartData(deaths: DeathEvent[]): ChartDataPoint[] {
   return deaths
     .filter((d) => d.bitcoinPrice > 0)

@@ -5,6 +5,7 @@ import {
   getBitcoinAgeYears,
   buildCpiIndex,
   calculateCashCounterfactual,
+  describeLossFraction,
   type DeathEvent,
 } from "./calculations.ts";
 
@@ -120,4 +121,27 @@ test("koruna: nominál = počet × vklad", () => {
     { "2020": 5, "2021": 10, "2022": 2 },
   );
   assert.equal(r.nominal, 3000);
+});
+
+// ── slovní zlomek ────────────────────────────────────────────────────────────
+
+test("zlomek: 25 % = čtvrtinu (holé slovo)", () => {
+  assert.equal(describeLossFraction(25), "čtvrtinu");
+});
+
+test("zlomek: 26 % = čtvrtinu (do ±2 p.b. holé)", () => {
+  assert.equal(describeLossFraction(26), "čtvrtinu");
+});
+
+test("zlomek: 29 % = více než čtvrtinu", () => {
+  assert.equal(describeLossFraction(29), "více než čtvrtinu");
+});
+
+test("zlomek: 30 % = téměř třetinu", () => {
+  assert.equal(describeLossFraction(30), "téměř třetinu");
+});
+
+test("zlomek: 20 % = pětinu, 50 % = polovinu", () => {
+  assert.equal(describeLossFraction(20), "pětinu");
+  assert.equal(describeLossFraction(50), "polovinu");
 });
