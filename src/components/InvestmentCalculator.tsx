@@ -74,12 +74,14 @@ export function InvestmentCalculator({
           . Dnes by vaše portfolio mělo hodnotu{" "}
           <strong className="text-green-500">
             {formatCurrency(inv.currentValue)}
-          </strong>
-          {" "}s{" "}výnosem{" "}
-          <strong className="text-green-500">
-            +{Math.round(inv.roi).toLocaleString("cs-CZ")}&nbsp;%
-          </strong>
-          .
+          </strong>{" "}
+          <span className="whitespace-nowrap">
+            s&nbsp;výnosem{" "}
+            <strong className="text-green-500">
+              +{Math.round(inv.roi).toLocaleString("cs-CZ")}&nbsp;%
+            </strong>
+            .
+          </span>
         </p>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
