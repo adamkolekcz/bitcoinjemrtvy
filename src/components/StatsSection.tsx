@@ -55,7 +55,7 @@ export function StatsSection({
         currentBtcPriceCzk={currentBtcPriceCzk}
       />
 
-      <div className="mt-8 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-8">
+      <div className="mt-8 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-6 sm:p-8">
         <h3 className="mb-4 text-xl font-bold text-white sm:text-2xl">
           Je Bitcoin mrtvý?
         </h3>
@@ -75,11 +75,12 @@ export function StatsSection({
               : "—"}
             sublabel={btcMarketCapCzk !== null ? formatMarketCapWords(btcMarketCapCzk) : ""}
             green
+            compact
           />
         </div>
       </div>
 
-      <div className="mt-8 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-8">
+      <div className="mt-8 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-6 sm:p-8">
         <h3 className="mb-6 flex flex-col items-center justify-center gap-2 text-xl font-bold text-white sm:flex-row sm:gap-3 sm:text-2xl">
           <span>Aktuální stav:</span>
           <span className="inline-flex items-center gap-2">

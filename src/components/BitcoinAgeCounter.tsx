@@ -62,7 +62,7 @@ export function BitcoinAgeCounter() {
       <p className="text-sm font-medium uppercase tracking-wider text-neutral-300">
         Jak dlouho žije Bitcoin?
       </p>
-      <p className="mt-2 text-2xl font-bold tabular-nums text-green-500">
+      <p className="mt-2 text-xl font-bold tabular-nums text-green-500 sm:text-2xl">
         {diff ? formatAge(diff) : "—"}
       </p>
       <p className="mt-1 text-sm text-neutral-400">Od 3. ledna 2009</p>
