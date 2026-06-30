@@ -24,7 +24,7 @@ export function Footer() {
               </span>
             </Link>
             <p className="mt-3 max-w-sm leading-relaxed text-neutral-400">
-              Již {years}&nbsp;let sledujeme, jak Bitcoin umírá
+              Již {years}&nbsp;let sledujeme Bitcoin umírat
             </p>
             <div className="mt-4">
               <FooterBtcPrice />

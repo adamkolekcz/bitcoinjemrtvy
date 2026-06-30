@@ -41,7 +41,7 @@ export function Header({ deathCount, asPageHeading = false }: HeaderProps) {
           )}
         </div>
         <p className="mt-1 text-sm text-neutral-300 sm:hidden">
-          Již {years}&nbsp;let sledujeme, jak Bitcoin umírá
+          Již {years}&nbsp;let sledujeme Bitcoin umírat
         </p>
 
         {/* Desktop: full layout */}
@@ -56,7 +56,7 @@ export function Header({ deathCount, asPageHeading = false }: HeaderProps) {
               </span>
             </Link>
             <p className="mt-1 text-base text-neutral-300 whitespace-nowrap">
-              Již {years}&nbsp;let sledujeme, jak Bitcoin umírá
+              Již {years}&nbsp;let sledujeme Bitcoin umírat
             </p>
           </div>
 
