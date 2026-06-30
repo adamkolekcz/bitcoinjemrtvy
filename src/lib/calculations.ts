@@ -160,6 +160,23 @@ export function calculateInvestment(
   };
 }
 
+/**
+ * Naškáluje výsledek investice na jinou částku za úmrtí. Všechny korunové veličiny
+ * (totalInvested, totalBtc, currentValue) jsou v částce lineární — viz calculateInvestment —
+ * takže stačí násobit faktorem (= nová částka / původní částka). ROI je poměr dvou
+ * lineárních veličin, tedy na částce nezávislé → zůstává beze změny.
+ * Škálování je matematicky identické s přepočtem calculateInvestment, jen nepotřebuje deaths.
+ */
+export function scaleInvestmentResult(base: InvestmentResult, factor: number): InvestmentResult {
+  return {
+    totalInvested: base.totalInvested * factor,
+    totalBtc: base.totalBtc * factor,
+    currentValue: base.currentValue * factor,
+    roi: base.roi,
+    numberOfDeaths: base.numberOfDeaths,
+  };
+}
+
 // ── „Je koruna mrtvá?" — cash counterfactual ────────────────────────────────
 // Protějšek k BTC ROI: stejné vklady, ale držené v hotovosti a užírané inflací.
 // Metoda převzata z forku nktrjsk/bitcoinjemrtvy (MIT).
@@ -239,6 +256,20 @@ export function calculateCashCounterfactual(
   const lossPct = nominal > 0 ? ((realValue - nominal) / nominal) * 100 : 0;
 
   return { nominal, realValue, lossPct, latestYear };
+}
+
+/**
+ * Naškáluje cash counterfactual na jinou částku. nominal i realValue jsou v částce
+ * lineární; lossPct je poměr (na částce nezávislý) → beze změny. Stejný princip jako
+ * scaleInvestmentResult.
+ */
+export function scaleCashResult(base: CashCounterfactualResult, factor: number): CashCounterfactualResult {
+  return {
+    nominal: base.nominal * factor,
+    realValue: base.realValue * factor,
+    lossPct: base.lossPct,
+    latestYear: base.latestYear,
+  };
 }
 
 /**

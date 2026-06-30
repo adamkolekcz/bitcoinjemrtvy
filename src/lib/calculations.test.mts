@@ -6,6 +6,8 @@ import {
   buildCpiIndex,
   calculateCashCounterfactual,
   describeLossFraction,
+  scaleInvestmentResult,
+  scaleCashResult,
   type DeathEvent,
 } from "./calculations.ts";
 
@@ -152,6 +154,32 @@ test("koruna: výchozí odhad je 2,5 %", () => {
   });
   // bez explicitního estimateRate → 2,5 %; dnešek 2023 → CPI(2023) = 100 × 1.025
   assert.ok(Math.abs(r.realValue - 1000 / 1.025) < 1e-6);
+});
+
+// ── škálování částky (interaktivní kalkulačka) ───────────────────────────────
+
+test("škálování investice: korunové hodnoty lineární, ROI a počet beze změny", () => {
+  const base = { totalInvested: 1000, totalBtc: 0.5, currentValue: 50000, roi: 4900, numberOfDeaths: 1 };
+  const s = scaleInvestmentResult(base, 3);
+  assert.equal(s.totalInvested, 3000);
+  assert.equal(s.totalBtc, 1.5);
+  assert.equal(s.currentValue, 150000);
+  assert.equal(s.roi, 4900);
+  assert.equal(s.numberOfDeaths, 1);
+});
+
+test("škálování investice: faktor 1 = identita", () => {
+  const base = { totalInvested: 1234, totalBtc: 0.1, currentValue: 9999, roi: 700, numberOfDeaths: 5 };
+  assert.deepEqual(scaleInvestmentResult(base, 1), base);
+});
+
+test("škálování koruny: nominal/realValue lineární, lossPct a rok beze změny", () => {
+  const base = { nominal: 1000, realValue: 800, lossPct: -20, latestYear: 2026 };
+  const s = scaleCashResult(base, 2.5);
+  assert.equal(s.nominal, 2500);
+  assert.equal(s.realValue, 2000);
+  assert.equal(s.lossPct, -20);
+  assert.equal(s.latestYear, 2026);
 });
 
 // ── slovní zlomek ────────────────────────────────────────────────────────────
