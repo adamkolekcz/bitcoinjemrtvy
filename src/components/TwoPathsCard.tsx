@@ -24,7 +24,7 @@ export function TwoPathsCard({ investment, cash }: TwoPathsCardProps) {
         </strong>
         . Ne Bitcoin, ale{" "}
         <strong className="text-neutral-300">koruna pod matrací pomalu umírá</strong>{" "}
-        &mdash; užírá ji inflace.
+        &mdash; zabíjí ji inflace.
       </p>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
