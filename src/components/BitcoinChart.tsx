@@ -165,7 +165,9 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
   const [period, setPeriod] = useState<Period>("all");
 
   // Na mobilu zúžíme osu Y a zkrátíme popisky (bez " Kč"), aby graf dostal víc šířky.
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(max-width: 640px)").matches,
+  );
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 640px)");
     const update = () => setIsMobile(mq.matches);
@@ -372,9 +374,9 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
       <div
         role="img"
         aria-label="Graf vývoje ceny Bitcoinu v čase s vyznačenými prohlášeními o jeho smrti. Body grafu jsou interaktivní myší; kompletní textový přehled všech prohlášení najdeš na stránce Prohlášení."
-        className="select-none h-[320px] sm:h-[500px]"
+        className="select-none"
       >
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer width="100%" height={isMobile ? 320 : 500}>
         <ComposedChart
           data={filteredChartData}
           margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
