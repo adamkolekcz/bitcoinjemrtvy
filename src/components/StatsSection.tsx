@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type {
   InvestmentResult,
   CashCounterfactualResult,
@@ -61,7 +60,7 @@ export function StatsSection({
           Je Bitcoin mrtvý?
         </h3>
         <p className="text-base leading-relaxed text-neutral-300 sm:text-lg">
-          <strong className="text-white">Ne</strong>, Bitcoin není mrtvý. Bitcoin byl od roku 2010 prohlášen za mrtvý více než{" "}
+          <strong className="text-white">Ne</strong>, Bitcoin není mrtvý. Bitcoin byl od roku 2010 prohlášen médii za mrtvý více než{" "}
           <strong className="text-[var(--death-red)]">{investment.numberOfDeaths}&times;</strong>, přesto však nadále funguje 24&nbsp;hodin denně, 7&nbsp;dní v&nbsp;týdnu. Nepřetržitě zpracovává transakce. Bitcoin neumírá. Naopak,{" "}
           <strong className="text-green-500">vzkvétá</strong>.
         </p>
@@ -78,16 +77,6 @@ export function StatsSection({
             green
           />
         </div>
-
-        <Link
-          href="/prohlaseni"
-          className="mt-6 inline-flex items-center gap-2 rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)] px-4 py-3 transition-all hover:border-[var(--bitcoin-orange)]/40 hover:bg-[var(--card-bg)]/80"
-        >
-          <span className="text-sm font-medium text-white">Seznam nekrologů</span>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-300">
-            <path d="M6 12L10 8L6 4" />
-          </svg>
-        </Link>
       </div>
 
       <div className="mt-8 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-8">
