@@ -121,7 +121,7 @@ export function StatsSection({
           <div className="text-center">
             <div className="mb-2 text-3xl">📈</div>
             <p className="mb-2 font-semibold text-white">Aktivní vývoj</p>
-            <p className="text-base text-neutral-300">Bezpečnost i&nbsp;možnosti sítě se stále zlepšují</p>
+            <p className="text-base text-neutral-300">Bezpečnost i&nbsp;možnosti se stále zlepšují</p>
           </div>
         </div>
 
