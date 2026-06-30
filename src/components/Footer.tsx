@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getBitcoinAgeYears } from "@/lib/calculations";
 
 const GITHUB_URL = "https://github.com/adamkolekcz/bitcoinjemrtvy";
 const LICENSE_URL = "https://github.com/adamkolekcz/bitcoinjemrtvy/blob/main/LICENSE";
@@ -7,6 +8,7 @@ const linkClass =
   "text-neutral-400 underline-offset-4 transition-colors hover:text-[var(--bitcoin-orange)] hover:underline";
 
 export function Footer() {
+  const years = getBitcoinAgeYears();
   return (
     <footer className="bg-[var(--background)] py-12 text-sm">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -20,8 +22,7 @@ export function Footer() {
               </span>
             </Link>
             <p className="mt-3 max-w-sm leading-relaxed text-neutral-400">
-              Mediální nekrology Bitcoinu od roku 2010. Pokaždé &bdquo;zemřel&ldquo; &mdash;
-              a pokaždé běží dál.
+              Již {years}&nbsp;let sledujeme, jak Bitcoin umírá
             </p>
             <div className="mt-4 inline-flex items-center gap-2">
               <span className="relative flex h-2 w-2" aria-hidden="true">
