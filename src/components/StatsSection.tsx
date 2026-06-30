@@ -80,13 +80,15 @@ export function StatsSection({
       </div>
 
       <div className="mt-8 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-8">
-        <h3 className="mb-6 flex items-center justify-center gap-3 text-xl font-bold text-white sm:text-2xl">
-          Aktuální stav:
-          <span className="relative flex h-3 w-3">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75"></span>
-            <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500"></span>
+        <h3 className="mb-6 flex flex-col items-center justify-center gap-2 text-xl font-bold text-white sm:flex-row sm:gap-3 sm:text-2xl">
+          <span>Aktuální stav:</span>
+          <span className="inline-flex items-center gap-2">
+            <span className="relative flex h-3 w-3" aria-hidden="true">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75 motion-reduce:animate-none"></span>
+              <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500"></span>
+            </span>
+            <span className="text-green-500">Živý a aktivní</span>
           </span>
-          <span className="text-green-500">Živý a aktivní</span>
         </h3>
 
         <div className="grid gap-6 sm:grid-cols-3">
