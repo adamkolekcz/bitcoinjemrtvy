@@ -102,7 +102,7 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-10 flex flex-col gap-2 border-t border-[var(--card-border)] pt-6 text-neutral-500 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-10 flex flex-col gap-2 border-t border-[var(--card-border)] pt-6 text-neutral-400 sm:flex-row sm:items-center sm:justify-between">
           <p>
             © {year} Adam Kolek · Kód pod{" "}
             <a
