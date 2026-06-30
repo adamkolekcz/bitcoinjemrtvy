@@ -95,17 +95,17 @@ export function StatsSection({
           <div className="text-center">
             <div className="mb-2 text-3xl">⚡</div>
             <p className="mb-2 font-semibold text-white">Běží nepřetržitě</p>
-            <p className="text-base text-neutral-300">Bitcoin funguje bez výpadku 24/7 — žádné víkendy, svátky ani odstávky, jaké znáš z&nbsp;bank</p>
+            <p className="text-base text-neutral-300">Bitcoin funguje bez výpadku 24/7</p>
           </div>
           <div className="text-center">
             <div className="mb-2 text-3xl">🌐</div>
             <p className="mb-2 font-semibold text-white">Globální decentralizovaná síť</p>
-            <p className="text-base text-neutral-300">Síť běží současně na desítkách tisíců počítačů po celém světě. Neovládá ji žádná společnost ani stát</p>
+            <p className="text-base text-neutral-300">Neovládá ji žádná společnost ani stát</p>
           </div>
           <div className="text-center">
             <div className="mb-2 text-3xl">📈</div>
             <p className="mb-2 font-semibold text-white">Aktivní vývoj</p>
-            <p className="text-base text-neutral-300">Software Bitcoinu se průběžně vyvíjí a&nbsp;postupně se zlepšuje bezpečnost i&nbsp;možnosti sítě</p>
+            <p className="text-base text-neutral-300">Bezpečnost i&nbsp;možnosti sítě se stále zlepšují</p>
           </div>
         </div>
 
