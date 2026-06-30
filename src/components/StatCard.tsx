@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 interface StatCardProps {
   label: ReactNode;
   value: string;
-  sublabel: string;
+  sublabel: ReactNode;
   highlight?: boolean;
   green?: boolean;
   /** Pro dlouhé hodnoty (market cap): menší písmo na mobilu, aby se nelámala. */

@@ -6,7 +6,7 @@ import { BitcoinAgeCounter } from "@/components/BitcoinAgeCounter";
 import { StatCard } from "@/components/StatCard";
 import { InvestmentCalculator } from "@/components/InvestmentCalculator";
 
-function formatMarketCapWords(value: number): string {
+function formatMarketCapWords(value: number, short = false): string {
   value = Math.round(value);
   const bilion = 1_000_000_000_000;
   const miliarda = 1_000_000_000;
@@ -17,6 +17,7 @@ function formatMarketCapWords(value: number): string {
     const biliony = Math.floor(value / bilion);
     const miliardy = Math.floor((value % bilion) / miliarda);
     const miliony = Math.floor((value % miliarda) / milion);
+    if (short) return `${biliony} bilionů ${miliardy} miliard ${miliony} milionů korun`;
     const tisice = Math.floor((value % milion) / tisic);
     const koruny = Math.floor(value % tisic);
     return `${biliony} bilionů ${miliardy} miliard ${miliony} milionů ${tisice} tisíc ${koruny} korun`;
@@ -24,6 +25,7 @@ function formatMarketCapWords(value: number): string {
   if (value >= miliarda) {
     const n = Math.floor(value / miliarda);
     const miliony = Math.floor((value % miliarda) / milion);
+    if (short) return `${n} miliard ${miliony} milionů korun`;
     const tisice = Math.floor((value % milion) / tisic);
     const koruny = Math.floor(value % tisic);
     return `${n} miliard ${miliony} milionů ${tisice} tisíc ${koruny} korun`;
@@ -73,7 +75,20 @@ export function StatsSection({
             value={btcMarketCapCzk !== null
               ? `${Math.round(btcMarketCapCzk).toLocaleString("cs-CZ")} Kč`
               : "—"}
-            sublabel={btcMarketCapCzk !== null ? formatMarketCapWords(btcMarketCapCzk) : ""}
+            sublabel={
+              btcMarketCapCzk !== null ? (
+                <>
+                  <span className="sm:hidden">
+                    {formatMarketCapWords(btcMarketCapCzk, true)}
+                  </span>
+                  <span className="hidden sm:inline">
+                    {formatMarketCapWords(btcMarketCapCzk)}
+                  </span>
+                </>
+              ) : (
+                ""
+              )
+            }
             green
             compact
           />
