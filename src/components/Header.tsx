@@ -16,8 +16,9 @@ export function Header({ deathCount, asPageHeading = false }: HeaderProps) {
           „more than one h1". Nadpis je proto tady, viditelná loga jsou <span>. */}
       {asPageHeading && <h1 className="sr-only">Bitcoin je mrtvý</h1>}
       <div className="mx-auto max-w-7xl px-4 py-4 sm:py-6 sm:px-6 lg:px-8">
-        {/* Mobile: title + death count on same row */}
-        <div className="flex items-center justify-between sm:hidden">
+        {/* Mobile: titulek vlevo + kompaktní jednořádková pilulka „N× mrtvý"
+            vpravo, podtitulek na plnou šířku pod tím. */}
+        <div className="flex items-center justify-between gap-3 sm:hidden">
           <Link href="/" tabIndex={-1}>
             <span className="block text-2xl font-bold tracking-tight">
               <span className="text-[var(--bitcoin-orange)]">
@@ -30,18 +31,16 @@ export function Header({ deathCount, asPageHeading = false }: HeaderProps) {
           {deathCount !== undefined && (
             <Link
               href="/prohlaseni"
-              className="flex items-center gap-1.5 rounded-lg bg-[var(--death-red)]/10 px-3 py-1 border border-[var(--death-red)]/20 transition-colors hover:bg-[var(--death-red)]/20 hover:border-[var(--death-red)]/40"
+              className="flex shrink-0 items-center gap-1.5 rounded-lg bg-[var(--death-red)]/10 px-3 py-1.5 border border-[var(--death-red)]/20 transition-colors hover:bg-[var(--death-red)]/20 hover:border-[var(--death-red)]/40"
             >
-              <span className="text-sm font-bold text-[var(--death-red)]">
+              <span className="text-2xl font-bold leading-none text-[var(--death-red)]">
                 {deathCount}&times;
               </span>
-              <span className="text-xs text-[var(--death-red)]">
-                prohlášen za&nbsp;mrtvý
-              </span>
+              <span className="text-sm leading-none text-[var(--death-red)]">mrtvý</span>
             </Link>
           )}
         </div>
-        <p className="mt-1.5 text-sm text-neutral-300 sm:hidden">
+        <p className="mt-1 text-sm text-neutral-300 sm:hidden">
           Již {years}&nbsp;let sledujeme, jak Bitcoin umírá
         </p>
 
