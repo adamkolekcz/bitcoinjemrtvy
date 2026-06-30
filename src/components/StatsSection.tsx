@@ -1,11 +1,11 @@
 import Link from "next/link";
-import {
-  formatCurrency,
-  type InvestmentResult,
-  type CashCounterfactualResult,
+import type {
+  InvestmentResult,
+  CashCounterfactualResult,
 } from "@/lib/calculations";
 import { BitcoinAgeCounter } from "@/components/BitcoinAgeCounter";
-import { TwoPathsCard } from "@/components/TwoPathsCard";
+import { StatCard } from "@/components/StatCard";
+import { InvestmentCalculator } from "@/components/InvestmentCalculator";
 
 function formatMarketCapWords(value: number): string {
   value = Math.round(value);
@@ -49,55 +49,12 @@ export function StatsSection({
 }: StatsSectionProps) {
   return (
     <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-6">
-        <h2 className="mb-4 text-xl font-bold sm:text-2xl">
-          Co kdybyste investovali{" "}
-          <span className="text-[var(--bitcoin-orange)]">1&nbsp;000&nbsp;Kč</span> pokaždé,
-          když někdo prohlásil Bitcoin za mrtvý?
-        </h2>
-        <p className="text-base leading-relaxed text-neutral-300 sm:text-lg">
-          Celkem byste investovali{" "}
-          <strong className="text-white">
-            {formatCurrency(investment.totalInvested)}
-          </strong>
-          . Dnes by vaše portfolio mělo hodnotu{" "}
-          <strong className="text-[var(--bitcoin-orange)]">
-            {formatCurrency(investment.currentValue)}
-          </strong>
-          {" "}s{"\u00A0"}výnosem{" "}
-          <strong className="text-green-500">
-            +{Math.round(investment.roi).toLocaleString("cs-CZ")}&nbsp;%
-          </strong>
-          .
-        </p>
-      </div>
-
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          label={<>Investice při každém &quot;úmrtí&quot;</>}
-          value={formatCurrency(investmentPerDeath)}
-          sublabel={`${investment.numberOfDeaths} investic celkem`}
-        />
-        <StatCard
-          label="Celkem investováno"
-          value={formatCurrency(investment.totalInvested)}
-          sublabel={`${investment.numberOfDeaths} × ${formatCurrency(investmentPerDeath)}`}
-        />
-        <StatCard
-          label="Aktuální hodnota"
-          value={formatCurrency(investment.currentValue)}
-          sublabel={`${investment.totalBtc.toFixed(4)} BTC`}
-          green
-        />
-        <StatCard
-          label="Výnos (ROI)"
-          value={`+${Math.round(investment.roi).toLocaleString("cs-CZ")} %`}
-          sublabel={`Při ceně BTC ${Math.round(currentBtcPriceCzk).toLocaleString("cs-CZ")} Kč`}
-          green
-        />
-      </div>
-
-      <TwoPathsCard investment={investment} cash={cash} />
+      <InvestmentCalculator
+        investment={investment}
+        cash={cash}
+        baseAmount={investmentPerDeath}
+        currentBtcPriceCzk={currentBtcPriceCzk}
+      />
 
       <div className="mt-8 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-8">
         <h3 className="mb-4 text-xl font-bold text-white sm:text-2xl">
@@ -108,6 +65,20 @@ export function StatsSection({
           <strong className="text-[var(--death-red)]">{investment.numberOfDeaths}&times;</strong>, přesto však nadále funguje 24&nbsp;hodin denně, 7&nbsp;dní v&nbsp;týdnu. Nepřetržitě zpracovává transakce. Bitcoin neumírá. Naopak,{" "}
           <strong className="text-green-500">vzkvétá</strong>.
         </p>
+
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <BitcoinAgeCounter />
+
+          <StatCard
+            label={<>Hodnota všech bitcoinů v&nbsp;oběhu</>}
+            value={btcMarketCapCzk !== null
+              ? `${Math.round(btcMarketCapCzk).toLocaleString("cs-CZ")} Kč`
+              : "—"}
+            sublabel={btcMarketCapCzk !== null ? formatMarketCapWords(btcMarketCapCzk) : ""}
+            green
+          />
+        </div>
+
         <Link
           href="/prohlaseni"
           className="mt-6 inline-flex items-center gap-2 rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)] px-4 py-3 transition-all hover:border-[var(--bitcoin-orange)]/40 hover:bg-[var(--card-bg)]/80"
@@ -147,19 +118,6 @@ export function StatsSection({
           </div>
         </div>
 
-      </div>
-
-      <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        <BitcoinAgeCounter />
-
-        <StatCard
-          label={<>Hodnota všech bitcoinů v{"\u00A0"}oběhu</>}
-          value={btcMarketCapCzk !== null
-            ? `${Math.round(btcMarketCapCzk).toLocaleString("cs-CZ")} Kč`
-            : "—"}
-          sublabel={btcMarketCapCzk !== null ? formatMarketCapWords(btcMarketCapCzk) : ""}
-          green
-        />
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2">
@@ -207,39 +165,5 @@ export function StatsSection({
         </a>
       </div>
     </section>
-  );
-}
-
-interface StatCardProps {
-  label: React.ReactNode;
-  value: string;
-  sublabel: string;
-  highlight?: boolean;
-  green?: boolean;
-}
-
-function StatCard({ label, value, sublabel, highlight, green }: StatCardProps) {
-  const getBorderBg = () => {
-    if (green) return "border-green-500/30 bg-green-500/5";
-    if (highlight) return "border-[var(--bitcoin-orange)]/30 bg-[var(--bitcoin-orange)]/5";
-    return "border-[var(--card-border)] bg-[var(--card-bg)]";
-  };
-
-  const getTextColor = () => {
-    if (green) return "text-green-500";
-    if (highlight) return "text-[var(--bitcoin-orange)]";
-    return "text-white";
-  };
-
-  return (
-    <div className={`rounded-xl border p-5 ${getBorderBg()}`}>
-      <p className="text-sm font-medium uppercase tracking-wider text-neutral-300">
-        {label}
-      </p>
-      <p className={`mt-2 text-2xl font-bold ${getTextColor()}`}>
-        {value}
-      </p>
-      <p className="mt-1 text-sm text-neutral-400">{sublabel}</p>
-    </div>
   );
 }
