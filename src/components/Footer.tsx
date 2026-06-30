@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getBitcoinAgeYears } from "@/lib/calculations";
+import { FooterBtcPrice } from "@/components/FooterBtcPrice";
 
 const GITHUB_URL = "https://github.com/adamkolekcz/bitcoinjemrtvy";
 const LICENSE_URL = "https://github.com/adamkolekcz/bitcoinjemrtvy/blob/main/LICENSE";
@@ -9,6 +10,7 @@ const linkClass =
 
 export function Footer() {
   const years = getBitcoinAgeYears();
+  const year = new Date().getFullYear();
   return (
     <footer className="bg-[var(--background)] py-12 text-sm">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -24,12 +26,8 @@ export function Footer() {
             <p className="mt-3 max-w-sm leading-relaxed text-neutral-400">
               Již {years}&nbsp;let sledujeme, jak Bitcoin umírá
             </p>
-            <div className="mt-4 inline-flex items-center gap-2">
-              <span className="relative flex h-2 w-2" aria-hidden="true">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75 motion-reduce:animate-none"></span>
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500"></span>
-              </span>
-              <span className="font-medium text-green-500">Živý a&nbsp;aktivní</span>
+            <div className="mt-4">
+              <FooterBtcPrice />
             </div>
           </div>
 
@@ -106,7 +104,7 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="mt-10 flex flex-col gap-2 border-t border-[var(--card-border)] pt-6 text-neutral-500 sm:flex-row sm:items-center sm:justify-between">
           <p>
-            © 2026 Adam Kolek · Kód pod{" "}
+            © {year} Adam Kolek · Kód pod{" "}
             <a
               href={LICENSE_URL}
               target="_blank"
