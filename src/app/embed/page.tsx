@@ -64,7 +64,7 @@ export default function EmbedPage() {
         })}
       </main>
 
-      <Footer hideEmbedLink />
+      <Footer />
     </div>
   );
 }
