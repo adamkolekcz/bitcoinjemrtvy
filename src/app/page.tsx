@@ -47,7 +47,7 @@ export default async function Home() {
       <Header deathCount={deaths.length} asPageHeading />
 
       <main>
-        <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <section className="mx-auto w-full max-w-7xl px-4 pt-8 pb-0 sm:px-6 lg:px-8">
           <BitcoinChartLazy data={chartData} currentPriceUsd={currentBtcPriceUsd} currentPriceCzk={currentBtcPriceCzk} usdToCzk={usdToCzk} />
         </section>
 
