@@ -114,7 +114,7 @@ export function Footer() {
               licencí MIT
             </a>
           </p>
-          <p>Není investiční doporučení — web slouží k pobavení a&nbsp;edukaci.</p>
+          <p>Není investiční doporučení — web slouží výhradně k&nbsp;edukaci.</p>
         </div>
       </div>
     </footer>

@@ -20,7 +20,7 @@ export function FooterBtcPrice() {
   }, []);
 
   return (
-    <p className="text-neutral-500">
+    <p className="text-neutral-400">
       1&nbsp;BTC ={" "}
       <span className="font-medium tabular-nums text-green-500">
         {priceCzk === null ? "…" : `${Math.round(priceCzk).toLocaleString("cs-CZ")} Kč`}
