@@ -95,7 +95,7 @@ export function StatsSection({
           <div className="text-center">
             <div className="mb-2 text-3xl">⚡</div>
             <p className="mb-2 font-semibold text-white">Běží nepřetržitě</p>
-            <p className="text-base text-neutral-300">Bitcoin funguje 24/7 a&nbsp;nové transakce se potvrzují přibližně každých 10&nbsp;minut</p>
+            <p className="text-base text-neutral-300">Bitcoin funguje bez výpadku 24/7 — žádné víkendy, svátky ani odstávky, jaké znáš z&nbsp;bank</p>
           </div>
           <div className="text-center">
             <div className="mb-2 text-3xl">🌐</div>
@@ -117,7 +117,7 @@ export function StatsSection({
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Invity - koupit Bitcoin"
-          className="block rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-8 transition-colors hover:border-[var(--bitcoin-orange)]/50"
+          className="block rounded-xl border border-[var(--bitcoin-orange)]/30 bg-[var(--bitcoin-orange)]/5 p-8 transition-colors hover:border-[var(--bitcoin-orange)]/60 hover:bg-[var(--bitcoin-orange)]/10"
         >
           <h3 className="mb-6 text-center text-xl font-bold text-white sm:text-2xl">
             Kde koupit bitcoin?
@@ -141,7 +141,7 @@ export function StatsSection({
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Trezor - hardwarová peněženka pro Bitcoin"
-          className="block rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-8 transition-colors hover:border-[var(--bitcoin-orange)]/50"
+          className="block rounded-xl border border-[var(--bitcoin-orange)]/30 bg-[var(--bitcoin-orange)]/5 p-8 transition-colors hover:border-[var(--bitcoin-orange)]/60 hover:bg-[var(--bitcoin-orange)]/10"
         >
           <h3 className="mb-6 text-center text-xl font-bold text-white sm:text-2xl">
             Jak bezpečně uchovat bitcoin?

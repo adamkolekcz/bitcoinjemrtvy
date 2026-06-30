@@ -242,7 +242,7 @@ export default async function DeathDetailPage({ params }: PageProps) {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Invity - koupit Bitcoin"
-            className="block rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-8 transition-colors hover:border-[var(--bitcoin-orange)]/50"
+            className="block rounded-xl border border-[var(--bitcoin-orange)]/30 bg-[var(--bitcoin-orange)]/5 p-8 transition-colors hover:border-[var(--bitcoin-orange)]/60 hover:bg-[var(--bitcoin-orange)]/10"
           >
             <h3 className="mb-6 text-center text-lg font-bold text-white">
               Kde koupit bitcoin?
@@ -265,7 +265,7 @@ export default async function DeathDetailPage({ params }: PageProps) {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Trezor - hardwarová peněženka pro Bitcoin"
-            className="block rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-8 transition-colors hover:border-[var(--bitcoin-orange)]/50"
+            className="block rounded-xl border border-[var(--bitcoin-orange)]/30 bg-[var(--bitcoin-orange)]/5 p-8 transition-colors hover:border-[var(--bitcoin-orange)]/60 hover:bg-[var(--bitcoin-orange)]/10"
           >
             <h3 className="mb-6 text-center text-lg font-bold text-white">
               Jak bezpečně uchovat bitcoin?
