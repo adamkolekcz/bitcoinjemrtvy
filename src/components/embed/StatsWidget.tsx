@@ -29,8 +29,9 @@ export function StatsWidget({ count, currentValue, roi, perDeposit, updated }: S
       </p>
 
       <p className="text-base leading-snug text-neutral-300">
-        Kdybyste investovali {formatCurrency(perDeposit)} při každém úmrtí, dnes by vaše
-        portfolio mělo hodnotu{" "}
+        Kdybyste investovali{" "}
+        <span className="font-bold text-[var(--bitcoin-orange)]">{formatCurrency(perDeposit)}</span>{" "}
+        při každém úmrtí, dnes by vaše portfolio mělo hodnotu{" "}
         <span className="font-bold text-green-500">{formatCurrency(currentValue)}</span>{" "}
         <span className="whitespace-nowrap">
           s&nbsp;výnosem{" "}
