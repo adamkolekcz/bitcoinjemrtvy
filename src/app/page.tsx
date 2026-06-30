@@ -8,7 +8,7 @@ import inflationCz from "@/data/inflation-cz.json";
 
 export const revalidate = 3600; // ISR - revalidace každou hodinu
 
-const INVESTMENT_PER_DEATH_CZK = 1000;
+const INVESTMENT_PER_DEATH_CZK = 500;
 
 export default async function Home() {
   const [{ deaths }, coinGeckoData] = await Promise.all([

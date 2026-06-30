@@ -19,7 +19,7 @@ interface InvestmentCalculatorProps {
   investment: InvestmentResult;
   /** Cash counterfactual spočítaný serverem při `baseAmount` Kč. */
   cash: CashCounterfactualResult;
-  /** Částka, při které byly base hodnoty spočítány (1000 Kč). */
+  /** Částka, při které byly base hodnoty spočítány serverem (INVESTMENT_PER_DEATH_CZK). */
   baseAmount: number;
   currentBtcPriceCzk: number;
 }

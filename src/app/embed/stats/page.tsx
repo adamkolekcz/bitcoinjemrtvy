@@ -5,7 +5,7 @@ import { StatsWidget } from "@/components/embed/StatsWidget";
 
 export const revalidate = 3600;
 
-const INVESTMENT_PER_DEATH_CZK = 1000;
+const INVESTMENT_PER_DEATH_CZK = 500;
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
