@@ -6,7 +6,7 @@ import type { ChartDataPoint } from "@/lib/calculations";
 
 function ChartSkeleton() {
   return (
-    <div className="h-[500px] w-full animate-pulse rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)]" />
+    <div className="h-[320px] sm:h-[500px] w-full animate-pulse rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)]" />
   );
 }
 

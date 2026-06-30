@@ -96,15 +96,13 @@ function buildYearTicks(): number[] {
 }
 const YEAR_TICKS = buildYearTicks();
 
-function makeFormatXTick(period: Period) {
+function makeFormatXTick() {
   return function(timestamp: number): string {
     const date = new Date(timestamp);
     const month = date.getMonth();
     const year = date.getFullYear();
     const yy = year.toString().slice(-2);
-    // 1y: numeric M/YY — e.g. "5/25", "10/25", "1/26"
-    if (period === "1y") return `${month + 1}/${yy}`;
-    // Other periods: January gets full year, others get M/YY
+    // January gets full year, others get M/YY
     if (month === 0) return year.toString();
     return `${month + 1}/${yy}`;
   };
@@ -160,7 +158,7 @@ function ChartMarker({ cx, cy, payload, onDeathClick }: ChartMarkerProps) {
 }
 
 
-type Period = "all" | "5y" | "3y" | "1y";
+type Period = "all" | "5y" | "3y";
 
 export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk }: BitcoinChartProps) {
   const [scale, setScale] = useState<"log" | "linear">("linear");
@@ -180,7 +178,7 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
     const base = makeFormatYTick(usdToCzk);
     return isMobile ? (value: number) => base(value).replace(" Kč", "") : base;
   }, [usdToCzk, isMobile]);
-  const formatXTick = useMemo(() => makeFormatXTick(period), [period]);
+  const formatXTick = useMemo(() => makeFormatXTick(), []);
   const router = useRouter();
 
   const handleDeathClick = useCallback((slug: string) => {
@@ -210,7 +208,6 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
     const periodMs: Record<Exclude<Period, "all">, number> = {
       "5y": 5 * 365 * 24 * 60 * 60 * 1000,
       "3y": 3 * 365 * 24 * 60 * 60 * 1000,
-      "1y": 1 * 365 * 24 * 60 * 60 * 1000,
     };
 
     const cutoff = latestTimestamp - periodMs[period];
@@ -305,24 +302,6 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
       return YEAR_TICKS.filter(t => t >= minTime && t <= maxTime);
     }
 
-    // For 1 year period: standard quarterly ticks (Jan, Apr, Jul, Oct)
-    if (period === "1y") {
-      const ticks: number[] = [];
-      const startDate = new Date(minTime);
-      let year = startDate.getFullYear();
-      let month = Math.floor(startDate.getMonth() / 3) * 3; // align to quarter
-
-      while (true) {
-        const tick = new Date(year, month, 1).getTime();
-        if (tick > maxTime) break;
-        if (tick >= minTime) ticks.push(tick);
-        month += 3;
-        if (month >= 12) { month = 0; year++; }
-      }
-
-      return ticks;
-    }
-
     // For 3y / 5y: one tick per year (Jan 1), only if the tick falls within the data
     const ticks: number[] = [];
     const startYear = new Date(minTime).getFullYear();
@@ -340,7 +319,6 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
     { value: "all", label: "Celé období" },
     { value: "5y", label: "5 let" },
     { value: "3y", label: "3 roky" },
-    { value: "1y", label: "1 rok" },
   ];
 
   return (
@@ -394,9 +372,9 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
       <div
         role="img"
         aria-label="Graf vývoje ceny Bitcoinu v čase s vyznačenými prohlášeními o jeho smrti. Body grafu jsou interaktivní myší; kompletní textový přehled všech prohlášení najdeš na stránce Prohlášení."
-        className="select-none"
+        className="select-none h-[320px] sm:h-[500px]"
       >
-      <ResponsiveContainer width="100%" height={500}>
+      <ResponsiveContainer width="100%" height="100%">
         <ComposedChart
           data={filteredChartData}
           margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
