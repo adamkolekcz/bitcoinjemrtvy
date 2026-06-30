@@ -23,7 +23,7 @@ export function TwoPathsCard({ investment, cash }: TwoPathsCardProps) {
           ztratily {describeLossFraction(Math.abs(cash.lossPct))} kupní síly
         </strong>
         . Ne Bitcoin, ale{" "}
-        <strong className="text-neutral-300">koruna pod polštářem pomalu umírá</strong>{" "}
+        <strong className="text-neutral-300">koruna pod matrací pomalu umírá</strong>{" "}
         &mdash; užírá ji inflace.
       </p>
 
