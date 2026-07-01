@@ -18,7 +18,7 @@ Data (`deaths.json`, `source-urls.json`, `translations-cs.json`) is maintained b
 
 Build scripts (`sharp`, `unrs-resolver`) are whitelisted in `pnpm-workspace.yaml` (`allowBuilds`). The same file holds an `overrides` entry for `postcss` (a security patch).
 
-Tests: `pnpm test` (`node:test`) cover the pure functions in `scripts/lib/translate-core.mjs`. There is no other test suite.
+Tests: `pnpm test` (`node:test`) covers the pure functions in `src/lib/calculations.ts`, `src/lib/embed-config.ts`, and `scripts/lib/translate-core.mjs` (each with a `*.test.*` file alongside it). There is no other test suite.
 
 ## Architecture
 
