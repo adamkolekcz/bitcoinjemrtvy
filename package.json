@@ -2,6 +2,14 @@
   "name": "btcdead",
   "version": "0.1.0",
   "private": true,
+  "description": "Bitcoin je mrtvý — a Czech-language site that tracks every time the media declares Bitcoin dead and shows what buying each dip would be worth today.",
+  "license": "MIT",
+  "author": "Adam Kolek <hello@adamkolek.com>",
+  "homepage": "https://www.bitcoinjemrtvy.cz",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adamkolekcz/bitcoinjemrtvy.git"
+  },
   "packageManager": "pnpm@11.4.0",
   "browserslist": [
     "chrome >= 92",
