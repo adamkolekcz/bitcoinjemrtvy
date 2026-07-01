@@ -9,6 +9,7 @@ import {
   scaleInvestmentResult,
   scaleCashResult,
   buildPageTitle,
+  buildDeathMetaDescription,
   type DeathEvent,
 } from "./calculations.ts";
 
@@ -231,4 +232,25 @@ test("buildPageTitle: zkrácení respektuje hranici slova", () => {
   assert.ok(out.endsWith("…"));
   assert.ok(!/\s…$/.test(out), "před elipsou nesmí být mezera");
   assert.ok(!out.includes("  "), "žádné dvojité mezery");
+});
+
+// ── buildDeathMetaDescription (padding u krátkých citátů) ─────────────────────
+test("meta description: krátký citát se doplní kontextem na ≥110 znaků", () => {
+  const d = makeDeath("9/8/2020");
+  d.person = "Mark Dow";
+  d.jobTitle = "Trader";
+  d.publicationName = "Twitter";
+  d.quote_cs = "Bitcoin je u konce. #RIP";
+  const out = buildDeathMetaDescription(d);
+  assert.ok(out.length >= 110, `délka ${out.length} < 110`);
+  assert.ok(out.length <= 160);
+  assert.ok(out.includes("Podívejte se, jak si Bitcoin vedl"));
+});
+
+test("meta description: dlouhý citát se NEdoplňuje dvakrát", () => {
+  const d = makeDeath("9/8/2020");
+  d.quote_cs = "Toto je dostatečně dlouhý citát který sám o sobě přesahuje jedenáct set znaků není potřeba nic dolepovat a už vůbec ne dvakrát dokola.";
+  const out = buildDeathMetaDescription(d);
+  const occurrences = out.split("Podívejte se, jak si Bitcoin vedl").length - 1;
+  assert.equal(occurrences, 0);
 });

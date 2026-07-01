@@ -85,14 +85,21 @@ export function formatCzechDate(dateStr: string): string {
 
 // Bohatý, unikátní meta description pro detailní stránku (~120–160 znaků).
 // Bez citátu (dřív fallback ~30 znaků) doplní kontextovou větu, ať není moc krátký.
+const META_CONTEXT = "Podívejte se, jak si Bitcoin vedl od tohoto prohlášení až dodnes.";
+const META_MIN = 110;
+
 export function buildDeathMetaDescription(death: DeathEvent): string {
   const date = formatCzechDate(death.date);
   const author = death.jobTitle ? `${death.person} (${death.jobTitle})` : death.person;
   const base = `${author} prohlásil Bitcoin za mrtvý — ${death.publicationName}, ${date}.`;
   const quote = death.quote_cs ?? death.quote;
-  const full = quote
+  let full = quote
     ? `${base} „${quote.replace(/\s+/g, " ").trim()}"`
-    : `${base} Podívejte se, jak si Bitcoin vedl od tohoto prohlášení až dodnes.`;
+    : `${base} ${META_CONTEXT}`;
+  // Krátký citát → doplň kontextovou větu, ať description není příliš krátký.
+  if (quote && full.length < META_MIN) {
+    full = `${full} ${META_CONTEXT}`;
+  }
 
   if (full.length <= 160) return full;
   return `${full.slice(0, 159).replace(/\s+\S*$/, "")}…`;
