@@ -12,13 +12,17 @@ pnpm build        # production build (from committed data)
 pnpm lint         # ESLint
 node scripts/sync-deaths.mjs          # manually refresh deaths.json
 node scripts/fetch-source-urls.mjs    # manually refresh source-urls.json
+node scripts/validate-source-urls.mjs # manual/weekly: clean source URLs (redirect→final, dead→Wayback, 403/paywall kept)
+node scripts/check-redirects.mjs      # guard: every redirects.json destination resolves to a live CZ slug
 ```
 
 Data (`deaths.json`, `source-urls.json`, `translations-cs.json`) is maintained by a **daily GitHub Action** (`.github/workflows/translate.yml`), not by the build. `pnpm build` builds from committed data; `getDeathsData` additionally fetches live data at runtime with a fallback to `deaths.json`. The `sync-deaths.mjs` / `fetch-source-urls.mjs` scripts can also be run manually.
 
 Build scripts (`sharp`, `unrs-resolver`) are whitelisted in `pnpm-workspace.yaml` (`allowBuilds`). The same file holds an `overrides` entry for `postcss` (a security patch).
 
-Tests: `pnpm test` (`node:test`) covers the pure functions in `src/lib/calculations.ts`, `src/lib/embed-config.ts`, and `scripts/lib/translate-core.mjs` (each with a `*.test.*` file alongside it). There is no other test suite.
+Tests: `pnpm test` (`node:test`) covers the pure functions in `src/lib/calculations.ts`, `src/lib/embed-config.ts`, `scripts/lib/translate-core.mjs`, and `scripts/lib/source-url-core.mjs` (each with a `*.test.*` file alongside it).
+
+**`node --test` gotcha:** it can't resolve an extensionless local import inside a tested `.ts` (Next forbids `.ts`/`.js` import extensions), so a tested pure-logic `.ts` must be **self-contained** — that's why `calculations.ts` imports nothing local. Logic that needs `calculations` (e.g. `timeline-item.ts`) is covered by integration (via `/api/deaths`) instead; `.mjs` scripts reuse `translate-core.mjs`.
 
 ## Architecture
 
@@ -68,6 +72,15 @@ All prices in the data are in **USD**. Conversion to CZK happens exclusively at 
 
 This pattern is required whenever you want `next/dynamic` with `ssr: false` — never import `dynamic()` directly in a Server Component.
 
+### Listing (`/prohlaseni`) — infinite scroll
+
+The listing SSRs only the first `TIMELINE_PAGE_SIZE` (40) items, then `Timeline.tsx` (`"use client"`) lazy-loads more via `GET /api/deaths?order&offset&limit` on scroll (IntersectionObserver). `src/lib/timeline-item.ts` (`sliceTimeline`, `toTimelineItem`) trims `DeathEvent` → lightweight `TimelineItem`. Keeps listing HTML small (was 266 KB rendering all 475); all detail links stay in `sitemap.xml`.
+
+### Metadata / SEO
+
+- `src/lib/metadata.ts` `buildSocialMeta({title,description,url,type})` — shared OG+Twitter block, spread into a page's `metadata`. OG image is the static `/opengraph-image`; **`og:url` must equal `canonical`** (the file-convention `opengraph-image.tsx` does NOT cascade to child routes, so detail/listing/embed set images explicitly).
+- Detail `<title>` uses `buildPageTitle()` (≤60 chars, word-boundary truncation); H1 and `og:title` stay full.
+
 ### Slugs and translations
 
 - The slug is generated from the **Czech title** (`articleTitle_cs ?? articleTitle`), truncated to 80 characters
@@ -80,7 +93,8 @@ This pattern is required whenever you want `next/dynamic` with `ssr: false` — 
 |------|----------|------------|
 | `deaths.json` | Bitcoin obituaries (from `bitcoindeaths.com/posts`) | `sync-deaths.mjs` (daily GitHub Action) |
 | `translations-cs.json` | Czech translations of titles and quotes | auto: `translate-deaths.mjs` (daily Action, Claude API); manual edits protected (the script never overwrites) |
-| `source-urls.json` | Source article URLs indexed by slug | `fetch-source-urls.mjs` (daily Action) |
+| `source-urls.json` | Source article URLs by slug; **`null` = verified-dead (link hidden), not a bug** | `fetch-source-urls.mjs` adds only missing keys (checks key presence, preserves `null`); `validate-source-urls.mjs` cleans (redirect→final, dead/soft-dead→Wayback CDX; 403/401/paywall **kept**) |
+| `source-urls-report.json` | Last `validate-source-urls.mjs` run log (rewrite/wayback/remove/kept) | `validate-source-urls.mjs` |
 | `redirects.json` | 301 redirects (Czech → English slugs) | manual |
 
 ### Recharts — important gotchas
