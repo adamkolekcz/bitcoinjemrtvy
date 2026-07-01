@@ -4,6 +4,7 @@ import { Footer } from "@/components/Footer";
 import { Timeline } from "@/components/Timeline";
 import { getDeathsData, getBtcCoinGeckoData } from "@/lib/deaths-data";
 import { buildSocialMeta } from "@/lib/metadata";
+import { sliceTimeline, TIMELINE_PAGE_SIZE } from "@/lib/timeline-item";
 
 export const revalidate = 3600; // ISR - revalidace každou hodinu
 
@@ -24,12 +25,19 @@ export default async function PostsPage() {
     getBtcCoinGeckoData(3600, false),
   ]);
 
+  const initialSlice = sliceTimeline(deaths, {
+    order: "newest",
+    offset: 0,
+    limit: TIMELINE_PAGE_SIZE,
+    usdToCzk: coinGeckoData.usdToCzk,
+  });
+
   return (
     <div className="min-h-screen bg-[var(--background)]">
       <Header deathCount={deaths.length} />
 
       <main>
-        <Timeline deaths={deaths} usdToCzk={coinGeckoData.usdToCzk} />
+        <Timeline initialSlice={initialSlice} total={deaths.length} />
       </main>
 
       <Footer />
