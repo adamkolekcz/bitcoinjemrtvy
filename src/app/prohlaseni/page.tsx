@@ -10,7 +10,7 @@ export const revalidate = 3600; // ISR - revalidace každou hodinu
 
 const LISTING_URL = "https://www.bitcoinjemrtvy.cz/prohlaseni";
 const LISTING_DESC =
-  "Kompletní chronologický přehled všech více než 470 mediálních prohlášení o smrti Bitcoinu od roku 2010 až do současnosti — s citací, autorem a cenou BTC v den prohlášení.";
+  "Chronologický přehled všech více než 470 mediálních prohlášení o smrti Bitcoinu od roku 2010 dodnes — u každého citace, autor a cena BTC v den prohlášení.";
 
 export const metadata: Metadata = {
   title: "Timeline — Bitcoin je mrtvý",
