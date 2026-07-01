@@ -17,6 +17,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://www.bitcoinjemrtvy.cz",
   },
+  verification: {
+    other: { "seznam-wmt": "W9RWO4OeCBgNuUwvTSkE6jOLGCSpAmOA" },
+  },
   openGraph: {
     title: "Bitcoin je mrtvý — Kolikrát byl Bitcoin prohlášen za mrtvý?",
     description:
