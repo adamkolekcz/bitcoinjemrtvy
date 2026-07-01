@@ -72,6 +72,15 @@ test("analyzeRedirect: same-host http→https homepage → safe (legit upgrade)"
   assert.equal(analyzeRedirect("http://site.com/", "https://site.com/"), "safe");
 });
 
+test("analyzeRedirect: redirect na feed/kolekci → softdead", () => {
+  assert.equal(analyzeRedirect("https://www.biznews.com/x/2015/01/13/end-bitcoin", "https://biznews.madrid.quintype.io/collection/latest-news"), "softdead");
+  assert.equal(analyzeRedirect("https://old.com/2015/article", "https://old.com/category/crypto"), "softdead");
+});
+
+test("analyzeRedirect: článek pod /tag/x/slug (víc segmentů) zůstává safe", () => {
+  assert.equal(analyzeRedirect("https://old.com/a", "https://new.com/tag/crypto/real-article-slug"), "safe");
+});
+
 test("decideAction: ok + consent zeď → keep original (ne consent URL!)", () => {
   assert.deepEqual(
     decideAction({ status: 200, originalUrl: "https://finance.yahoo.com/news/x.html", finalUrl: "https://consent.yahoo.com/v2/collectConsent?sessionId=abc", waybackUrl: null }),

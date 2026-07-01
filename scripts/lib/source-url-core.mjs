@@ -29,6 +29,10 @@ export function analyzeRedirect(originalUrl, finalUrl) {
   // Redirect končící na holé homepage → článek pryč: buď originál měl cestu (article→home),
   // nebo se změnila doména (root→root jiné domény = expirovaná doména / takeover na spam).
   if (fPath === "" && (oPath !== "" || f.hostname !== o.hostname)) return "softdead";
+  // Redirect na obecný výpis (feed/kategorie/tag/hledání) s max. jedním segmentem =
+  // konkrétní článek pryč (CMS přesměruje stará URL na kolekci). Článek pod /tag/x/slug
+  // (víc segmentů) NEsplní → zůstává safe (legitimní migrace).
+  if (/^\/(collection|category|categories|tag|tags|topics?|search|feed|latest)(\/[^/]+)?$/i.test(fPath)) return "softdead";
   return "safe";
 }
 

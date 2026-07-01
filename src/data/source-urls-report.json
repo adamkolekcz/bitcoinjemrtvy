@@ -366,11 +366,6 @@
       "to": "https://www.youtube.com/watch?v=1evQi9q1T-8&feature=youtu.be"
     },
     {
-      "slug": "2015-01-13-is-this-the-end-of-bitcoin",
-      "from": "https://www.biznews.com/global-investing/2015/01/13/end-bitcoin-behind-falling-price-many-flaws",
-      "to": "https://biznews.madrid.quintype.io/collection/latest-news"
-    },
-    {
       "slug": "2014-12-16-bitcoins-financial-network-is-doomed",
       "from": "https://www.washingtonpost.com/blogs/monkey-cage/wp/2014/12/16/bitcoins-financial-network-is-doomed/",
       "to": "https://www.washingtonpost.com/news/monkey-cage/wp/2014/12/16/bitcoins-financial-network-is-doomed/"
@@ -541,6 +536,11 @@
       "slug": "2011-08-09-the-bitcoin-is-dying-whatever",
       "from": "https://www.gizmodo.com.au/2011/08/the-bitcoin-is-dying-whatever/",
       "to": "https://web.archive.org/web/20240723143639/https://gizmodo.com.au/2011/08/the-bitcoin-is-dying-whatever/"
+    },
+    {
+      "slug": "2015-01-13-is-this-the-end-of-bitcoin",
+      "from": "https://biznews.madrid.quintype.io/collection/latest-news",
+      "to": "https://web.archive.org/web/20211130055803/https://www.biznews.com/global-investing/2015/01/13/end-bitcoin-behind-falling-price-many-flaws"
     }
   ],
   "remove": [
