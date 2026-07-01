@@ -318,3 +318,19 @@ export function prepareChartData(deaths: DeathEvent[]): ChartDataPoint[] {
     })
     .sort((a, b) => a.timestamp - b.timestamp);
 }
+
+// ── Title tag ────────────────────────────────────────────────────────────────
+// Ahrefs hlásí „Title too long" nad ~60 znaků. H1 na stránce zůstává plný,
+// zkracujeme jen <title>: plný headline+suffix pokud se vejde, jinak samotný
+// headline, jinak zkrácení na hranici slova + elipsa.
+const TITLE_SUFFIX = " — Bitcoin je mrtvý";
+const TITLE_MAX = 60;
+
+export function buildPageTitle(headline: string): string {
+  const trimmed = headline.trim();
+  const withSuffix = `${trimmed}${TITLE_SUFFIX}`;
+  if (withSuffix.length <= TITLE_MAX) return withSuffix;
+  if (trimmed.length <= TITLE_MAX) return trimmed;
+  const cut = trimmed.slice(0, TITLE_MAX - 1).replace(/\s+\S*$/, "").trimEnd();
+  return `${cut}…`;
+}

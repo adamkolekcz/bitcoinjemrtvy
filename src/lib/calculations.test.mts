@@ -8,6 +8,7 @@ import {
   describeLossFraction,
   scaleInvestmentResult,
   scaleCashResult,
+  buildPageTitle,
   type DeathEvent,
 } from "./calculations.ts";
 
@@ -203,4 +204,31 @@ test("zlomek: 30 % = téměř třetinu", () => {
 test("zlomek: 20 % = pětinu, 50 % = polovinu", () => {
   assert.equal(describeLossFraction(20), "pětinu");
   assert.equal(describeLossFraction(50), "polovinu");
+});
+
+// ── buildPageTitle (title tag ≤60) ───────────────────────────────────────────
+test("buildPageTitle: krátký headline dostane suffix", () => {
+  assert.equal(
+    buildPageTitle("RIP decentralizace"),
+    "RIP decentralizace — Bitcoin je mrtvý",
+  );
+});
+
+test("buildPageTitle: středně dlouhý headline (≤60) bez suffixu", () => {
+  const h = "A".repeat(50); // 50 ≤ 60, ale +suffix > 60
+  assert.equal(buildPageTitle(h), h);
+});
+
+test("buildPageTitle: dlouhý headline se zkrátí na ≤60 s elipsou", () => {
+  const out = buildPageTitle("A".repeat(100));
+  assert.ok(out.length <= 60, `délka ${out.length} > 60`);
+  assert.ok(out.endsWith("…"));
+});
+
+test("buildPageTitle: zkrácení respektuje hranici slova", () => {
+  const out = buildPageTitle("slovo ".repeat(20).trim()); // mezery po 5 znacích
+  assert.ok(out.length <= 60, `délka ${out.length} > 60`);
+  assert.ok(out.endsWith("…"));
+  assert.ok(!/\s…$/.test(out), "před elipsou nesmí být mezera");
+  assert.ok(!out.includes("  "), "žádné dvojité mezery");
 });
