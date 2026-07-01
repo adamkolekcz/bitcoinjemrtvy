@@ -131,7 +131,7 @@ export function StatsSection({
         <a
           href="https://invity.onelink.me/OfI3/c1u1hmh3"
           target="_blank"
-          rel="noopener noreferrer"
+          rel="sponsored noopener noreferrer"
           aria-label="Invity - koupit Bitcoin"
           className="block rounded-xl border border-[var(--bitcoin-orange)]/30 bg-[var(--bitcoin-orange)]/5 p-8 transition-colors hover:border-[var(--bitcoin-orange)]/60 hover:bg-[var(--bitcoin-orange)]/10"
         >
@@ -155,7 +155,7 @@ export function StatsSection({
         <a
           href="https://affil.trezor.io/SH10i"
           target="_blank"
-          rel="noopener noreferrer"
+          rel="sponsored noopener noreferrer"
           aria-label="Trezor - hardwarová peněženka pro Bitcoin"
           className="block rounded-xl border border-[var(--bitcoin-orange)]/30 bg-[var(--bitcoin-orange)]/5 p-8 transition-colors hover:border-[var(--bitcoin-orange)]/60 hover:bg-[var(--bitcoin-orange)]/10"
         >
