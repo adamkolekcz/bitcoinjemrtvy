@@ -4,95 +4,95 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-Projekt používá **pnpm** (verze přes `packageManager` field + corepack).
+The project uses **pnpm** (version pinned via the `packageManager` field + Corepack).
 
 ```bash
 pnpm dev          # dev server (Turbopack)
-pnpm build        # produkční build (z commitnutých dat)
+pnpm build        # production build (from committed data)
 pnpm lint         # ESLint
-node scripts/sync-deaths.mjs          # ruční aktualizace deaths.json
-node scripts/fetch-source-urls.mjs    # ruční aktualizace source-urls.json
+node scripts/sync-deaths.mjs          # manually refresh deaths.json
+node scripts/fetch-source-urls.mjs    # manually refresh source-urls.json
 ```
 
-Data (`deaths.json`, `source-urls.json`, `translations-cs.json`) udržuje **denní GitHub Action** (`.github/workflows/translate.yml`), ne build. `pnpm build` staví z commitnutých dat; `getDeathsData` navíc za runtime fetchuje živá data s fallbackem na `deaths.json`. Skripty `sync-deaths.mjs` / `fetch-source-urls.mjs` jdou spustit i ručně.
+Data (`deaths.json`, `source-urls.json`, `translations-cs.json`) is maintained by a **daily GitHub Action** (`.github/workflows/translate.yml`), not by the build. `pnpm build` builds from committed data; `getDeathsData` additionally fetches live data at runtime with a fallback to `deaths.json`. The `sync-deaths.mjs` / `fetch-source-urls.mjs` scripts can also be run manually.
 
-Build skripty (`sharp`, `unrs-resolver`) jsou whitelistnuté v `pnpm-workspace.yaml` (`allowBuilds`). Tamtéž je `overrides` na `postcss` (bezpečnostní patch).
+Build scripts (`sharp`, `unrs-resolver`) are whitelisted in `pnpm-workspace.yaml` (`allowBuilds`). The same file holds an `overrides` entry for `postcss` (a security patch).
 
-Testy: `pnpm test` (`node:test`) pokrývají čisté funkce v `scripts/lib/translate-core.mjs`. Jiná testovací sada není.
+Tests: `pnpm test` (`node:test`) cover the pure functions in `scripts/lib/translate-core.mjs`. There is no other test suite.
 
-## Architektura
+## Architecture
 
-### Datový tok
+### Data flow
 
 ```
-bitcoindeaths.com/posts (__NEXT_DATA__ → pageProps.posts; homepage `chartData` přišla o quote+jobTitle, proto čteme /posts)
-  → src/data/deaths.json (statický fallback)
-  → src/lib/deaths-data.ts (getDeathsData) — odfiltruje nepřeložené (bez articleTitle_cs)
-  → src/lib/translations.ts (applyTranslations z translations-cs.json)
+bitcoindeaths.com/posts (__NEXT_DATA__ → pageProps.posts; the homepage `chartData` lost quote+jobTitle, so we read /posts)
+  → src/data/deaths.json (static fallback)
+  → src/lib/deaths-data.ts (getDeathsData) — filters out untranslated records (no articleTitle_cs)
+  → src/lib/translations.ts (applyTranslations from translations-cs.json)
   → src/app/page.tsx / prohlaseni/[slug]/page.tsx
 ```
 
-Živá data se načítají za runtime přes ISR (`revalidate = 3600` na homepage, `86400` na slug stránkách). Při selhání se použije statický `deaths.json`.
+Live data is fetched at runtime via ISR (`revalidate = 3600` on the homepage, `86400` on slug pages). On failure it falls back to the static `deaths.json`.
 
-`getDeathsData` odfiltruje záznamy bez českého překladu (`articleTitle_cs`), takže nepřeložené články se na webu (graf, výpis, sitemap i detail) vůbec neobjeví — nevzniká anglický slug.
+`getDeathsData` filters out records without a Czech translation (`articleTitle_cs`), so untranslated articles never appear on the site (chart, listing, sitemap, or detail) — no English slug is ever generated.
 
-### Automatický překlad nových článků
+### Automatic translation of new articles
 
-`scripts/translate-deaths.mjs` (volá ho denní GitHub Action `.github/workflows/translate.yml`) najde záznamy, jejichž `translationKey` chybí v `translations-cs.json`, přeloží titulek + citát přes Claude API (model `claude-sonnet-4-6`, structured tool output) ve stylu stávajících překladů a zapíše je. Čisté funkce jsou v `scripts/lib/translate-core.mjs` (testy `pnpm test`). Klíčové vlastnosti:
+`scripts/translate-deaths.mjs` (invoked by the daily GitHub Action `.github/workflows/translate.yml`) finds records whose `translationKey` is missing from `translations-cs.json`, translates the title + quote via the Claude API (model `claude-sonnet-4-6`, structured tool output) in the style of the existing translations, and writes them. The pure functions live in `scripts/lib/translate-core.mjs` (tested by `pnpm test`). Key properties:
 
-- **Nikdy nepřepisuje** existující překlad → ruční úpravy v `translations-cs.json` jsou trvalé.
-- **Atomicky po článku**: když neprojde sanity-check kterékoli pole (titulek/citát), zahodí se celý záznam — žádný polostav „CZ titulek + EN citát".
-- **Threshold guard**: při > 15 chybějících abortuje (ochrana proti driftu klíče a runaway nákladům); legitimní velkou dávku pustíš `workflow_dispatch` vstupem `override`.
-- **Self-test** na startu ověří paritu `translationKey` se zdrojem (zamrzlé páry) — viz „Slugy a překlady".
-- API klíč `ANTHROPIC_API_KEY` je **GitHub secret**, ne ve Vercelu. Spec + plán: `docs/superpowers/`.
+- **Never overwrites** an existing translation → manual edits in `translations-cs.json` are permanent.
+- **Atomic per article**: if any field (title/quote) fails the sanity check, the whole record is discarded — no half-state of "CZ title + EN quote".
+- **Threshold guard**: aborts when > 15 records are missing (protection against key drift and runaway cost); run a legitimate large batch via the `workflow_dispatch` `override` input.
+- **Self-test** on startup verifies `translationKey` parity with the source (frozen pairs) — see "Slugs and translations".
+- The `ANTHROPIC_API_KEY` is a **GitHub secret**, not stored in Vercel.
 
 ### Deploy (Vercel)
 
-Auto-deploy na Vercel proběhne **při každém pushi do `main`** (i workflow-only změny — Vercel nefiltruje cesty), takže každý push = 1 build. Denní Action navíc commitne (→ deploy) **jen když se změní `src/data/`** (gate `git diff --quiet -- src/data/`) — bez nového obsahu nic necommitne ani nedeployuje. Install command na Vercelu je `pnpm install`; build staví z commitnutých dat (prebuild nefetchuje).
+A Vercel auto-deploy runs on **every push to `main`** (including workflow-only changes — Vercel does not filter by path), so every push = 1 build. The daily Action additionally commits (→ deploy) **only when `src/data/` changes** (guarded by `git diff --quiet -- src/data/`) — with no new content it commits nothing and deploys nothing. The Vercel install command is `pnpm install`; the build builds from committed data (the prebuild does not fetch).
 
-### Ceny BTC a kurz USD/CZK
+### BTC price and USD/CZK rate
 
-`getBtcCoinGeckoData()` v `src/lib/deaths-data.ts` má dvojitý fallback řetězec:
+`getBtcCoinGeckoData()` in `src/lib/deaths-data.ts` has a two-tier fallback chain:
 
-- **Cena BTC**: Kraken → Coinbase → CoinGecko → `null`
-- **Kurz USD/CZK**: Frankfurter → ČNB → hardcoded `20.75`
-- **Market cap**: CoinGecko `czk_market_cap` (tiché selhání, neblokuje render)
+- **BTC price**: Kraken → Coinbase → CoinGecko → `null`
+- **USD/CZK rate**: Frankfurter → ČNB → hardcoded `20.75`
+- **Market cap**: CoinGecko `czk_market_cap` (silent failure, does not block render)
 
-Všechny ceny v datech jsou v **USD**. Přepočet na CZK se provádí výhradně při zobrazení pomocí `usdToCzk` multiplikátoru.
+All prices in the data are in **USD**. Conversion to CZK happens exclusively at render time via the `usdToCzk` multiplier.
 
-### Server vs. Client komponenty
+### Server vs. Client components
 
-- `src/app/page.tsx` je async Server Component — zde se dělá veškeré data fetching
-- `BitcoinChart` používá Recharts (browser-only), takže nelze použít `ssr: false` přímo v Server Componentě
-- Řešení: `BitcoinChartLazy.tsx` je thin `"use client"` wrapper, který volá `dynamic(..., { ssr: false })`; Server Componenta importuje wrapper
+- `src/app/page.tsx` is an async Server Component — all data fetching happens here
+- `BitcoinChart` uses Recharts (browser-only), so `ssr: false` cannot be used directly in a Server Component
+- Solution: `BitcoinChartLazy.tsx` is a thin `"use client"` wrapper that calls `dynamic(..., { ssr: false })`; the Server Component imports the wrapper
 
-Tento pattern je nutný kdykoli chceš `next/dynamic` s `ssr: false` — nikdy neimportuj `dynamic()` přímo ze Server Componenty.
+This pattern is required whenever you want `next/dynamic` with `ssr: false` — never import `dynamic()` directly in a Server Component.
 
-### Slugy a překlady
+### Slugs and translations
 
-- Slug se generuje z **českého titulu** (`articleTitle_cs ?? articleTitle`), zkráceno na 80 znaků
-- Klíč pro lookup v `translations-cs.json` se generuje z **anglického titulu bez zkrácení** — obě funkce (`generateDeathSlug` a `translationKey`) jsou záměrně oddělené
-- **Pozor na duplikaci:** `scripts/lib/translate-core.mjs` má vlastní kopii `translationKey`, `parseDate` a normalizace slugu (skript je `.mjs`, nemůže importovat TS). Musí zůstat bajt-identická s `translations.ts` / `calculations.ts`. Když měníš logiku klíče/slugu, **uprav obě místa** — drift hlídá self-test v `translate-deaths.mjs` + unit testy, ale aktivně se o synchronizaci postarej.
+- The slug is generated from the **Czech title** (`articleTitle_cs ?? articleTitle`), truncated to 80 characters
+- The lookup key for `translations-cs.json` is generated from the **untruncated English title** — the two functions (`generateDeathSlug` and `translationKey`) are intentionally separate
+- **Watch out for duplication:** `scripts/lib/translate-core.mjs` has its own copy of `translationKey`, `parseDate`, and the slug normalization (the script is `.mjs` and cannot import TS). It must stay byte-identical with `translations.ts` / `calculations.ts`. When you change the key/slug logic, **update both places** — a self-test in `translate-deaths.mjs` plus unit tests guard against drift, but actively keep them in sync.
 
-### Statická data (`src/data/`)
+### Static data (`src/data/`)
 
-| Soubor | Obsah | Aktualizace |
-|--------|-------|-------------|
-| `deaths.json` | Bitcoin obituaries (z `bitcoindeaths.com/posts`) | `sync-deaths.mjs` (denní GitHub Action) |
-| `translations-cs.json` | České překlady titulků a citátů | auto: `translate-deaths.mjs` (denní Action, Claude API); ruční úpravy chráněné (skript nepřepisuje) |
-| `source-urls.json` | URL zdrojových článků indexované slugem | `fetch-source-urls.mjs` (denní Action) |
-| `redirects.json` | 301 přesměrování (české → anglické slugy) | ruční |
+| File | Contents | Updated by |
+|------|----------|------------|
+| `deaths.json` | Bitcoin obituaries (from `bitcoindeaths.com/posts`) | `sync-deaths.mjs` (daily GitHub Action) |
+| `translations-cs.json` | Czech translations of titles and quotes | auto: `translate-deaths.mjs` (daily Action, Claude API); manual edits protected (the script never overwrites) |
+| `source-urls.json` | Source article URLs indexed by slug | `fetch-source-urls.mjs` (daily Action) |
+| `redirects.json` | 301 redirects (Czech → English slugs) | manual |
 
-### Recharts — důležité gotchas
+### Recharts — important gotchas
 
-- `Area.baseValue` musí být nastaven na stejnou hodnotu jako `domain` minimum, jinak Recharts vyplní oblast od nuly a vznikne velká mezera pod daty (zvláště patrné na lineárním scale při krátkých časových úsecích)
-- Y-axis `domain` a `ticks` se počítají z rozsahu viditelných dat, ne od nuly — viz `yTicksLinear` / `yDomainMinLinear` v `BitcoinChart.tsx`
-- X-axis ticks jsou generovány dynamicky podle zvoleného periodu (1y/3y/5y/all)
+- `Area.baseValue` must be set to the same value as the `domain` minimum, otherwise Recharts fills the area from zero and a large gap appears below the data (especially visible on a linear scale over short time ranges)
+- The Y-axis `domain` and `ticks` are computed from the range of visible data, not from zero — see `yTicksLinear` / `yDomainMinLinear` in `BitcoinChart.tsx`
+- X-axis ticks are generated dynamically based on the selected period (1y/3y/5y/all)
 
-### CSS proměnné
+### CSS variables
 
-Globální barvy jsou definovány v `src/app/globals.css` jako CSS proměnné:
-- `--bitcoin-orange` — oranžová barva Bitcoinu
-- `--death-red` — červená pro "počet úmrtí"
-- `--card-bg`, `--card-border` — pozadí a border karet
-- `--background` — hlavní pozadí stránky
+Global colors are defined in `src/app/globals.css` as CSS variables:
+- `--bitcoin-orange` — the Bitcoin orange color
+- `--death-red` — red for the "death count"
+- `--card-bg`, `--card-border` — card background and border
+- `--background` — the main page background
