@@ -4,8 +4,9 @@ import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { getDeathsData, getBtcCoinGeckoData } from "@/lib/deaths-data";
-import { formatCzechDate, generateDeathSlug, parseDate, buildDeathMetaDescription } from "@/lib/calculations";
+import { formatCzechDate, generateDeathSlug, parseDate, buildDeathMetaDescription, buildPageTitle } from "@/lib/calculations";
 import type { DeathEvent } from "@/lib/calculations";
+import { buildSocialMeta } from "@/lib/metadata";
 
 export const revalidate = 86400; // ISR - revalidace jednou za 24 hodin (historická data se mění zřídka)
 
@@ -56,19 +57,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const url = `https://www.bitcoinjemrtvy.cz/prohlaseni/${slug}`;
   const description = buildDeathMetaDescription(death);
 
+  const fullTitle = `${death.articleTitle_cs ?? death.articleTitle} — Bitcoin je mrtvý`;
+
   return {
-    title: `${death.articleTitle_cs ?? death.articleTitle} — Bitcoin je mrtvý`,
+    title: buildPageTitle(death.articleTitle_cs ?? death.articleTitle),
     description,
     alternates: {
       canonical: url,
     },
-    openGraph: {
-      title: `${death.articleTitle_cs ?? death.articleTitle} — Bitcoin je mrtvý`,
-      description,
-      url,
-      siteName: "Bitcoin je mrtvý",
-      type: "article",
-    },
+    ...buildSocialMeta({ title: fullTitle, description, url, type: "article" }),
   };
 }
 

@@ -3,21 +3,19 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Timeline } from "@/components/Timeline";
 import { getDeathsData, getBtcCoinGeckoData } from "@/lib/deaths-data";
+import { buildSocialMeta } from "@/lib/metadata";
 
 export const revalidate = 3600; // ISR - revalidace každou hodinu
 
+const LISTING_URL = "https://www.bitcoinjemrtvy.cz/prohlaseni";
+const LISTING_DESC =
+  "Kompletní chronologický přehled všech více než 470 mediálních prohlášení o smrti Bitcoinu od roku 2010 až do současnosti — s citací, autorem a cenou BTC v den prohlášení.";
+
 export const metadata: Metadata = {
   title: "Timeline — Bitcoin je mrtvý",
-  description: "Chronologický přehled všech prohlášení o smrti Bitcoinu od roku 2010 do současnosti.",
-  alternates: {
-    canonical: "https://www.bitcoinjemrtvy.cz/prohlaseni",
-  },
-  openGraph: {
-    title: "Timeline — Bitcoin je mrtvý",
-    description: "Chronologický přehled všech prohlášení o smrti Bitcoinu od roku 2010 do současnosti.",
-    url: "https://www.bitcoinjemrtvy.cz/prohlaseni",
-    siteName: "Bitcoin je mrtvý",
-  },
+  description: LISTING_DESC,
+  alternates: { canonical: LISTING_URL },
+  ...buildSocialMeta({ title: "Timeline — Bitcoin je mrtvý", description: LISTING_DESC, url: LISTING_URL }),
 };
 
 export default async function PostsPage() {

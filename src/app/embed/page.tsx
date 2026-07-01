@@ -3,12 +3,17 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CopyEmbedCode } from "@/components/embed/CopyEmbedCode";
 import { EMBED_ORIGIN, EMBED_WIDGETS, buildEmbedSnippet, type EmbedWidgetKey } from "@/lib/embed-config";
+import { buildSocialMeta } from "@/lib/metadata";
+
+const EMBED_URL = `${EMBED_ORIGIN}/embed`;
+const EMBED_DESC =
+  "Vložte si na web živé počítadlo a statistiku, kolikrát byl Bitcoin prohlášen za mrtvý. Stačí zkopírovat HTML kód.";
 
 export const metadata: Metadata = {
   title: "Vložte si widget na svůj web — Bitcoin je mrtvý",
-  description:
-    "Vložte si na web živé počítadlo a statistiku, kolikrát byl Bitcoin prohlášen za mrtvý. Stačí zkopírovat HTML kód.",
-  alternates: { canonical: `${EMBED_ORIGIN}/embed` },
+  description: EMBED_DESC,
+  alternates: { canonical: EMBED_URL },
+  ...buildSocialMeta({ title: "Vložte si widget na svůj web — Bitcoin je mrtvý", description: EMBED_DESC, url: EMBED_URL }),
 };
 
 const SECTIONS: { key: EmbedWidgetKey; title: string; description: string }[] = [
