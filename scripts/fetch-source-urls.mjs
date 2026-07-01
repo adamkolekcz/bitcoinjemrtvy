@@ -101,9 +101,10 @@ async function main() {
     // Soubor neexistuje nebo není validní — začneme prázdným
   }
 
-  // Najít slugy bez URL
+  // Chybějící = klíč vůbec není přítomen. Klíč s hodnotou null = „ověřeně mrtvý,
+  // nedohledatelný" (nastaveno validate-source-urls.mjs) → NEznovustahovat.
   const missingSlugs = deaths
-    .filter((d) => d.slug && !existing[d.slug])
+    .filter((d) => d.slug && !(d.slug in existing))
     .map((d) => d.slug);
 
   if (missingSlugs.length === 0) {

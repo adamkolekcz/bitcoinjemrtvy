@@ -3,7 +3,7 @@ import staticDeathsData from "@/data/deaths.json";
 import sourceUrlsData from "@/data/source-urls.json";
 import { applyTranslations } from "./translations";
 
-const sourceUrls = sourceUrlsData as Record<string, string>;
+const sourceUrls = sourceUrlsData as Record<string, string | null>;
 
 function applySourceUrls(deaths: DeathEvent[]): DeathEvent[] {
   return deaths.map((death) => {
