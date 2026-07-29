@@ -114,7 +114,7 @@ export async function getBtcCoinGeckoData(
   revalidateSeconds = REVALIDATE_SECONDS,
   includeMarketCap = true,
 ): Promise<BtcCoinGeckoData> {
-  const opts = (timeout = 8_000) => ({
+  const opts = (timeout = 4_000) => ({
     next: { revalidate: revalidateSeconds },
     signal: AbortSignal.timeout(timeout),
   });
@@ -196,7 +196,7 @@ export async function getBtcCoinGeckoData(
 
   // --- 3. CoinGecko (záloha pro vše) ---
   try {
-    const res = await fetch(COINGECKO_API, opts(10_000));
+    const res = await fetch(COINGECKO_API, opts(5_000));
     if (!res.ok) throw new Error(`CoinGecko HTTP ${res.status}`);
 
     const data = (await res.json()) as {
