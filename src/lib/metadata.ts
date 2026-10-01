@@ -8,6 +8,14 @@ export const SITE_URL = "https://www.bitcoinjemrtvy.cz";
 const OG_IMAGE = { url: "/opengraph-image", width: 1200, height: 630, alt: SITE_NAME };
 const TWITTER_IMAGE = "/twitter-image";
 
+/**
+ * JSON-LD pro <script dangerouslySetInnerHTML>. Escapuje „<", jinak by text z cizích dat
+ * (titulek, autor, médium z bitcoindeaths.com) obsahující „</script>" vložil HTML/skript (XSS).
+ */
+export function serializeJsonLd(data: object): string {
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+
 interface SocialMetaInput {
   title: string;
   description: string;

@@ -105,10 +105,13 @@ export function InvestmentCalculator({
                 onKeyDown={(e) => {
                   if (e.key === "Enter") e.currentTarget.blur();
                 }}
-                aria-label="Částka investovaná při každém prohlášení, 1 až 9999 Kč"
+                aria-describedby="investment-amount-hint"
                 className="w-20 rounded-md border border-[var(--bitcoin-orange)]/40 bg-[var(--bitcoin-orange)]/10 px-2 py-0.5 text-center text-2xl font-bold tabular-nums text-[var(--bitcoin-orange)] outline-none focus:border-[var(--bitcoin-orange)] focus:ring-1 focus:ring-[var(--bitcoin-orange)]/50"
               />
               <span className="text-2xl font-bold text-[var(--bitcoin-orange)]">Kč</span>
+              <span id="investment-amount-hint" className="sr-only">
+                Částka investovaná při každém prohlášení, 1 až 9999 Kč
+              </span>
               <svg
                 width="15"
                 height="15"

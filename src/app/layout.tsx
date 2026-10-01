@@ -1,39 +1,16 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { SITE_NAME, SITE_URL, serializeJsonLd } from "@/lib/metadata";
 import { AnalyticsLazy } from "@/components/AnalyticsLazy";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
+// Jen sdílené výchozí hodnoty. Canonical + OG/Twitter (url) si nastavuje každá stránka sama —
+// v layoutu by je zdědily i 404 a noindex embed widgety (canonical/og:url na homepage).
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.bitcoinjemrtvy.cz"),
-  title: "Bitcoin je mrtvý — Kolikrát byl Bitcoin prohlášen za mrtvý?",
-  description:
-    'Bitcoin byl více než 470× prohlášen za mrtvý, a přesto žije. Kolik byste vydělali, kdybyste při každém "úmrtí" Bitcoin nakoupili?',
+  metadataBase: new URL(SITE_URL),
+  title: SITE_NAME,
   keywords: ["bitcoin", "bitcoin je mrtvý", "bitcoin deaths", "bitcoin obituary", "kryptoměny"],
-  alternates: {
-    canonical: "https://www.bitcoinjemrtvy.cz",
-  },
   verification: {
     other: { "seznam-wmt": "W9RWO4OeCBgNuUwvTSkE6jOLGCSpAmOA" },
-  },
-  openGraph: {
-    title: "Bitcoin je mrtvý — Kolikrát byl Bitcoin prohlášen za mrtvý?",
-    description:
-      'Bitcoin byl více než 470× prohlášen za mrtvý, a přesto žije. Kolik byste vydělali, kdybyste při každém "úmrtí" Bitcoin nakoupili?',
-    type: "website",
-    locale: "cs_CZ",
-    url: "https://www.bitcoinjemrtvy.cz",
-    siteName: "Bitcoin je mrtvý",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Bitcoin je mrtvý — Kolikrát byl Bitcoin prohlášen za mrtvý?",
-    description:
-      'Bitcoin byl více než 470× prohlášen za mrtvý, a přesto žije. Kolik byste vydělali, kdybyste při každém "úmrtí" Bitcoin nakoupili?',
   },
 };
 
@@ -45,17 +22,18 @@ export default function RootLayout({
   return (
     <html lang="cs" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} antialiased`}
+        className="antialiased"
         suppressHydrationWarning
       >
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
+            __html: serializeJsonLd({
               "@context": "https://schema.org",
               "@type": "WebSite",
-              "name": "Bitcoin je mrtvý",
-              "url": "https://www.bitcoinjemrtvy.cz",
+              "name": SITE_NAME,
+              "url": SITE_URL,
+              "inLanguage": "cs",
               "description": "Kolikrát byl Bitcoin prohlášen za mrtvý? Kompletní přehled všech nekrologů od roku 2010.",
             }),
           }}

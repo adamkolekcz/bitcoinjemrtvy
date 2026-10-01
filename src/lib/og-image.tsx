@@ -8,10 +8,10 @@ const size = {
 export async function renderOgImage() {
   const [geistBold, geistRegular] = await Promise.all([
     fetch(
-      "https://cdn.jsdelivr.net/fontsource/fonts/geist-sans@latest/latin-700-normal.woff"
+      "https://cdn.jsdelivr.net/fontsource/fonts/geist-sans@5.3.0/latin-700-normal.woff"
     ).then((res) => res.arrayBuffer()),
     fetch(
-      "https://cdn.jsdelivr.net/fontsource/fonts/geist-sans@latest/latin-400-normal.woff"
+      "https://cdn.jsdelivr.net/fontsource/fonts/geist-sans@5.3.0/latin-400-normal.woff"
     ).then((res) => res.arrayBuffer()),
   ]);
 

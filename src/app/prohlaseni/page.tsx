@@ -12,11 +12,13 @@ const LISTING_URL = "https://www.bitcoinjemrtvy.cz/prohlaseni";
 const LISTING_DESC =
   "Kompletní přehled všech více než 470 mediálních prohlášení o smrti Bitcoinu od roku 2010 až do současnosti — s citací, autorem a cenou BTC v den prohlášení.";
 
+const LISTING_TITLE = "Prohlášení o úmrtích Bitcoinu — Bitcoin je mrtvý";
+
 export const metadata: Metadata = {
-  title: "Timeline — Bitcoin je mrtvý",
+  title: LISTING_TITLE,
   description: LISTING_DESC,
   alternates: { canonical: LISTING_URL },
-  ...buildSocialMeta({ title: "Timeline — Bitcoin je mrtvý", description: LISTING_DESC, url: LISTING_URL }),
+  ...buildSocialMeta({ title: LISTING_TITLE, description: LISTING_DESC, url: LISTING_URL }),
 };
 
 export default async function PostsPage() {

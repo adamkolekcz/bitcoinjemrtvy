@@ -6,7 +6,7 @@ import { Footer } from "@/components/Footer";
 import { getDeathsData, getBtcCoinGeckoData } from "@/lib/deaths-data";
 import { formatCzechDate, generateDeathSlug, parseDate, buildDeathMetaDescription, buildPageTitle } from "@/lib/calculations";
 import type { DeathEvent } from "@/lib/calculations";
-import { buildSocialMeta } from "@/lib/metadata";
+import { SITE_NAME, SITE_URL, buildSocialMeta, serializeJsonLd } from "@/lib/metadata";
 
 export const revalidate = 86400; // ISR - revalidace jednou za 24 hodin (historická data se mění zřídka)
 
@@ -51,10 +51,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const death = findDeathBySlug(deaths, slug);
 
   if (!death) {
-    return { title: "Nenalezeno" };
+    return { title: "Nenalezeno", robots: { index: false } };
   }
 
-  const url = `https://www.bitcoinjemrtvy.cz/prohlaseni/${slug}`;
+  const url = `${SITE_URL}/prohlaseni/${slug}`;
   const description = buildDeathMetaDescription(death);
 
   const fullTitle = `${death.articleTitle_cs ?? death.articleTitle} — Bitcoin je mrtvý`;
@@ -86,17 +86,31 @@ export default async function DeathDetailPage({ params }: PageProps) {
 
   const { prev, next } = getAdjacentDeaths(deaths, death);
   const priceCzk = death.bitcoinPrice * usdToCzk;
-  const currentPriceCzk = btcPriceCzk ?? death.bitcoinPrice * usdToCzk;
-  const priceChange = ((currentPriceCzk - priceCzk) / priceCzk) * 100;
+  // Bez aktuální ceny (výpadek všech API) změnu neukazujeme — dřív se dosadila cena
+  // z data prohlášení a stránka 24 h tvrdila „Změna +0 %“.
+  const priceChange = btcPriceCzk === null ? null : ((btcPriceCzk - priceCzk) / priceCzk) * 100;
+  const changeColor =
+    priceChange === null ? "text-neutral-300" : priceChange >= 0 ? "text-green-500" : "text-[var(--death-red)]";
+  const isoDate = parseDate(death.date).toISOString().split("T")[0];
+  const url = `${SITE_URL}/prohlaseni/${slug}`;
 
-  const articleJsonLd = {
+  // Stránka je náš český záznam o cizím článku → WebPage, původní článek jako citation.
+  const pageJsonLd = {
     "@context": "https://schema.org",
-    "@type": "Article",
-    "headline": death.articleTitle,
-    "author": { "@type": "Person", "name": death.person },
-    "publisher": { "@type": "Organization", "name": death.publicationName },
-    "datePublished": parseDate(death.date).toISOString().split("T")[0],
-    "url": `https://www.bitcoinjemrtvy.cz/prohlaseni/${slug}`,
+    "@type": "WebPage",
+    "name": death.articleTitle_cs ?? death.articleTitle,
+    "url": url,
+    "inLanguage": "cs",
+    "isPartOf": { "@type": "WebSite", "name": SITE_NAME, "url": SITE_URL },
+    "citation": {
+      "@type": "NewsArticle",
+      "headline": death.articleTitle,
+      "inLanguage": "en",
+      "datePublished": isoDate,
+      "author": { "@type": "Person", "name": death.person },
+      "publisher": { "@type": "Organization", "name": death.publicationName },
+      ...(death.sourceUrl ? { "url": death.sourceUrl } : {}),
+    },
   };
 
   return (
@@ -104,14 +118,14 @@ export default async function DeathDetailPage({ params }: PageProps) {
       <Header deathCount={deaths.length} />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(pageJsonLd) }}
       />
 
       <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
         <article>
           <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
             <time
-              dateTime={parseDate(death.date).toISOString().split("T")[0]}
+              dateTime={isoDate}
               className="text-sm text-neutral-300"
             >
               {formatCzechDate(death.date)}
@@ -189,14 +203,18 @@ export default async function DeathDetailPage({ params }: PageProps) {
               </div>
               <div>
                 <p className="text-xs text-neutral-400">Aktuální cena</p>
-                <p className={`mt-1 text-lg font-bold ${priceChange >= 0 ? "text-green-500" : "text-[var(--death-red)]"}`}>
-                  {currentPriceCzk.toLocaleString("cs-CZ", { maximumFractionDigits: 0 })} Kč
+                <p className={`mt-1 text-lg font-bold ${changeColor}`}>
+                  {btcPriceCzk === null
+                    ? "Nedostupná"
+                    : `${btcPriceCzk.toLocaleString("cs-CZ", { maximumFractionDigits: 0 })} Kč`}
                 </p>
               </div>
               <div>
                 <p className="text-xs text-neutral-400">Změna</p>
-                <p className={`mt-1 text-lg font-bold ${priceChange >= 0 ? "text-green-500" : "text-[var(--death-red)]"}`}>
-                  {priceChange >= 0 ? "+" : ""}{priceChange.toLocaleString("cs-CZ", { maximumFractionDigits: 0 })} %
+                <p className={`mt-1 text-lg font-bold ${changeColor}`}>
+                  {priceChange === null
+                    ? "—"
+                    : `${priceChange >= 0 ? "+" : ""}${priceChange.toLocaleString("cs-CZ", { maximumFractionDigits: 0 })} %`}
                 </p>
               </div>
             </div>
@@ -238,7 +256,7 @@ export default async function DeathDetailPage({ params }: PageProps) {
             href="https://invity.onelink.me/OfI3/c1u1hmh3"
             target="_blank"
             rel="sponsored noopener noreferrer"
-            aria-label="Invity - koupit Bitcoin"
+            aria-label="Kde koupit bitcoin? Invity (otevře se v novém okně)"
             className="block rounded-xl border border-[var(--bitcoin-orange)]/30 bg-[var(--bitcoin-orange)]/5 p-8 transition-colors hover:border-[var(--bitcoin-orange)]/60 hover:bg-[var(--bitcoin-orange)]/10"
           >
             <h3 className="mb-6 text-center text-lg font-bold text-white">
@@ -261,7 +279,7 @@ export default async function DeathDetailPage({ params }: PageProps) {
             href="https://affil.trezor.io/SH10i"
             target="_blank"
             rel="sponsored noopener noreferrer"
-            aria-label="Trezor - hardwarová peněženka pro Bitcoin"
+            aria-label="Jak bezpečně uchovat bitcoin? Hardwarová peněženka Trezor (otevře se v novém okně)"
             className="block rounded-xl border border-[var(--bitcoin-orange)]/30 bg-[var(--bitcoin-orange)]/5 p-8 transition-colors hover:border-[var(--bitcoin-orange)]/60 hover:bg-[var(--bitcoin-orange)]/10"
           >
             <h3 className="mb-6 text-center text-lg font-bold text-white">

@@ -132,7 +132,7 @@ export function StatsSection({
           href="https://invity.onelink.me/OfI3/c1u1hmh3"
           target="_blank"
           rel="sponsored noopener noreferrer"
-          aria-label="Invity - koupit Bitcoin"
+          aria-label="Kde koupit bitcoin? Invity (otevře se v novém okně)"
           className="block rounded-xl border border-[var(--bitcoin-orange)]/30 bg-[var(--bitcoin-orange)]/5 p-8 transition-colors hover:border-[var(--bitcoin-orange)]/60 hover:bg-[var(--bitcoin-orange)]/10"
         >
           <h3 className="mb-6 text-center text-xl font-bold text-white sm:text-2xl">
@@ -156,7 +156,7 @@ export function StatsSection({
           href="https://affil.trezor.io/SH10i"
           target="_blank"
           rel="sponsored noopener noreferrer"
-          aria-label="Trezor - hardwarová peněženka pro Bitcoin"
+          aria-label="Jak bezpečně uchovat bitcoin? Hardwarová peněženka Trezor (otevře se v novém okně)"
           className="block rounded-xl border border-[var(--bitcoin-orange)]/30 bg-[var(--bitcoin-orange)]/5 p-8 transition-colors hover:border-[var(--bitcoin-orange)]/60 hover:bg-[var(--bitcoin-orange)]/10"
         >
           <h3 className="mb-6 text-center text-xl font-bold text-white sm:text-2xl">
