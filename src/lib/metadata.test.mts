@@ -14,11 +14,10 @@ test("buildSocialMeta: og:url === zadané url", () => {
 });
 
 test("buildSocialMeta: default type = website, lze přepsat na article", () => {
-  assert.equal(buildSocialMeta({ title: "T", description: "D", url: "u" }).openGraph?.type, "website");
-  assert.equal(
-    buildSocialMeta({ title: "T", description: "D", url: "u", type: "article" }).openGraph?.type,
-    "article",
-  );
+  const ogType = (type?: "website" | "article") =>
+    (buildSocialMeta({ title: "T", description: "D", url: "u", type }).openGraph as { type: string }).type;
+  assert.equal(ogType(), "website");
+  assert.equal(ogType("article"), "article");
 });
 
 test("buildSocialMeta: twitter má obrázek i titulek", () => {
