@@ -39,12 +39,35 @@ function urlsFromFile() {
     .filter(Boolean);
 }
 
+// Ping jde hned po pushi, ale Vercel build trvá pár minut — nové slugy by do té doby
+// vracely 404 a Bing by je tak mohl zaindexovat. Počkáme, až je nový detail živý.
+const LIVE_WAIT_MS = 15 * 60_000;
+const LIVE_POLL_MS = 20_000;
+
+async function waitUntilLive(url) {
+  const deadline = Date.now() + LIVE_WAIT_MS;
+  while (Date.now() < deadline) {
+    const status = await fetch(url, { signal: AbortSignal.timeout(15_000) })
+      .then((r) => r.status)
+      .catch(() => 0);
+    if (status === 200) return true;
+    await new Promise((r) => setTimeout(r, LIVE_POLL_MS));
+  }
+  return false;
+}
+
 async function main() {
   const all = process.argv.includes("--all");
   const urlList = all ? await urlsFromSitemap() : urlsFromFile();
 
   if (urlList.length === 0) {
     console.log("[indexnow] Žádné URL k odeslání.");
+    return;
+  }
+
+  // Poslední URL = nově přeložený detail (translate-deaths.mjs je zapisuje na konec).
+  if (!all && !(await waitUntilLive(urlList[urlList.length - 1]))) {
+    console.warn("[indexnow] Nový obsah není ani po 15 min živý — ping přeskočen.");
     return;
   }
 

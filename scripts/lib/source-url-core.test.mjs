@@ -101,3 +101,8 @@ test("decideAction: ok + softdead bez waybacku → remove (skrýt, ne homepage/s
     { action: "remove", url: null },
   );
 });
+
+test("classifyStatus: 0 (timeout/DNS z probe) = error, ne blocked", () => {
+  assert.equal(classifyStatus(0), "error");
+  assert.equal(decideAction({ status: 0, originalUrl: "https://x/a", finalUrl: "https://x/a" }).action, "keep");
+});

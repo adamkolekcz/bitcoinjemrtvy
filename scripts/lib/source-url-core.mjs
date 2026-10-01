@@ -5,6 +5,7 @@
  * „blokuje boty / paywall" (CNBC, MarketWatch, FT, WSJ), NE „mrtvé" — ponechat.
  */
 export function classifyStatus(status) {
+  if (status === 0) return "error"; // timeout / DNS / síť (probe) — přechodné, ne „blocked"
   if (status >= 200 && status < 300) return "ok";
   if (status === 404 || status === 410) return "dead";
   if (status >= 500) return "error";
