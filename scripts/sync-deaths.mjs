@@ -13,6 +13,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { isValidDeath } from "./lib/translate-core.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DEATHS_JSON_PATH = resolve(__dirname, "../src/data/deaths.json");
@@ -44,23 +45,6 @@ function parsePostsFromHtml(html) {
   }
 }
 
-/** Validuje strukturu dat — kontrola povinných polí prvního záznamu */
-function validateDeathsData(data) {
-  if (!Array.isArray(data) || data.length === 0) {
-    return false;
-  }
-
-  const first = data[0];
-  return (
-    typeof first === "object" &&
-    first !== null &&
-    typeof first.date === "string" &&
-    typeof first.bitcoinPrice === "number" &&
-    typeof first.articleTitle === "string" &&
-    typeof first.person === "string"
-  );
-}
-
 async function main() {
   console.log("[sync-deaths] Fetching data from bitcoindeaths.com...");
 
@@ -83,9 +67,15 @@ async function main() {
     return;
   }
 
-  const deaths = parsePostsFromHtml(html);
+  const posts = parsePostsFromHtml(html);
+  // Kontrola KAŽDÉHO záznamu — jeden vadný (jiný formát data, chybějící cena) by jinak
+  // prošel do deaths.json a shodil prerender detailu i sitemapu.
+  const deaths = posts ? posts.filter(isValidDeath) : [];
+  if (posts && deaths.length < posts.length) {
+    console.warn(`[sync-deaths] Vyřazeno ${posts.length - deaths.length} nevalidních záznamů.`);
+  }
 
-  if (!deaths || !validateDeathsData(deaths)) {
+  if (deaths.length === 0) {
     console.warn("[sync-deaths] Failed to parse valid data from HTML.");
     console.log("[sync-deaths] Keeping existing deaths.json unchanged.");
     return;

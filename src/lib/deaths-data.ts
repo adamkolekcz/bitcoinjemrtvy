@@ -1,4 +1,5 @@
-import type { DeathEvent } from "./calculations";
+import { cache } from "react";
+import { isValidDeath, type DeathEvent } from "./calculations";
 import staticDeathsData from "@/data/deaths.json";
 import sourceUrlsData from "@/data/source-urls.json";
 import { applyTranslations } from "./translations";
@@ -28,7 +29,7 @@ interface DeathsDataResult {
  * Pozn.: /posts má kompletní záznamy (quote + jobTitle), na rozdíl od
  * homepage `chartData`, ze které bitcoindeaths.com tato pole odstranil.
  */
-function parsePostsFromHtml(html: string): DeathEvent[] | null {
+function parsePostsFromHtml(html: string): unknown[] | null {
   // Hledáme __NEXT_DATA__ script tag
   const nextDataMatch = html.match(
     /<script\s+id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/
@@ -42,7 +43,7 @@ function parsePostsFromHtml(html: string): DeathEvent[] | null {
     const nextData = JSON.parse(nextDataMatch[1]) as {
       props?: {
         pageProps?: {
-          posts?: DeathEvent[];
+          posts?: unknown[];
         };
       };
     };
@@ -58,26 +59,6 @@ function parsePostsFromHtml(html: string): DeathEvent[] | null {
   } catch {
     return null;
   }
-}
-
-/**
- * Validuje, že data mají správnou strukturu
- */
-function validateDeathsData(data: unknown): data is DeathEvent[] {
-  if (!Array.isArray(data) || data.length === 0) {
-    return false;
-  }
-
-  // Kontrola prvního záznamu
-  const first = data[0];
-  return (
-    typeof first === "object" &&
-    first !== null &&
-    typeof first.date === "string" &&
-    typeof first.bitcoinPrice === "number" &&
-    typeof first.articleTitle === "string" &&
-    typeof first.person === "string"
-  );
 }
 
 /**
@@ -110,7 +91,9 @@ interface BtcCoinGeckoData {
  * Market cap (volitelný, jen pro homepage):
  *   CoinGecko — tiché selhání, nezablokuje zobrazení ceny.
  */
-export async function getBtcCoinGeckoData(
+// cache(): homepage i detail volají v jednom renderu víckrát (stránka + generateMetadata);
+// AbortSignal v opts vypíná fetch dedup Next.js, takže bez cache() by šly requesty 2×.
+export const getBtcCoinGeckoData = cache(async function getBtcCoinGeckoData(
   revalidateSeconds = REVALIDATE_SECONDS,
   includeMarketCap = true,
 ): Promise<BtcCoinGeckoData> {
@@ -118,6 +101,13 @@ export async function getBtcCoinGeckoData(
     next: { revalidate: revalidateSeconds },
     signal: AbortSignal.timeout(timeout),
   });
+
+  // CoinGecko (market cap i záloha ceny) — jeden request, sdílený. Při includeMarketCap
+  // startuje hned souběžně s Krakenem, ne až po něm.
+  let coinGeckoP: Promise<CoinGeckoResponse | null> | undefined;
+  const getCoinGecko = () => (coinGeckoP ??= fetchCoinGecko());
+  if (includeMarketCap) void getCoinGecko();
+  const fetchMarketCap = async () => (await getCoinGecko())?.bitcoin?.czk_market_cap ?? null;
 
   // --- Pomocná funkce: načte kurz USD/CZK ---
   // Řetězec: Frankfurter → ČNB → hardcoded fallback
@@ -148,6 +138,9 @@ export async function getBtcCoinGeckoData(
     return FALLBACK_USD_TO_CZK;
   }
 
+  // Kurz se stahuje jednou a sdílí ho Kraken i Coinbase větev (dřív 2× při výpadku Krakenu).
+  const usdToCzkP = fetchUsdToCzk();
+
   // --- 1. Kraken + Frankfurter ---
   try {
     const [krakenRes, usdToCzk] = await Promise.all([
@@ -155,7 +148,7 @@ export async function getBtcCoinGeckoData(
         if (!r.ok) throw new Error(`Kraken HTTP ${r.status}`);
         return r.json() as Promise<{ result?: { XXBTZUSD?: { c?: string[] } } }>;
       }),
-      fetchUsdToCzk(),
+      usdToCzkP,
     ]);
 
     const priceUsd = krakenRes?.result?.XXBTZUSD?.c?.[0]
@@ -179,7 +172,7 @@ export async function getBtcCoinGeckoData(
         if (!r.ok) throw new Error(`Coinbase HTTP ${r.status}`);
         return r.json() as Promise<{ data?: { amount?: string } }>;
       }),
-      fetchUsdToCzk(),
+      usdToCzkP,
     ]);
 
     const priceUsd = coinbaseRes?.data?.amount ? parseFloat(coinbaseRes.data.amount) : null;
@@ -196,12 +189,8 @@ export async function getBtcCoinGeckoData(
 
   // --- 3. CoinGecko (záloha pro vše) ---
   try {
-    const res = await fetch(COINGECKO_API, opts(5_000));
-    if (!res.ok) throw new Error(`CoinGecko HTTP ${res.status}`);
-
-    const data = (await res.json()) as {
-      bitcoin?: { czk?: number; usd?: number; czk_market_cap?: number };
-    };
+    const data = await getCoinGecko();
+    if (!data) throw new Error("CoinGecko nedostupný");
     const priceCzk = data?.bitcoin?.czk ?? null;
     const priceUsdCg = data?.bitcoin?.usd ?? null;
     const marketCapCzk = includeMarketCap ? (data?.bitcoin?.czk_market_cap ?? null) : null;
@@ -219,16 +208,19 @@ export async function getBtcCoinGeckoData(
   }
 
   // --- Pomocné funkce ---
-  async function fetchMarketCap(): Promise<number | null> {
+  async function fetchCoinGecko(): Promise<CoinGeckoResponse | null> {
     try {
       const res = await fetch(COINGECKO_API, opts(5_000));
       if (!res.ok) return null;
-      const data = (await res.json()) as { bitcoin?: { czk_market_cap?: number } };
-      return data?.bitcoin?.czk_market_cap ?? null;
+      return (await res.json()) as CoinGeckoResponse;
     } catch {
       return null;
     }
   }
+});
+
+interface CoinGeckoResponse {
+  bitcoin?: { czk?: number; usd?: number; czk_market_cap?: number };
 }
 
 function fmt(n: number) { return Math.round(n).toLocaleString("cs-CZ"); }
@@ -236,7 +228,19 @@ function msg(e: unknown) { return e instanceof Error ? e.message : String(e); }
 // Info logy potlačíme v dev (šum při každém načtení), v produkci se logují (monitoring zdrojů dat/cen).
 function logInfo(message: string) { if (process.env.NODE_ENV !== "development") console.log(message); }
 
-export async function getDeathsData(revalidateSeconds = REVALIDATE_SECONDS): Promise<DeathsDataResult> {
+// Jen záznamy, které umíme vykreslit, s českým překladem (nepřeložené se na webu neobjeví).
+function prepareDeaths(records: unknown[]): DeathEvent[] {
+  const valid = records.filter(isValidDeath);
+  if (valid.length < records.length) {
+    console.warn(`[deaths-data] Vyřazeno ${records.length - valid.length} nevalidních záznamů`);
+  }
+  return applySourceUrls(applyTranslations(valid).filter((d) => d.articleTitle_cs));
+}
+
+// cache(): stránka i generateMetadata v jednom renderu sdílí jeden parse (~440 KB HTML).
+export const getDeathsData = cache(async function getDeathsData(
+  revalidateSeconds = REVALIDATE_SECONDS,
+): Promise<DeathsDataResult> {
   try {
     const response = await fetch(BITCOINDEATHS_URL, {
       next: { revalidate: revalidateSeconds },
@@ -247,24 +251,20 @@ export async function getDeathsData(revalidateSeconds = REVALIDATE_SECONDS): Pro
       throw new Error(`HTTP ${response.status}`);
     }
 
-    const html = await response.text();
-    const deaths = parsePostsFromHtml(html);
-
-    if (!deaths || !validateDeathsData(deaths)) {
+    const posts = parsePostsFromHtml(await response.text());
+    const deaths = posts ? prepareDeaths(posts) : [];
+    if (deaths.length === 0) {
       throw new Error("Invalid data structure");
     }
 
     logInfo(`[deaths-data] Loaded ${deaths.length} obituaries from bitcoindeaths.com`);
-    const translated = applyTranslations(deaths).filter((d) => d.articleTitle_cs);
-    return { deaths: applySourceUrls(translated), source: "live" };
+    return { deaths, source: "live" };
   } catch (error) {
     console.warn(
       "[deaths-data] Failed to fetch from bitcoindeaths.com, using static fallback:",
       error instanceof Error ? error.message : "Unknown error"
     );
 
-    const staticDeaths = staticDeathsData as DeathEvent[];
-    const translatedStatic = applyTranslations(staticDeaths).filter((d) => d.articleTitle_cs);
-    return { deaths: applySourceUrls(translatedStatic), source: "static" };
+    return { deaths: prepareDeaths(staticDeathsData), source: "static" };
   }
-}
+});

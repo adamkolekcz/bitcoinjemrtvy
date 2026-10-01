@@ -105,23 +105,52 @@ export function buildDeathMetaDescription(death: DeathEvent): string {
   return `${full.slice(0, 159).replace(/\s+\S*$/, "")}…`;
 }
 
-export function generateDeathSlug(death: DeathEvent): string {
-  const date = parseDate(death.date);
+// Záznam z upstreamu, který umíme bezpečně vykreslit. Kontroluje se KAŽDÝ záznam:
+// jediné vadné datum by jinak shodilo prerender (RangeError z toISOString) i sitemapu.
+// MUSÍ zůstat v sync s isValidDeath ve scripts/lib/translate-core.mjs.
+export function isValidDeath(value: unknown): value is DeathEvent {
+  if (typeof value !== "object" || value === null) return false;
+  const d = value as Record<string, unknown>;
+  return (
+    typeof d.date === "string" &&
+    /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(d.date) &&
+    typeof d.bitcoinPrice === "number" &&
+    Number.isFinite(d.bitcoinPrice) &&
+    d.bitcoinPrice > 0 &&
+    typeof d.articleTitle === "string" &&
+    d.articleTitle.trim() !== "" &&
+    typeof d.person === "string" &&
+    typeof d.publicationName === "string"
+  );
+}
+
+function datePrefix(dateStr: string): string {
+  const date = parseDate(dateStr);
   const day = String(date.getDate()).padStart(2, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = date.getFullYear();
+  return `${day}-${month}-${date.getFullYear()}`;
+}
 
-  const title = death.articleTitle_cs ?? death.articleTitle;
-  const titleSlug = title
+function slugifyTitle(title: string): string {
+  return title
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 80)
-    .replace(/-+$/g, "");
+    .replace(/^-+|-+$/g, "");
+}
 
-  return `${day}-${month}-${year}-${titleSlug}`;
+export function generateDeathSlug(death: Pick<DeathEvent, "date" | "articleTitle" | "articleTitle_cs">): string {
+  const title = death.articleTitle_cs ?? death.articleTitle;
+  return `${datePrefix(death.date)}-${slugifyTitle(title).slice(0, 80).replace(/-+$/g, "")}`;
+}
+
+/**
+ * Klíč pro lookup v translations-cs.json — vždy z anglického titulu bez zkrácení.
+ * Klíče vznikly před zavedením zkracování slugů, proto se od generateDeathSlug liší.
+ */
+export function translationKey(death: Pick<DeathEvent, "date" | "articleTitle">): string {
+  return `${datePrefix(death.date)}-${slugifyTitle(death.articleTitle)}`;
 }
 
 export function formatCurrency(value: number, currency: string = "CZK"): string {

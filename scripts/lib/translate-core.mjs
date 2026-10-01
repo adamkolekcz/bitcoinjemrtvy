@@ -1,8 +1,9 @@
 // Čisté, I/O-free helpery pro translate-deaths.mjs.
 // MUSÍ zůstat v sync s:
-//   - src/lib/translations.ts  → translationKey (DD-MM-YYYY-{en-title-slug}, bez zkrácení)
-//   - src/lib/calculations.ts  → parseDate (M/D/YYYY)
-// Změna tam = změna tady. Drift hlídá self-test v translate-deaths.mjs + unit testy.
+//   - src/lib/calculations.ts  → translationKey (DD-MM-YYYY-{en-title-slug}, bez zkrácení),
+//                                parseDate (M/D/YYYY), generateDeathSlug, isValidDeath
+// Změna tam = změna tady. Drift hlídá src/lib/slug-parity.test.mts (všechna reálná
+// data přes obě implementace) + self-test v translate-deaths.mjs.
 
 export const MISSING_THRESHOLD = 15;
 
@@ -38,6 +39,23 @@ export function deathSlug(death) {
   const title = death.articleTitle_cs ?? death.articleTitle;
   const titleSlug = slugifyTitle(title).slice(0, 80).replace(/-+$/g, "");
   return `${day}-${month}-${year}-${titleSlug}`;
+}
+
+// Záznam z upstreamu, který umíme bezpečně vykreslit (viz isValidDeath v calculations.ts).
+export function isValidDeath(d) {
+  return (
+    typeof d === "object" &&
+    d !== null &&
+    typeof d.date === "string" &&
+    /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(d.date) &&
+    typeof d.bitcoinPrice === "number" &&
+    Number.isFinite(d.bitcoinPrice) &&
+    d.bitcoinPrice > 0 &&
+    typeof d.articleTitle === "string" &&
+    d.articleTitle.trim() !== "" &&
+    typeof d.person === "string" &&
+    typeof d.publicationName === "string"
+  );
 }
 
 export function isFieldSane(source, translated) {

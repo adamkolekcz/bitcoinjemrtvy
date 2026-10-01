@@ -56,7 +56,7 @@ function selfTest() {
     if (got !== expected) {
       throw new Error(
         `[translate] SELF-TEST SELHAL: "${got}" !== "${expected}". ` +
-          `translationKey odběhl od src/lib/translations.ts — oprav scripts/lib/translate-core.mjs.`
+          `translationKey odběhl od src/lib/calculations.ts — oprav scripts/lib/translate-core.mjs.`
       );
     }
   }
@@ -180,7 +180,15 @@ async function main() {
   let skipped = 0;
   for (const death of missing) {
     const key = translationKey(death);
-    const result = await translateOne(client, death);
+    // Chyba jednoho článku (529, síť) nesmí zahodit už zaplacené překlady ostatních.
+    let result;
+    try {
+      result = await translateOne(client, death);
+    } catch (e) {
+      skipped++;
+      console.warn(`[translate] PŘESKOČENO (API chyba: ${e?.message ?? e}): ${key}`);
+      continue;
+    }
     if (!result || !isTranslationSane(death, result)) {
       skipped++;
       console.warn(`[translate] PŘESKOČENO (sanity): ${key}`);
