@@ -5,6 +5,6 @@ import { getBtcCoinGeckoData } from "@/lib/deaths-data";
 export const revalidate = 3600;
 
 export async function GET() {
-  const { priceCzk } = await getBtcCoinGeckoData();
+  const { priceCzk } = await getBtcCoinGeckoData(3600, false);
   return Response.json({ priceCzk });
 }

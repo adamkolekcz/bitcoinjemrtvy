@@ -48,20 +48,33 @@ export function Timeline({ initialSlice, total }: TimelineProps) {
   const offsetRef = useRef(initialSlice.items.length);
   const didMount = useRef(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   const loadPage = useCallback(async (nextOrder: Order, offset: number, replace: boolean) => {
+    // Přepnutí řazení během načítání: starý request zrušíme, jinak by se jeho dávka
+    // přilepila za nové řazení (promíchaná data, rozhozený offset).
+    abortRef.current?.abort();
+    const ctrl = new AbortController();
+    abortRef.current = ctrl;
     setLoading(true);
     try {
-      const res = await fetch(`/api/deaths?order=${nextOrder}&offset=${offset}&limit=${TIMELINE_PAGE_SIZE}`);
+      const res = await fetch(`/api/deaths?order=${nextOrder}&offset=${offset}&limit=${TIMELINE_PAGE_SIZE}`, {
+        signal: ctrl.signal,
+      });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const slice: TimelineSlice = await res.json();
-      setItems((prev) => (replace ? slice.items : [...prev, ...slice.items]));
+      setItems((prev) => {
+        if (replace) return slice.items;
+        // SSR dávka a API můžou mít různý ISR snapshot (mezitím přibyl článek) → bez duplicit.
+        const seen = new Set(prev.map((i) => i.slug));
+        return [...prev, ...slice.items.filter((i) => !seen.has(i.slug))];
+      });
       offsetRef.current = offset + slice.items.length;
       setHasMore(slice.hasMore);
     } catch {
       // ponech stávající stav; observer to zkusí znovu při dalším scrollu
     } finally {
-      setLoading(false);
+      if (abortRef.current === ctrl) setLoading(false);
     }
   }, []);
 
@@ -109,10 +122,15 @@ export function Timeline({ initialSlice, total }: TimelineProps) {
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
-          <span className="text-sm text-neutral-300">Řazení:</span>
-          <div className="flex items-center gap-1 rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)] p-1">
+          <span id="timeline-order-label" className="text-sm text-neutral-300">Řazení:</span>
+          <div
+            role="group"
+            aria-labelledby="timeline-order-label"
+            className="flex items-center gap-1 rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)] p-1"
+          >
             <button
               type="button"
+              aria-pressed={order === "newest"}
               onClick={() => setOrder("newest")}
               className={`rounded px-3 py-1 text-xs font-medium transition-colors ${
                 order === "newest" ? "bg-[var(--bitcoin-orange)] text-black" : "text-neutral-300 hover:text-white"
@@ -122,6 +140,7 @@ export function Timeline({ initialSlice, total }: TimelineProps) {
             </button>
             <button
               type="button"
+              aria-pressed={order === "oldest"}
               onClick={() => setOrder("oldest")}
               className={`rounded px-3 py-1 text-xs font-medium transition-colors ${
                 order === "oldest" ? "bg-[var(--bitcoin-orange)] text-black" : "text-neutral-300 hover:text-white"
@@ -151,7 +170,10 @@ export function Timeline({ initialSlice, total }: TimelineProps) {
       ))}
 
       {hasMore && <div ref={sentinelRef} className="h-10" aria-hidden="true" />}
-      {loading && <p className="py-6 text-center text-sm text-neutral-400">Načítám&hellip;</p>}
+      {/* Live region musí existovat předem, jinak čtečka změnu neohlásí. */}
+      <p role="status" className={loading ? "py-6 text-center text-sm text-neutral-400" : "sr-only"}>
+        {loading ? "Načítám…" : ""}
+      </p>
     </div>
   );
 }

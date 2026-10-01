@@ -20,7 +20,7 @@ Data (`deaths.json`, `source-urls.json`, `translations-cs.json`) is maintained b
 
 Build scripts (`sharp`, `unrs-resolver`) are whitelisted in `pnpm-workspace.yaml` (`allowBuilds`). The same file holds an `overrides` entry for `postcss` (a security patch).
 
-Tests: `pnpm test` (`node:test`) covers the pure functions in `src/lib/calculations.ts`, `src/lib/embed-config.ts`, `scripts/lib/translate-core.mjs`, and `scripts/lib/source-url-core.mjs` (each with a `*.test.*` file alongside it).
+Tests: `pnpm test` (`node:test`) covers the pure functions in `src/lib/calculations.ts`, `src/lib/embed-config.ts`, `src/lib/metadata.ts`, `scripts/lib/translate-core.mjs`, and `scripts/lib/source-url-core.mjs` (each with a `*.test.*` file alongside it). `src/lib/slug-parity.test.mts` runs all real data through both the TS and the `.mjs` slug/key/validation logic (drift guard + slug-collision check). CI additionally runs `check-redirects.mjs`.
 
 **`node --test` gotcha:** it can't resolve an extensionless local import inside a tested `.ts` (Next forbids `.ts`/`.js` import extensions), so a tested pure-logic `.ts` must be **self-contained** — that's why `calculations.ts` imports nothing local. Logic that needs `calculations` (e.g. `timeline-item.ts`) is covered by integration (via `/api/deaths`) instead; `.mjs` scripts reuse `translate-core.mjs`.
 
@@ -31,7 +31,7 @@ Tests: `pnpm test` (`node:test`) covers the pure functions in `src/lib/calculati
 ```
 bitcoindeaths.com/posts (__NEXT_DATA__ → pageProps.posts; the homepage `chartData` lost quote+jobTitle, so we read /posts)
   → src/data/deaths.json (static fallback)
-  → src/lib/deaths-data.ts (getDeathsData) — filters out untranslated records (no articleTitle_cs)
+  → src/lib/deaths-data.ts (getDeathsData, React cache()) — drops invalid records (isValidDeath, per record) and untranslated ones (no articleTitle_cs)
   → src/lib/translations.ts (applyTranslations from translations-cs.json)
   → src/app/page.tsx / prohlaseni/[slug]/page.tsx
 ```
@@ -69,6 +69,7 @@ All prices in the data are in **USD**. Conversion to CZK happens exclusively at 
 - `src/app/page.tsx` is an async Server Component — all data fetching happens here
 - `BitcoinChart` uses Recharts (browser-only), so `ssr: false` cannot be used directly in a Server Component
 - Solution: `BitcoinChartLazy.tsx` is a thin `"use client"` wrapper that calls `dynamic(..., { ssr: false })`; the Server Component imports the wrapper
+- Chart data is **not** passed as props: the wrapper fetches it from `/api/chart-data` (static ISR route) after idle, so ~215 KB stays out of the homepage HTML/RSC payload
 
 This pattern is required whenever you want `next/dynamic` with `ssr: false` — never import `dynamic()` directly in a Server Component.
 
@@ -85,7 +86,7 @@ The listing SSRs only the first `TIMELINE_PAGE_SIZE` (40) items, then `Timeline.
 
 - The slug is generated from the **Czech title** (`articleTitle_cs ?? articleTitle`), truncated to 80 characters
 - The lookup key for `translations-cs.json` is generated from the **untruncated English title** — the two functions (`generateDeathSlug` and `translationKey`) are intentionally separate
-- **Watch out for duplication:** `scripts/lib/translate-core.mjs` has its own copy of `translationKey`, `parseDate`, and the slug normalization (the script is `.mjs` and cannot import TS). It must stay byte-identical with `translations.ts` / `calculations.ts`. When you change the key/slug logic, **update both places** — a self-test in `translate-deaths.mjs` plus unit tests guard against drift, but actively keep them in sync.
+- **Watch out for duplication:** `scripts/lib/translate-core.mjs` has its own copy of `translationKey`, `parseDate`, `isValidDeath`, and the slug normalization (the script is `.mjs` and cannot import TS). It must stay byte-identical with `calculations.ts`. When you change the key/slug/validation logic, **update both places** — `slug-parity.test.mts` (all real data through both) and the self-test in `translate-deaths.mjs` guard against drift, but actively keep them in sync.
 
 ### Static data (`src/data/`)
 

@@ -332,6 +332,7 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
             <button
               type="button"
               key={option.value}
+              aria-pressed={period === option.value}
               onClick={() => setPeriod(option.value)}
               className={`rounded px-3 py-1 text-xs font-medium transition-colors ${
                 period === option.value
@@ -348,6 +349,7 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
         <div className="flex items-center gap-1 rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)] p-1">
           <button
             type="button"
+            aria-pressed={scale === "log"}
             onClick={() => setScale("log")}
             className={`rounded px-3 py-1 text-xs font-medium transition-colors ${
               scale === "log"
@@ -359,6 +361,7 @@ export function BitcoinChart({ data, currentPriceUsd, currentPriceCzk, usdToCzk 
           </button>
           <button
             type="button"
+            aria-pressed={scale === "linear"}
             onClick={() => setScale("linear")}
             className={`rounded px-3 py-1 text-xs font-medium transition-colors ${
               scale === "linear"
