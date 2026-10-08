@@ -122,7 +122,7 @@ export default async function DeathDetailPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(pageJsonLd) }}
       />
 
-      <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
+      <main className="mx-auto max-w-3xl px-4 pt-8 sm:px-6">
         <article>
           <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
             <time
@@ -252,8 +252,11 @@ export default async function DeathDetailPage({ params }: PageProps) {
           )}
         </nav>
 
-        <PartnerCards headingClassName="text-lg" />
       </main>
+
+      <div className="mx-auto w-full max-w-7xl px-4 pb-8 sm:px-6 lg:px-8">
+        <PartnerCards headingClassName="text-lg" />
+      </div>
 
       <Footer />
     </div>
