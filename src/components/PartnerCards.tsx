@@ -76,10 +76,10 @@ export function PartnerCards({ headingClassName }: { headingClassName: string })
         heading="Jak bezpečně uchovat bitcoin?"
         headingClassName={headingClassName}
         logo={TREZOR_LOGO}
-        intro="Hardwarová peněženka Trezor vám dá:"
+        intro="Dokud máte bitcoiny na burze, má je v rukou ona. S Trezorem jsou opravdu jen vaše:"
         points={[
-          <><strong className="text-white">klíče jen ve vašich rukou</strong> — bitcoiny nezávisí na žádné burze ani aplikaci</>,
-          <><strong className="text-white">ochranu offline</strong> — každou transakci potvrzujete přímo na zařízení</>,
+          <><strong className="text-white">nezávisíte na burze</strong> — když zkrachuje nebo ji hacknou, vaše bitcoiny zůstanou v&nbsp;bezpečí</>,
+          <><strong className="text-white">ani hacker je nepošle pryč</strong> — každou platbu musíte potvrdit přímo na zařízení</>,
         ]}
         cta="Prohlédnout Trezor"
       />
